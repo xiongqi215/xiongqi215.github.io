@@ -12,7 +12,7 @@ subnav:
   rss: "/atom.xml"
   #zhihu: "#"
   #douban: "#"
-  #mail: "#"
+  mail: "mailto: xiongqi215@sina.com"
   #facebook: "#"
   #google: "#"
   #twitter: "#"
