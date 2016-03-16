@@ -107,7 +107,7 @@ $ git commit -m '提交说明'
 ![git add/commit](http://7xrvdu.com1.z0.glb.clouddn.com/git5.jpg)
 这次我们通过命令结果输出可以看到`1 file changed , 1 insertions(+)`。
 
-我们可以清楚的发现，Git记录不光是文件的新增，同时也包含了文件中具体修改，新增多少行货删除多少行。而不是像如SVN，我们一般只能看add file、upadte file或delete file。
+我们可以清楚的发现，Git记录的不光是文件的新增，同时也包含了文件中具体修改-----新增多少行货删除多少行。而不是像如SVN，我们一般只能看add file、upadte file或delete file。
 
 另外我们还可以使用`git status`命令跟踪文件的状态。比如，当我们新建readme.txt时执行`git status`,如图：
 ![git status](http://7xrvdu.com1.z0.glb.clouddn.com/git6.jpg)
