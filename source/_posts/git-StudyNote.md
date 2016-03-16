@@ -15,17 +15,22 @@ description: Git--分布式版本控制工具，首先我们需要了解版本�
     * [集中化版本控制工具](#2.1)
     * [分布式版本控制工具](#2.2)
  * [Git 入门](#3)
+    * [创建本地版本库](#3.1)
+    * [管理修改](#3.2)
+    * [分支管理](#3.3)
+    * [使用远程库](#3.4)
+    * [冲突处理](#3.5)
  * [其它详细教程](#4)
 
 # <a id="1">文章目的</a>
-最近在捣鼓自己博客网站，接触到如octopress,Jekyll和Hexo等静态博客生成工具（p.s：最后还是选择使用Hexo，原因：Hexo非常适合我这种爱(ji)研(shu)究(zha)又爱（xiang）分(zhuang)享(B)的人，易上手，配置简单，省时省力），顺便接触到Git--一款高大上版本控制工具。对于长时间在公司开发，习惯了使用SVN的风格，刚一开始还真不习惯Git。 现在我使用Hexo+Git,在写文章、生成网页再到发布上已经非常顺手了，故而觉得应该写下这篇文章，一是作为自己学习的积累，二是希望完成一个Git快速上手教程分享与大家。
-
+最近在捣鼓自己博客网站，接触到如octopress,Jekyll和Hexo等静态博客生成工具（p.s：最后还是选择使用Hexo，原因：Hexo非常适合我这种爱(ji)研(shu)究(zha)又爱（xiang）分(zhuang)享(B)的人，易上手，配置简单，省时省力），顺便接触到Git。对于长时间在公司开发，习惯了使用SVN的风格，刚一开始还真不习惯。 现在我使用Hexo+Git,在写文章、生成网页再到发布上已经非常顺手了，故而觉得应该写下这篇文章，一是作为自己学习的积累，二是希望完成一个Git快速上手教程分享与大家。
+<!--more -->
 # <a id="2">关于版本控制</a>
 以下我对版本控制的理解:
 
 版本控制工具就是这样一种工具，它用于记录我们对文件每一次修改记录，以便日后回溯每一次的变更内容。每次的变更我们称之为`版本`，对这些版本的管理即为版本管理。版本控制工具能够提供记录修改、提交修改、更新到最新版本、与其他版本合并以及撤销当前版本或回滚到指定版本。
 
-版本控制工具大概分为以下二类([廖雪峰的官方网站](http://www.liaoxuefeng.com/wiki/0013739516305929606dd18361248578c67b8067c8c017b000 "廖雪峰的官方网站"))：
+版本控制工具大概分为以下二类：
  - 集中化版本控制工具
  - 分布式版本控制工具
 
@@ -68,7 +73,7 @@ $ git config --global user.email "email@example.com"
 ```
 **注意git config命令的--global参数，用了这个参数，表示你这台机器上所有的Git仓库都会使用这个配置，当然也可以对某个仓库指定不同的用户名和Email地址。**
 
-##  Git--创建本地版本库
+## <a id="3.1"> 创建本地版本库</a>
 `repository`--版本库或称为仓库,可以简单理解成一个目录，这个目录里面的所有文件都可以被Git管理起来，每个文件的修改、删除，Git都能跟踪，以便任何时刻都可以追踪历史，或者在将来某个时刻可以“还原”。在你需要创建版本库的文件夹中打开`git bash`,并执行如下命令：
 ```bash
 $ git init
@@ -76,27 +81,56 @@ $ git init
 成功后你会看到如下提示：
 ![git init](http://7xrvdu.com1.z0.glb.clouddn.com/git3.jpg)
 
-你一定会注意到这句话：`Initialized empty Git repository in xxxxx` 这说明你的`repository`建立成功了。而且在该目录下会多出一个`.git`的文件夹，类似于SVN中的`.svn`，都是用于保存版本相关信息的。
+你一定会注意到这句话：`Initialized empty Git repository in xxxxx`, 这说明你的`repository`建立成功了。而且在该目录下会多出一个`.git`的文件夹，类似于SVN中的`.svn`，都是用于保存版本相关信息的。
 
+## <a id="3.2">管理修改</a>
+`管理修改`就是我们平时工作时，对文件产生的修改以及对修改提交、撤销操作。
+Git一个非常优秀的设计是在Git当中版本管理的单位是`修改`而非文件。所谓修改包括新增一个文件，删除一个文件，或在文件当中新增，修改或删除一行。每一次的修改都会使文件的状态发生改变。
+![file status](http://7xrvdu.com1.z0.glb.clouddn.com/18333fig0201-tn.png)
+*（git中的文件状态变化，图片来自[Pro Git](http://http://iissnan.com/progit/html/zh/ch2_2.html "Pro Git")）*
+下面我们一步步操作来详细看下Git是如何体现以修改为单位的管理。
+首先，当我们完成工作需要提交文件时，需要执行如下两个命令：
 
-## Git--修改提交
-Git的修改提交分两步
-第一步执行:
 ```bash
 $ git add <fileName>
 ```
-将指定文件提交到`暂存区`,或者执行`add .` 表示目录下所有文件。第二步执行：
+和
 ```bash
-$ git commit -m '说明'
+$ git commit -m '提交说明'
 ```
-到把暂存区的所有内容提交到当前`分支`。
-**关于`暂存区` 和 `分支` 会在稍后细说。**
+`git add`命令是要求git对某个或某些文件进行`跟踪`,并把当前的修改内容放入暂存区。而`git commit`命令的作用是把所有暂存区的内容所提交到当前`分支`，也就是完成真正意义上的提交。**关于`暂存区` 和 `分支` 会在稍后细说。**
+
 例如我们在仓库中新建一个readme.txt文件，并提交它，如下图：
 ![git add/commit](http://7xrvdu.com1.z0.glb.clouddn.com/git4.jpg)
 命令执行完成后readme.txt便被提交到了`master`分支中。而且，我们通过命令结果输出可以清楚的看到`1 file changed , 0 insertions(+), 0 deletions(-)`。**需要注意的是git add执行成功后不会有任何输出**。
-接下我们编辑下`readme.txt`，插入一句话：*first edit* 然后在提交：
+接下我们编辑下`readme.txt`，插入一句话：*first edit* 然后再次提交：
 ![git add/commit](http://7xrvdu.com1.z0.glb.clouddn.com/git5.jpg)
 这次我们通过命令结果输出可以看到`1 file changed , 1 insertions(+)`。
+
+我们可以清楚的发现，Git记录不光是文件的新增，同时也包含了文件中具体修改，新增多少行货删除多少行。而不是像如SVN，我们一般只能看add file、upadte file或delete file。
+
+另外我们还可以使用`git status`命令跟踪文件的状态。比如，当我们新建readme.txt时执行`git status`,如图：
+![git status](http://7xrvdu.com1.z0.glb.clouddn.com/git6.jpg)
+输出结果表示 readme.txt 是`untracked` 状态，并且提示我们使用`add <file>` 命令。然后我们执行
+```bash
+  $ git add readme.txt
+```
+再次执行`git status`：
+![git status](http://7xrvdu.com1.z0.glb.clouddn.com/git7.jpg)
+这时readme.txt已经在暂存区(`stage`)中了，并且如果你想将其从暂存区撤销可以使用
+```bash
+$ git rm --cached<file>
+```
+接下来我们使用`git commit` 来提交，并查看提交后的状态：
+![git status](http://7xrvdu.com1.z0.glb.clouddn.com/git8.jpg)
+命令结果显示没有需要提交的内容了。
+
+## <a id="3.3"> 分支管理</a>
+
+
+
+## <a id="3.4"> 远程库的使用</a>
+## <a id="3.3"> 使用远程库</a>
 
 
 
