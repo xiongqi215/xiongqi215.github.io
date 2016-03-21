@@ -17,6 +17,9 @@ description: Git--分布式版本控制工具，首先我们需要了解版本�
  * [Git 入门](#3)
     * [创建本地版本库](#3.1)
     * [管理修改](#3.2)
+      * [修改提交](#3.2.1)
+      * [修改撤销](#3.2.2)
+      * [修改查看](#3.2.2)
     * [分支管理](#3.3)
     * [使用远程库](#3.4)
     * [冲突处理](#3.5)
@@ -84,11 +87,13 @@ $ git init
 你一定会注意到这句话：`Initialized empty Git repository in xxxxx`, 这说明你的`repository`建立成功了。而且在该目录下会多出一个`.git`的文件夹，类似于SVN中的`.svn`，都是用于保存版本相关信息的。
 
 ## <a id="3.2">管理修改</a>
-`管理修改`就是我们平时工作时，对文件产生的修改以及对修改提交、撤销操作。
+`管理修改`就是我们平时工作时，对文件产生的修改以及对修改的提交、撤销操作。
 Git一个非常优秀的设计是在Git当中版本管理的单位是`修改`而非文件。所谓修改包括新增一个文件，删除一个文件，或在文件当中新增，修改或删除一行。每一次的修改都会使文件的状态发生改变。
 ![file status](http://7xrvdu.com1.z0.glb.clouddn.com/18333fig0201-tn.png)
 *（git中的文件状态变化，图片来自[Pro Git](http://http://iissnan.com/progit/html/zh/ch2_2.html "Pro Git")）*
 下面我们一步步操作来详细看下Git是如何体现以修改为单位的管理。
+
+###<a id="3.2.1">修改提交：</a>
 首先，当我们完成工作需要提交文件时，需要执行如下两个命令：
 
 ```bash
@@ -98,7 +103,7 @@ $ git add <fileName>
 ```bash
 $ git commit -m '提交说明'
 ```
-`git add`命令是要求git对某个或某些文件进行`跟踪`,并把当前的修改内容放入暂存区。而`git commit`命令的作用是把所有暂存区的内容所提交到当前`分支`，也就是完成真正意义上的提交。**关于`暂存区` 和 `分支` 会在稍后细说。**
+`git add`命令的作用是要求git对某个或某些文件进行`跟踪`,并把当前的修改内容放入暂存区。而`git commit`命令的作用是把所有暂存区的内容所提交到当前`分支`，也就是完成真正意义上的提交。**关于`暂存区` 和 `分支` 会在稍后细说。**
 
 例如我们在仓库中新建一个readme.txt文件，并提交它，如下图：
 ![git add/commit](http://7xrvdu.com1.z0.glb.clouddn.com/git4.jpg)
@@ -117,13 +122,27 @@ $ git commit -m '提交说明'
 ```
 再次执行`git status`：
 ![git status](http://7xrvdu.com1.z0.glb.clouddn.com/git7.jpg)
-这时readme.txt已经在暂存区(`stage`)中了，并且如果你想将其从暂存区撤销可以使用
-```bash
-$ git rm --cached<file>
-```
+这时readme.txt已经在暂存区(`stage`)中了。
+
 接下来我们使用`git commit` 来提交，并查看提交后的状态：
 ![git status](http://7xrvdu.com1.z0.glb.clouddn.com/git8.jpg)
 命令结果显示没有需要提交的内容了。
+
+###<a id="3.2.2">修改撤销：</a>
+工作中往往可能出现各种错误，使用版本管理工具的好处就是我们可以随时弥补错误。
+Git中可以使用 `git checkout -- <fileName>` 和`git reset ` 两个命令来完成修改的撤销。
+**git checkout -- <fileName> 如果不加 ‘-- <fileName>’ 则是进行分支切换**
+我们先来看下`git checkout -- <fileName>` 命令的使用：
+>命令`git checkout  -- <fileName> ` 意思就是，把文件<fileName>在工作区的修改全部撤销，这里有两种情况：
+>一种是`<fileName>`自修改后还没有被放到暂存区，现在，撤销修改就回到和版本库一模一样的状态；
+> 一种是`<fileName>`已经添加到暂存区后，又作了修改，现在，撤销修改就回到添加到暂存区后的状态。
+> 总之，就是让这个文件回到最近一次git commit或git add时的状态。
+
+*修改后还没有被放到暂存区使用`git checkout  -- <fileName> `*
+
+
+
+###<a id="3.2.3">修改查看：</a>
 
 ## <a id="3.3"> 分支管理</a>
 
