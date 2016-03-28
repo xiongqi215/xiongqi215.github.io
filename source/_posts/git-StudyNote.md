@@ -19,10 +19,7 @@ description: Git--分布式版本控制工具，首先我们需要了解版本�
     * [管理修改](#3.2)
       * [修改提交](#3.2.1)
       * [修改撤销](#3.2.2)
-      * [修改查看](#3.2.2)
-    * [分支管理](#3.3)
-    * [使用远程库](#3.4)
-    * [冲突处理](#3.5)
+    * [使用远程库](#3.3)
  * [其它详细教程](#4)
 
 # <a id="1">文章目的</a>
@@ -128,7 +125,7 @@ $ git commit -m '提交说明'
 ![git status](http://7xrvdu.com1.z0.glb.clouddn.com/git8.jpg)
 命令结果显示没有需要提交的内容了。
 
-###<a id="3.2.2">修改撤销：</a>
+### <a id="3.2.2">修改撤销：</a>
 工作中往往可能出现各种错误，使用版本管理工具的好处就是我们可以随时弥补错误。
 Git中可以使用 `git checkout -- <fileName>` 和`git reset ` 两个命令来完成修改的撤销。
 **git checkout -- <fileName> 如果不加 ‘-- <fileName>’ 则是进行分支切换**
@@ -139,17 +136,43 @@ Git中可以使用 `git checkout -- <fileName>` 和`git reset ` 两个命令来�
 > 总之，就是让这个文件回到最近一次git commit或git add时的状态。
 
 *修改后还没有被放到暂存区使用`git checkout  -- <fileName> `*
+![git](http://7xrvdu.com1.z0.glb.clouddn.com/git9.jpg)
+在通过`add`命令前使用`git checkout  -- <fileName> ` 会将文件内容还原为修改前的内容。
 
+*已经添加到暂存区后，又作了修改，使用`git checkout  -- <fileName> `*
+![git](http://7xrvdu.com1.z0.glb.clouddn.com/git10.jpg)
 
+接下来是`git reset `。
+使用`git reset `可以将文件从暂存区撤销，或者可以将已经commit 的文件进行版本回退。
+*使用`git reset HEAD  <fileName> ` 完成从暂存区撤销*
+![git](http://7xrvdu.com1.z0.glb.clouddn.com/git11.jpg)
+OK，这次修改已经回到了add前，这意味着你可以重新修改文件，再执行add 操作。
+再接下来，我们使用`git reset `进行版本操作。
+先简单说下git 版本回退的原理。回想前面在`git reset HEAD  <fileName> `命令中出现的 `HEAD` 参数，它其实是git中的版本指针，并且指向的是最新版本。
+所以git中的版本回退原理其实就是将`HEAD`指针指向其他版本号。
 
-###<a id="3.2.3">修改查看：</a>
+这里出现了一个问题，`版本号`从何而来？ 我们可以使用`git log`查询提交记录：
+![git log](http://7xrvdu.com1.z0.glb.clouddn.com/git12.jpg)
+图中如`292ac30e27a81f66b04a56cffa44074ae353aae7`等一长串的数字就是git中的版本号。
+>Git的版本号不像svn使用1，2，3……递增的数字，而是一个SHA1计算出来的一个非常大的数字，用十六进制表示。
+这样做的目的是因为git是分布式的版本管理工具，单纯的1,2,3..递增显然很容易出现冲突的。
 
-## <a id="3.3"> 分支管理</a>
+刚才说到过`HEAD`指向的是最新版本，那么上个版本就是HEAD^,上上个就是HEAD^^,因此我们可以使用如下命令完成版本回退
+```bash
+git reset --hard HEAD^
+```
+或者直接指明版本号
+```bash
+git reset --hard b7568c296
+```
+`b7568c296`就是你需要回退到的版本，git支持简短缩写版本号，它会自动匹配。当然不要太短了，至少7-8位吧。
+![git reset](http://7xrvdu.com1.z0.glb.clouddn.com/git13.jpg)
+![git reset](http://7xrvdu.com1.z0.glb.clouddn.com/git14.jpg)
+回退成功后，查看`readme.txt`，其中内容应该也相应回到回退版本相应的内容。但是，从图中你会发现，版本回退后，前面的版本号已经没了，这时像后悔怎么办？
+git中总有后悔药吃，你可以使用`git reflog` 查看所有操作的记录，从而得版本号：
+![git reset](http://7xrvdu.com1.z0.glb.clouddn.com/git15.jpg)
+## <a id="3.3"> 远程库的使用</a>
 
-
-
-## <a id="3.4"> 远程库的使用</a>
-## <a id="3.3"> 使用远程库</a>
 
 
 
