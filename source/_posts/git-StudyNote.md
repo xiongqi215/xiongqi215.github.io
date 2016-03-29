@@ -1,7 +1,7 @@
 ---
 layout: post
 title: "Git学习笔记--入门"
-date: 2016-03-14
+date: 2016-03-29
 comments: true
 categories: Git
 tags:  [github,git]
