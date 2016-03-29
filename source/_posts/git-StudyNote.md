@@ -236,14 +236,14 @@ git push -u origin master
 git clone  git@github.com:xiongqi215/gitstudy.git
 ```
 同样`xiongqi215`更换成你的github账户。
-[github clone](http://7xrvdu.com1.z0.glb.clouddn.com/git%20clone.jpg)
+![github clone](http://7xrvdu.com1.z0.glb.clouddn.com/git%20clone.jpg)
 
 现在，我们的已经在github建立了一个远程库，同时这个库被`clone`到了多台电脑上。
 这时假如A电脑`push`了一些修改到远程库中，B电脑需要更新到这部分修改，那么可以使用如下命令：
 ```bash
 git pull origin master
 ```
-[github clone](http://7xrvdu.com1.z0.glb.clouddn.com/github%20pull.jpg)
+![github pull](http://7xrvdu.com1.z0.glb.clouddn.com/github%20pull.jpg)
 
 ###  小结
 - 要绑定本地库与远程库，使用命令`git remote add origin git@server-name:path/repo-name.git`。
