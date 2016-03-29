@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "Git学习笔记"
+title: "Git学习笔记--入门"
 date: 2016-03-14
 comments: true
 categories: Git
@@ -8,7 +8,8 @@ tages: [github,git]
 description: Git--分布式版本控制工具，首先我们需要了解版本控制工具都有哪些类型以及区别，然后是Git的命令使用方式。
 ---
 ![git](http://7xrvdu.com1.z0.glb.clouddn.com/0.jpg)
-
+最近在捣鼓自己博客网站，接触到如octopress,Jekyll和Hexo等静态博客生成工具，顺便接触到Git。对于长时间在公司开发，习惯了使用SVN的风格，刚一开始还真不习惯。 现在我使用Hexo+Git,在写文章、生成网页再到发布上已经非常顺手了，故而觉得应该写下这篇文章，一是作为自己学习的积累，二是希望完成一个Git快速上手教程分享与大家。
+<!--more -->
 目录：
  * [文章目的](#1)
  * [关于版本控制](#2)
@@ -20,11 +21,11 @@ description: Git--分布式版本控制工具，首先我们需要了解版本�
       * [修改提交](#3.2.1)
       * [修改撤销](#3.2.2)
     * [使用远程库](#3.3)
- * [其它详细教程](#4)
+      * [使用Github托管自己的代码库](#3.3.1)
+      * [从github克隆代码库](#3.3.2)
+ * [总结](#4)
+ * [其它详细教程](#5)
 
-# <a id="1">文章目的</a>
-最近在捣鼓自己博客网站，接触到如octopress,Jekyll和Hexo等静态博客生成工具（p.s：最后还是选择使用Hexo，原因：Hexo非常适合我这种爱(ji)研(shu)究(zha)又爱（xiang）分(zhuang)享(B)的人，易上手，配置简单，省时省力），顺便接触到Git。对于长时间在公司开发，习惯了使用SVN的风格，刚一开始还真不习惯。 现在我使用Hexo+Git,在写文章、生成网页再到发布上已经非常顺手了，故而觉得应该写下这篇文章，一是作为自己学习的积累，二是希望完成一个Git快速上手教程分享与大家。
-<!--more -->
 # <a id="2">关于版本控制</a>
 以下我对版本控制的理解:
 
@@ -90,7 +91,7 @@ Git一个非常优秀的设计是在Git当中版本管理的单位是`修改`而
 *（git中的文件状态变化，图片来自[Pro Git](http://http://iissnan.com/progit/html/zh/ch2_2.html "Pro Git")）*
 下面我们一步步操作来详细看下Git是如何体现以修改为单位的管理。
 
-###<a id="3.2.1">修改提交：</a>
+### <a id="3.2.1">修改提交：</a>
 首先，当我们完成工作需要提交文件时，需要执行如下两个命令：
 
 ```bash
@@ -100,7 +101,15 @@ $ git add <fileName>
 ```bash
 $ git commit -m '提交说明'
 ```
-`git add`命令的作用是要求git对某个或某些文件进行`跟踪`,并把当前的修改内容放入暂存区。而`git commit`命令的作用是把所有暂存区的内容所提交到当前`分支`，也就是完成真正意义上的提交。**关于`暂存区` 和 `分支` 会在稍后细说。**
+在使用这些命令前，需要了解一下git中一个非常重要的概念----**暂存区**。
+暂存区是git中最重的概念之一。先说下相对暂存区，还有一个概念叫工作区（Working Directory）。工作区很好理解，就是我们在电脑里能看到的目录，比如我的`gitStudy`文件夹就是一个工作区：
+![Working Directory](http://7xrvdu.com1.z0.glb.clouddn.com/Working Directory.jpg)
+在这个文件夹中有一个`.git`的文件夹，这个是git的版本库。
+Git的版本库里存了很多东西，其中最重要的就是称为stage（或者叫index）的暂存区，还有git为我们自动创建的第一个分支master，以及我们刚才说到过的HEAD指针，它当前分支master。下图将展示工作区，暂存区和分支的一个关系：
+![git stage](http://7xrvdu.com1.z0.glb.clouddn.com/git%20stage.jpg)
+图中可以看出，当我们使用`add`命令时，实际上就是把文件修改从工作区添加到暂存区。
+
+而当我们使用`commit`命令是，则是将暂存区中所有的修改提交到当前分支(master)中，提交以后暂存区将被清空。
 
 例如我们在仓库中新建一个readme.txt文件，并提交它，如下图：
 ![git add/commit](http://7xrvdu.com1.z0.glb.clouddn.com/git4.jpg)
@@ -125,6 +134,11 @@ $ git commit -m '提交说明'
 ![git status](http://7xrvdu.com1.z0.glb.clouddn.com/git8.jpg)
 命令结果显示没有需要提交的内容了。
 
+再举一个例子，比如当我们对`readme.txt`进行一次修改后执行`add`,然后再次修改但不执行`add`命令。
+![git status](http://7xrvdu.com1.z0.glb.clouddn.com/git17.jpg)
+从图中可以看出，`git status`命令显示的结果有两条：上面的状态显示第一次修改已经在暂存区中，而第二次修改还是` not staged` 未加入暂存区。
+这个例子也很好的说明了`暂存区`的概念，同时证明了git中对于修改的管理是以`修改`本身为单位，而非文件。
+
 ### <a id="3.2.2">修改撤销：</a>
 工作中往往可能出现各种错误，使用版本管理工具的好处就是我们可以随时弥补错误。
 Git中可以使用 `git checkout -- <fileName>` 和`git reset ` 两个命令来完成修改的撤销。
@@ -148,7 +162,7 @@ Git中可以使用 `git checkout -- <fileName>` 和`git reset ` 两个命令来�
 ![git](http://7xrvdu.com1.z0.glb.clouddn.com/git11.jpg)
 OK，这次修改已经回到了add前，这意味着你可以重新修改文件，再执行add 操作。
 再接下来，我们使用`git reset `进行版本操作。
-先简单说下git 版本回退的原理。回想前面在`git reset HEAD  <fileName> `命令中出现的 `HEAD` 参数，它其实是git中的版本指针，并且指向的是最新版本。
+先简单说下git 版本回退的原理。回想前面在`git reset HEAD  <fileName> `命令中出现的 `HEAD` 参数，它其实是git中的版本指针，并且指向的是当前分支的最新版本，比如我们这里的分支是`master`。
 所以git中的版本回退原理其实就是将`HEAD`指针指向其他版本号。
 
 这里出现了一个问题，`版本号`从何而来？ 我们可以使用`git log`查询提交记录：
@@ -168,15 +182,83 @@ git reset --hard b7568c296
 `b7568c296`就是你需要回退到的版本，git支持简短缩写版本号，它会自动匹配。当然不要太短了，至少7-8位吧。
 ![git reset](http://7xrvdu.com1.z0.glb.clouddn.com/git13.jpg)
 ![git reset](http://7xrvdu.com1.z0.glb.clouddn.com/git14.jpg)
-回退成功后，查看`readme.txt`，其中内容应该也相应回到回退版本相应的内容。但是，从图中你会发现，版本回退后，前面的版本号已经没了，这时像后悔怎么办？
-git中总有后悔药吃，你可以使用`git reflog` 查看所有操作的记录，从而得版本号：
+回退成功后，查看`readme.txt`，其中内容应该也相应回到回退版本相应的内容。但是，从图中你会发现，版本回退后，前面的版本号已经没了，这时想后悔怎么办？
+没关系，git中总有后悔药吃。我们可以使用`git reflog` 查看所有操作的记录，从而得版本号：
 ![git reset](http://7xrvdu.com1.z0.glb.clouddn.com/git15.jpg)
+
+### 小结
+总结一下上面说到过的git中关于修改管理的基础命令：
+- 文件修改后使用`add <fileName>`或 `add .`将指定文件修改或者文件下所有修改保存到`暂存区`中。
+- 如果在执行`add`前发现修改中存在问题，可以使用`git checkout -- <fileName>` 将指定的文件修改撤销。
+- 如果执行`add`发现修改中存在问题，可以使用`git reset HEAD  <fileName> ` 将指定的文件修改从`暂存区`撤出。
+- 确认无误后，使用`git commit -m '修改说明'`将`暂存区`中的修改提交到当前分支中。在提交前，最好使用下`git status` 查看当前有哪些修改提交到暂存或哪些修改还未暂存，避免出现错误的提交或在遗漏提交。
+- 在提交完成后，假如需要版本回退，可以使用`git reset --hard HEAD^`回退指定个版本，或者使用`git reset --hard b7568c296 ` 回退到指定版本号，版本号可以通过`git log`查询。
+
 ## <a id="3.3"> 远程库的使用</a>
 
+前面说到的都是git在本地的操作，那么实际协作开发过程中我们肯定是要有一个远程版本库作为项目的核心版本库，也就是投入生产使用的版本。这里我们以 [Github](https://github.com/ "Github")为例。Github是一个开放的git远程服务器，首先我们先注册一个github账户，如何注册就不在这里说了绑定本地版本库与Github远程库有两种方式，一种是以ssh协议连接，在这方式下我们需要先绑定一个ssh key，这个在下面会说。还有一种是https协议，但是使用`https`速度慢会比慢，而且每次推送(`push`)都必须输入口令，但是在某些只开放http端口的公司内部就无法使用ssh协议而只能用https。
+### <a id="3.3.1">使用Github托管自己的代码库</a>
+如果你已经注册完你的Github账户，新增需要在生成一个`ssh key`，这个key用于验证你的身份是该版本库的创立者，也就是如上面说的允许你使用`ssh`方式连接Github上的远程库。执行如下命令生成`ssh key`:
+```bash
+$ ssh-keygen -t rsa -C "youremail@example.com"
+```
+**注意把`youremail@example.com`改为你的邮箱。** 命令执行过程只能够会要求你设置密码，这个可选的，如果设置了密码，后面每次提交也许输入密码。最后你可以在用户目录下找到.ssh文件夹（我的是`C:\Users\Justin\.ssh`)里面有`id_rsa`和`id_rsa.pub`两个文件，这两个就是SSH Key的秘钥对，`id_rsa`是私钥，不能泄露出去，`id_rsa.pub`是公钥，可以放心地告诉任何人。
+接下来我们需要绑定这个key到你的github账户中:
+![github sshkey](http://7xrvdu.com1.z0.glb.clouddn.com/githu%20sshkey.jpg)
+填上任意Title，在Key文本框里粘贴`id_rsa.pub`文件的内容,点“Add Key”，你就应该看到已经添加的Key。
+>当然，GitHub允许你添加多个Key。假定你有若干电脑，你一会儿在公司提交，一会儿在家里提交，只要把每台电脑的Key都添加到GitHub，就可以在每台电脑上往GitHub推送了。
 
+接下来我们在Github上建立一个名为`gitstudy`的`Repository`：
+![github](http://7xrvdu.com1.z0.glb.clouddn.com/github1.jpg)
+![github](http://7xrvdu.com1.z0.glb.clouddn.com/github2.jpg)
+![github](http://7xrvdu.com1.z0.glb.clouddn.com/github3.jpg)
+GitHub告诉我们，可以从这个仓库克隆出新的仓库，也可以把一个已有的本地仓库与之关联，然后，把本地仓库的内容推送到GitHub仓库。
+**Github的Repository分为public 和 private 两种。 public是公共的也就是谁都能查看，如果是商业项目的话还是使用private的吧，不过github要收保护费。**
+现在，我们根据GitHub的提示，在本地的仓库的目录，也就前面用到的`gitStudy`下运行命令：
+```bash
+git remote add origin git@github.com:xiongqi215/gitstudy.git
+```
+其中`xiongqi215`更换成你的github账户。 另外`origin`是远程库在你本地的名字，这个git默认的叫法，一般情况下不需要修改。
+下一步，就可以把本地库的所有内容推送到远程库上,使用命令
+```bash
+git push -u origin master
+```
+把本地库的内容推送到远程，用`git push`命令，实际上是把当前分支master推送到远程。
 
+由于远程库是空的，我们第一次推送master分支时，加上了-u参数，以后就不需要加上这个参数了：
+[github push](http://7xrvdu.com1.z0.glb.clouddn.com/git%20push.jpg)
+**如果前面建立ssh key的时候你设置了密码，那么push过程中你也会看到`Enter passphrase for key '/c/Users/Justin/.ssh/id_rsa':`的提示，这时你需输入之前设置的密码。**
+成功`push`后，查看Github上的`gitstudy`库，发现所有文件已经推送上去了，并且是最新的版本。
 
-# <a id="4">其它详细教程</a>
+### <a id="3.3.2">从github克隆代码库</a>
+现在，假设我们换了一台电脑，或者我们需要克隆别人在Github上的某个库时，我们需要使用`git clone`:
+```bash
+git clone  git@github.com:xiongqi215/gitstudy.git
+```
+同样`xiongqi215`更换成你的github账户。
+[github clone](http://7xrvdu.com1.z0.glb.clouddn.com/git%20clone.jpg)
+
+现在，我们的已经在github建立了一个远程库，同时这个库被`clone`到了多台电脑上。
+这时假如A电脑`push`了一些修改到远程库中，B电脑需要更新到这部分修改，那么可以使用如下命令：
+```bash
+git pull origin master
+```
+[github clone](http://7xrvdu.com1.z0.glb.clouddn.com/github%20pull.jpg)
+
+###  小结
+- 要绑定本地库与远程库，使用命令`git remote add origin git@server-name:path/repo-name.git`。
+- 绑定后后，使用命令`git push -u origin master`第一次推送master分支的所有内容。
+- 以后，只要使用`git push origin master`推送最新修改。
+- 使用`git clone  git@server-name:path/repo-name.git`命令克隆一个远程库到本地。
+- 多台电脑可以使用 `git pull origin master`抓取相互提交到远程库中的最新修改。
+
+# <a id="4">总结</a>
+Git是个非常高效的版本控制工具。分布式的、基于修改的管理方式非常适合多人协调完成开发工作。
+>分布式版本系统的最大好处之一是在本地工作完全不需要考虑远程库的存在，也就是有没有联网都可以正常工作，而SVN在没有联网的时候是拒绝干活的！当有网络的时候，再把本地提交推送一下就完成了同步，真是太方便了！
+
+这次学习笔记还有很多内容没有涉及，本人还在学习当中。后面陆续补充如`分支管理`、`冲突处理`等内容。这里再提供一份命令手册供大家[下载](http://7xrvdu.com1.z0.glb.clouddn.com/git-cheatsheet.pdf "下载")。
+
+# <a id="5">其它详细教程</a>
 - [Pro Git中文翻译 by iissnan](http://iissnan.com/progit/html/zh/ch1_0.html "Pro Git中文翻译")
 
 - [廖雪峰的官方网站](http://www.liaoxuefeng.com/wiki/0013739516305929606dd18361248578c67b8067c8c017b000 "廖雪峰的官方网站")
