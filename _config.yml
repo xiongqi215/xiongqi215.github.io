@@ -62,25 +62,23 @@ pagination_dir: page
 
 # Extensions
 Plugins:
-- hexo-generator-sitemap
+
 - hexo-generator-feed
 
 #sitemap
-sitemap:
-  path: sitemap.xml
+#sitemap:
+  #path: sitemap.xml
 
 feed:
   type: atom
   path: atom.xml
   limit: 20
-  
+
 theme: yilia
 
 # Deployment
 ## Docs: https://hexo.io/docs/deployment.html
 deploy:
-    type: git 
+    type: git
     repository: https://github.com/xiongqi215/xiongqi215.github.io.git
     branch: master
-
-
