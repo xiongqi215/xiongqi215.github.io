@@ -5,7 +5,7 @@ date: 2015-09-08 17:57:14 +0800
 comments: true
 categories: 其它
 tags:  [字符集与编码,中文乱码,web开发]
-description: 字符集与编码
+description: Java中的字符集与编码
 ---
 *以下内容转自 [http://www.cnblogs.com/skynet/archive/2011/05/03/2035105.html](http://www.cnblogs.com/skynet/archive/2011/05/03/2035105.html)*
 

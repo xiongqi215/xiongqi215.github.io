@@ -4,11 +4,11 @@ title: "Git学习笔记--入门"
 date: 2016-03-14
 comments: true
 categories: Git
-tages: [github,git]
-description: Git--分布式版本控制工具，首先我们需要了解版本控制工具都有哪些类型以及区别，然后是Git的命令使用方式。
+tags:  [github,git]
+description: Git是一款分布式版本控制工具，该篇文章一是作为自己学习的积累，二是希望完成一个Git快速上手教程与大家分享。
 ---
 ![git](http://7xrvdu.com1.z0.glb.clouddn.com/0.jpg)
-最近在捣鼓自己博客网站，接触到如octopress,Jekyll和Hexo等静态博客生成工具，顺便接触到Git。对于长时间在公司开发，习惯了使用SVN的风格，刚一开始还真不习惯。 现在我使用Hexo+Git,在写文章、生成网页再到发布上已经非常顺手了，故而觉得应该写下这篇文章，一是作为自己学习的积累，二是希望完成一个Git快速上手教程分享与大家。
+最近在捣鼓自己博客网站，接触到如octopress,Jekyll和Hexo等静态博客生成工具，顺便接触到Git。对于长时间在公司开发，习惯了使用SVN的风格，刚一开始还真不习惯。 现在我使用Hexo+Git,在写文章、生成网页再到发布上已经非常顺手了，故而觉得应该写下这篇文章，一是作为自己学习的积累，二是希望完成一个Git快速上手教程与大家分享。
 <!--more -->
 目录：
  * [文章目的](#1)
