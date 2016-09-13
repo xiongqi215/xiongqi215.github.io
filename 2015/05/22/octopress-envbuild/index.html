@@ -1,0 +1,60 @@
+<!DOCTYPE html><html><head><meta charset="utf-8"><meta name="X-UA-Compatible" content="IE=edge"><title> Octopress个人博客搭建 · 非典型性程序猿</title><meta name="description" content="Octopress个人博客搭建 - Justin"><meta name="viewport" content="width=device-width, initial-scale=1"><link rel="short icon" href="/favicon.png"><link rel="stylesheet" href="/css/apollo.css"><link rel="search" type="application/opensearchdescription+xml" href="http://www.justin-x.cn/atom.xml" title="非典型性程序猿"></head><body><div class="wrap"><header><a href="/" class="logo-link"><img src="/favicon.png"></a><ul class="nav nav-list"><li class="nav-list-item"><a href="/" target="_self" class="nav-list-link">BLOG</a></li><li class="nav-list-item"><a href="/archives/" target="_self" class="nav-list-link">ARCHIVE</a></li><li class="nav-list-item"><a href="http://weibo.com/sunchongsheng" target="_blank" class="nav-list-link">WEIBO</a></li><li class="nav-list-item"><a href="https://github.com/pinggod" target="_blank" class="nav-list-link">GITHUB</a></li><li class="nav-list-item"><a href="/atom.xml" target="_self" class="nav-list-link">RSS</a></li></ul></header><section class="container"><div class="post"><article class="post-block"><h1 class="post-title">Octopress个人博客搭建</h1><div class="post-info">May 22, 2015</div><div class="post-content"><p><img src="http://i.imgur.com/47kd0XA.png" alt=""></p>
+<p><strong>一直想要做一个属于自己的博客网站。</strong></p>
+<p>试过在<code>新浪</code>，<code>CSDN</code>上写博客，但总感觉不是很爽，缺少个性化（博主是水瓶座）。后来开始学习PHP，想用wordpress搭建个人网站。学习中发现，wordpress做为个人博客构建工具实在不够轻便，光安装不同的主机提供商就有各种不同的方法，而且wordpress过于强大的功能也让它不在局限于做博客了。</p>
+<p>Octopress基于Jekyll使用<code>Ruby</code>语言编写，实质是一个静态html生成工具，利用Markdown语言编写博客文章，在通过Github提供的page服务向外发布。<br>这样好处是明显的,安装好自己主题后，博客撰写不在需要关注如何展示（省去了文字编辑器），而是关注文章内容本身。<br>另外，最重要一点事省去了租用主机的费用，Github的服务免费的。<br><a id="more"></a><br>不过Octopress也有明显不足的地方，最为头疼的是前期的环境准备工作。<br>搭建Octopress需安装的程序:</p>
+<ul>
+<li>Git-1.9.5</li>
+<li>rubyinstaller-2.1.3</li>
+<li>DevKit</li>
+</ul>
+<p>另外，编辑makdown可以选择<br><code>markdownpad2</code> 与 <code>awesomium_v1.6.6_sdk_win</code> 的组合。</p>
+<p>以上程序我已经放到云盘啦（64位）：<a href="http://pan.baidu.com/s/1mgoqUxU" target="_blank" rel="external">点击下载</a> 。</p>
+<h2 id="一、git环境搭建"><a href="#一、git环境搭建" class="headerlink" title="一、git环境搭建"></a>一、git环境搭建</h2><hr>
+<p>先注册<a href="https://github.com/" target="_blank" rel="external">Github</a>账号。</p>
+<p>安装完Git-1.9.5后，需要完成本地与github的链接。</p>
+<p>打开git bash窗口（鼠标右键菜单中选择），输入以下两条命令：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">git config --global user.name <span class="string">"你的github账号"</span></div><div class="line">git config --global user.email<span class="string">"你的github注册邮箱"</span></div></pre></td></tr></table></figure></p>
+<p>执行命令生成SSH密钥对:<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">ssh-keygen -C <span class="string">"username@email.com"</span> -t rsa</div></pre></td></tr></table></figure></p>
+<p><strong>注：出现提示如下两条提示：</strong><br><strong>Enter file in which to save the key (/c/Users/Administrator/.ssh/id_rsa):</strong><br><strong>若不输入文件名，秘钥文件将默认保存到c/Users/Administrator/.ssh/id_rsa （Administrator为当前系统用户）</strong><br><strong>Enter passphrase (empty for no passphrase):</strong><br><strong>输入密码，可以为空。若设置密码，后期每次提交github都需要输入密码。</strong></p>
+<p>登入github，进入setting选择SSH KEYS，点击add ssh key，<br>打开前面生成的id_rsa.pub文件，将其中内容粘贴到github中。</p>
+<p><img src="http://i.imgur.com/9pwWnLx.png" alt=""></p>
+<p>打开git bash 输入：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ ssh -T git@github. com</div></pre></td></tr></table></figure></p>
+<p>执行后若出现一下成功信息，则表示已经与github完成绑定。<br><!--more--></p>
+<h2 id="二、ruby环境搭建"><a href="#二、ruby环境搭建" class="headerlink" title="二、ruby环境搭建"></a>二、ruby环境搭建</h2><hr>
+<p>安装rubyinstaller-2.1.3-x64，解压DevKit-mingw64-64-4.7.2-20130224-1432-sfx</p>
+<p><strong>注意DevKit解压路径不可以有中文。</strong></p>
+<p><strong>安装rubyinstaller-2.1.3-x64要按下图勾选设置默认环境变量：</strong><br><img src="http://i.imgur.com/1Hcn5PE.png" alt=""></p>
+<p>进入Devkit的解压目录，运行git bash, 首先使用<code>ruby --version</code> 命令测试下ruby是否成功安装。接着输入：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">ruby dk.rb init</div></pre></td></tr></table></figure>
+<p>打开<code>config.ym</code>l文件，在最后添加ruby安装目录，比如： <code>- D:\Ruby21-x64</code> 执行命令：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">ruby dk.rb install</div></pre></td></tr></table></figure>
+<p><strong>注：<br>若出现任何错误都与config.yml文件中设置的ruby路径有关，请仔细检查。</strong></p>
+<h2 id="三、安装octopress"><a href="#三、安装octopress" class="headerlink" title="三、安装octopress:"></a>三、安装octopress:</h2><p>从github上下载octopress，打开git bash 输入命令：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">git <span class="built_in">clone</span> git://github.com/imathis/octopress.git octopress</div></pre></td></tr></table></figure></p>
+<p>由于国内网络问题，下载可能出现几次网络错误，需要多试几次。</p>
+<p>下载完成后，进入octpress目录，打开git bash。接下来需要为octopress安装默认依赖包。但还是由于国内的网络问题，我们先设置下下载地址到国内的镜像上,执行命令：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">gem sources --remove https://rubygems.org/</div><div class="line">gem sources <span class="_">-a</span> http://ruby.taobao.org/</div></pre></td></tr></table></figure></p>
+<p><strong>这里非常感谢淘宝提供的软件镜像；</strong></p>
+<p>打开octopress目录下的 <code>GemFile</code> 文件 修改source 为<code>http://ruby.taobao.org/</code><br>执行命令：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">gem install bundler</div><div class="line"></div><div class="line">bundle install</div></pre></td></tr></table></figure></p>
+<p>等待几分钟…….完成后执行，用于安装默认主题：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">rake install</div></pre></td></tr></table></figure></p>
+<p><strong>恭喜，所有本地环境配置完成！！！</strong></p>
+<p>现在，我们便可以运行我们的博客了。执行两个重要命令：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">rake generate //生成网页</div><div class="line">rake preview //启动本地预览，默认端口4000。</div></pre></td></tr></table></figure></p>
+<p>打开浏览器输入localhost:4000,预览你的博客网站吧^.^ 。</p>
+<p><strong>注：从第四步开始，所有的命令、操作都在octopress目录下执行。</strong></p>
+<h2 id="四、开始写博文"><a href="#四、开始写博文" class="headerlink" title="四、开始写博文"></a>四、开始写博文</h2><hr>
+<p>Ok,既然环境搭建好了，我们开始写博客吧。<br>通过<code>rake new_post[&quot;title&quot;]</code>命令，在source/_post下创建一个新的文章，默认文件名如下面的格式:2012-02-16-title.markdown。<br>然后可以用<code>VIM</code>或打<code>Markdownpad</code> 开该文件，并在其中输入/编辑文章内容。<br>再次执行<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">rake generate</div><div class="line">rake preview</div></pre></td></tr></table></figure></p>
+<p>打开浏览器就就能看到刚才文章了啦。</p>
+<h2 id="五、将博客部署到Github上"><a href="#五、将博客部署到Github上" class="headerlink" title="五、将博客部署到Github上"></a>五、将博客部署到Github上</h2><hr>
+<p>现在我们将博客部署到Github上。</p>
+<p>部署前需要先要在<a href="https://github.com/" target="_blank" rel="external">Github</a>上创建一个名为：<code>username.github.io</code>的repository， 然后使用’rake setup_github_pages’命令将自己的Blog与上述的repository关联起来。 根据提示输入：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">git@github.com:username/username.github.io.git</div></pre></td></tr></table></figure></p>
+<p><strong>注：username替换为自己github的账户名。</strong></p>
+<p>然后就可以通过下面的命令来部署自己的博客内容至Github了:<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">rake deploy  //部署</div><div class="line">//上传源码</div><div class="line">git status</div><div class="line">git add .</div><div class="line">git commit <span class="_">-a</span> -m <span class="string">'comment'</span></div><div class="line">git push origin <span class="built_in">source</span></div></pre></td></tr></table></figure></p>
+<p>开始浏览自己的博客吧！在浏览器的地址栏中输入username.github.io，打开的网站就是自己的博客了，此刻一个独立博客就如此问世了!</p>
+</div></article></div></section><footer><div class="paginator"><a href="/2015/05/24/octopress-customizerSet/" class="prev">PREV</a><a href="/2014/08/21/javaXml-Api-intro/" class="next">NEXT</a></div><div data-thread-key="2015/05/22/octopress-envbuild/" data-title="Octopress个人博客搭建" data-url="http://www.justin-x.cn/2015/05/22/octopress-envbuild/" data-author-key="1" class="ds-thread"></div><script>var duoshuoQuery = {short_name:"Justin-Blog"};
+(function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';ds.async = true;
+    ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0] 
+     || document.getElementsByTagName('body')[0]).appendChild(ds);
+})();
+
+</script><div class="copyright"><p>© 2015 - 2016 <a href="http://www.justin-x.cn">Justin</a>, powered by <a href="https://hexo.io/" target="_blank">Hexo</a> and <a href="https://github.com/pinggod/hexo-theme-apollo" target="_blank">hexo-theme-apollo</a>.</p></div></footer></div><script async src="//cdn.bootcss.com/mathjax/2.6.1/MathJax.js?config=TeX-MML-AM_CHTML"></script></body></html>

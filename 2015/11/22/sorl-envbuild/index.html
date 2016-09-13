@@ -1,0 +1,55 @@
+<!DOCTYPE html><html><head><meta charset="utf-8"><meta name="X-UA-Compatible" content="IE=edge"><title> Solr环境搭建 · 非典型性程序猿</title><meta name="description" content="Solr环境搭建 - Justin"><meta name="viewport" content="width=device-width, initial-scale=1"><link rel="short icon" href="/favicon.png"><link rel="stylesheet" href="/css/apollo.css"><link rel="search" type="application/opensearchdescription+xml" href="http://www.justin-x.cn/atom.xml" title="非典型性程序猿"></head><body><div class="wrap"><header><a href="/" class="logo-link"><img src="/favicon.png"></a><ul class="nav nav-list"><li class="nav-list-item"><a href="/" target="_self" class="nav-list-link">BLOG</a></li><li class="nav-list-item"><a href="/archives/" target="_self" class="nav-list-link">ARCHIVE</a></li><li class="nav-list-item"><a href="http://weibo.com/sunchongsheng" target="_blank" class="nav-list-link">WEIBO</a></li><li class="nav-list-item"><a href="https://github.com/pinggod" target="_blank" class="nav-list-link">GITHUB</a></li><li class="nav-list-item"><a href="/atom.xml" target="_self" class="nav-list-link">RSS</a></li></ul></header><section class="container"><div class="post"><article class="post-block"><h1 class="post-title">Solr环境搭建</h1><div class="post-info">Nov 22, 2015</div><div class="post-content"><h1 id="Solr安装"><a href="#Solr安装" class="headerlink" title="Solr安装"></a>Solr安装</h1><p>总结下solr环境的部署步骤。</p>
+<p>Solr非常易于安装，我们只要从官网下载他的工程报，准备一个servlet容器，如tomcat,jetty都可以。<br>这里已tomcat为例子。步骤如下</p>
+<ul>
+<li><p>获取solr.war，部署到tomcat</p>
+</li>
+<li><p>由于solr.war中有jar包缺失，故而第一次启动不能成功。将solr解压后<code>\server\lib\ext</code>中所有jar包拷贝到项目<code>/WEB-INF/lib</code>下。</p>
+<a id="more"></a>
+<ul>
+<li>配置solr-home。solr-home是放置solr核心core的地方，core可以简单理解为数据库中实例。该目录可以随便定义自己创建，创建后，将solr根目录 <code>server\solr</code> 中solr.xml复制到你的solr-home目录下。<br>修改<code>web.xml</code> 增加如下一段：</li>
+</ul>
+</li>
+</ul>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="tag">&lt;<span class="name">env-entry</span>&gt;</span></div><div class="line">  <span class="tag">&lt;<span class="name">env-entry-name</span>&gt;</span>solr/home<span class="tag">&lt;/<span class="name">env-entry-name</span>&gt;</span> </div><div class="line">  <span class="tag">&lt;<span class="name">env-entry-value</span>&gt;</span>E:\solr_home<span class="tag">&lt;/<span class="name">env-entry-value</span>&gt;</span> </div><div class="line">  <span class="tag">&lt;<span class="name">env-entry-type</span>&gt;</span>java.lang.String<span class="tag">&lt;/<span class="name">env-entry-type</span>&gt;</span> </div><div class="line"><span class="tag">&lt;/<span class="name">env-entry</span>&gt;</span></div></pre></td></tr></table></figure>
+<p>其中env-entry-value为你的solr-home路径，再次启动tomcat 访问’<a href="http://localhost:8080/solr&#39;成功出现solr的控制台。" target="_blank" rel="external">http://localhost:8080/solr&#39;成功出现solr的控制台。</a><br><img src="http://i.imgur.com/uiQaQba.png" alt=""></p>
+<p>环境搭建基本完成！ </p>
+<h1 id="solr-home配置"><a href="#solr-home配置" class="headerlink" title="solr-home配置"></a>solr-home配置</h1><p>solr-home为solr的核心，我们90%对的开发工作都将在这里进行。首先solr-home的目录结构有若干个core的文件夹和solr.xml组成。关键的配置为core。在solr根目录<code>example</code>文件下可以找到相关例子。</p>
+<ul>
+<li><p>复制solr根目录下 <code>\example\example-DIH\solr\solr\</code> 文件夹到solr-home中 </p>
+</li>
+<li><p>新建lib目录，并将solr根目录下 <code>\dist</code> 下如下jar包复制到lib中 </p>
+</li>
+</ul>
+<p><img src="http://i.imgur.com/686UdNO.png" alt=""></p>
+<ul>
+<li>修改<code>conf/solrconfig.xml</code>。将jar包引入配置：</li>
+</ul>
+<p><img src="http://i.imgur.com/yqx2ifa.png" alt=""></p>
+<ul>
+<li>修改为：</li>
+</ul>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="tag">&lt;<span class="name">lib</span> <span class="attr">dir</span>=<span class="string">"./lib"</span> <span class="attr">regex</span>=<span class="string">".*\.jar"</span>/&gt;</span></div><div class="line"><span class="tag">&lt;/<span class="name">pre</span>&gt;</span></div></pre></td></tr></table></figure>
+<ul>
+<li>启动tomcat，进入solr控制，可以在左边看到刚才新建的core</li>
+</ul>
+<p><img src="http://i.imgur.com/tbRhQra.png" alt=""></p>
+<ul>
+<li>点击进入后，左侧出现所以操作，包括收索( <code>query</code> ),文档(<code>document</code>),数据导入(<code>dataimport</code>)</li>
+</ul>
+<p><img src="http://i.imgur.com/DMMLLFH.png" alt=""></p>
+<p>solr可以对多个core进行综合管理，并接受请求选择特定的一个或者多个core执行相关任务。</p>
+<p>core的主要结构包括一个存储数据的<code>Data</code>文件夹、一个放置配置文件的<code>conf</code>文件夹。最主要的配置文件是：<code>solrconfig.xml</code>和<code>schema.xml</code>。</p>
+<p><code>solrconfig.xml</code>从整体上对core进行了配置，例如索引的存放路径、字段的最大长度（<code>maxFiedlLength</code>）、写锁的超时时间（<code>writeLockTimeout</code>）、锁类型（<code>lockType</code>）、是否压缩索引（<code>useCompoundFile</code>）、内存索引缓冲区大小（<code>ramBufferSizeMB</code>）、合并因子（<code>mergeFactor</code>）、删除策略、自动提交策略、缓存设置等，它好比是一份组装机器人的说明书，里面详细描述了各个部件（handler）的参数。</p>
+<p><code>schema.xml</code>主要是对索引的配置，例如分词器、字段名称+索引方法+存储方式+分词方式、唯一标识字段等，它好比是机器人学习的学习方法，机器人主动或被动接受特定数据，按照配置转化成索引，然后通过其部件（handler）展示出来，例如：search、moreLikeThis、spellCheck、factedSearcher等。</p>
+<p>后面再继续总结各个配置文件。</p>
+</div></article></div></section><footer><div class="paginator"><a href="/2015/11/30/sorl-richText/" class="prev">PREV</a><a href="/2015/11/22/sorl-dataimportconfig/" class="next">NEXT</a></div><div data-thread-key="2015/11/22/sorl-envbuild/" data-title="Solr环境搭建" data-url="http://www.justin-x.cn/2015/11/22/sorl-envbuild/" data-author-key="1" class="ds-thread"></div><script>var duoshuoQuery = {short_name:"Justin-Blog"};
+(function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';ds.async = true;
+    ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0] 
+     || document.getElementsByTagName('body')[0]).appendChild(ds);
+})();
+
+</script><div class="copyright"><p>© 2015 - 2016 <a href="http://www.justin-x.cn">Justin</a>, powered by <a href="https://hexo.io/" target="_blank">Hexo</a> and <a href="https://github.com/pinggod/hexo-theme-apollo" target="_blank">hexo-theme-apollo</a>.</p></div></footer></div><script async src="//cdn.bootcss.com/mathjax/2.6.1/MathJax.js?config=TeX-MML-AM_CHTML"></script></body></html>

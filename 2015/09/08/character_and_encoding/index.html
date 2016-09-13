@@ -1,0 +1,54 @@
+<!DOCTYPE html><html><head><meta charset="utf-8"><meta name="X-UA-Compatible" content="IE=edge"><title> 字符集与编码 · 非典型性程序猿</title><meta name="description" content="字符集与编码 - Justin"><meta name="viewport" content="width=device-width, initial-scale=1"><link rel="short icon" href="/favicon.png"><link rel="stylesheet" href="/css/apollo.css"><link rel="search" type="application/opensearchdescription+xml" href="http://www.justin-x.cn/atom.xml" title="非典型性程序猿"></head><body><div class="wrap"><header><a href="/" class="logo-link"><img src="/favicon.png"></a><ul class="nav nav-list"><li class="nav-list-item"><a href="/" target="_self" class="nav-list-link">BLOG</a></li><li class="nav-list-item"><a href="/archives/" target="_self" class="nav-list-link">ARCHIVE</a></li><li class="nav-list-item"><a href="http://weibo.com/sunchongsheng" target="_blank" class="nav-list-link">WEIBO</a></li><li class="nav-list-item"><a href="https://github.com/pinggod" target="_blank" class="nav-list-link">GITHUB</a></li><li class="nav-list-item"><a href="/atom.xml" target="_self" class="nav-list-link">RSS</a></li></ul></header><section class="container"><div class="post"><article class="post-block"><h1 class="post-title">字符集与编码</h1><div class="post-info">Sep 8, 2015</div><div class="post-content"><p><em>以下内容转自 <a href="http://www.cnblogs.com/skynet/archive/2011/05/03/2035105.html" target="_blank" rel="external">http://www.cnblogs.com/skynet/archive/2011/05/03/2035105.html</a></em></p>
+<h1 id="什么是字符集与字符编码？"><a href="#什么是字符集与字符编码？" class="headerlink" title="什么是字符集与字符编码？"></a>什么是字符集与字符编码？</h1><hr>
+<p><strong>字符集</strong> （Charset）：是一个系统支持的所有抽象字符的集合。字符是各种文字和符号的总称，包括各国家文字、标点符号、图形符号、数字等。<br>常见字符集名称：ASCII字符集、GB2312字符集、BIG5字符集、GB18030字符集、Unicode字符集等</p>
+<p><strong>字符编码</strong>（Character Encoding）：是一套法则，使用该法则能够对自然语言的字符的一个集合（如字母表或音节表），与其他东西的一个集合（如号码或电脉冲）进行配对。即在符号集合与数字系统之间建立对应关系，它是信息处理的一项基本技术。通常人们用符号集合（一般情况下就是文字）来表达信息。而以计算机为基础的信息处理系统则是利用元件（硬件）不同状态的组合来存储和处理信息的。元件不同状态的组合能代表数字系统的数字，因此字符编码就是将符号转换为计算机可以接受的数字系统的数，称为数字代码。</p>
+<p>可以这样理解：Unicode是字符集，UTF-32/ UTF-16/ UTF-8是三种字符编码方案。<br><a id="more"></a></p>
+<h1 id="HTTP中关于字符与字符集的参数"><a href="#HTTP中关于字符与字符集的参数" class="headerlink" title="HTTP中关于字符与字符集的参数"></a>HTTP中关于字符与字符集的参数</h1><hr>
+<p>在HTTP中，与字符集和字符编码相关的消息头是Accept-Charset/Content-Type，另外主区区分Accept-Charset/Accept-Encoding/Accept-Language/Content-Type/Content-Encoding/Content-Language：</p>
+<ul>
+<li>Accept-Charset：浏览器申明自己接收的字符集，这就是本文前面介绍的各种字符集和字符编码，如gb2312，utf-8（通常我们说Charset包括了相应的字符编码方案）；</li>
+</ul>
+<ul>
+<li>Accept-Encoding：浏览器申明自己接收的编码方法，通常指定压缩方法，是否支持压缩，支持什么压缩方法（gzip，deflate），（注意：这不是只字符编码）；</li>
+</ul>
+<ul>
+<li>Accept-Language：浏览器申明自己接收的语言。语言跟字符集的区别：中文是语言，中文有多种字符集，比如big5，gb2312，gbk等等；</li>
+</ul>
+<ul>
+<li>Content-Type：WEB服务器告诉浏览器自己响应的对象的类型和字符集。例如：Content-Type: text/html; charset=’gb2312’</li>
+</ul>
+<ul>
+<li>Content-Encoding：WEB服务器表明自己使用了什么压缩方法（gzip，deflate）压缩响应中的对象。例如：Content-Encoding：gzip</li>
+</ul>
+<ul>
+<li>Content-Language：WEB服务器告诉浏览器自己响应的对象的语言。</li>
+</ul>
+<h2 id="Java-web-开发中的编码问题"><a href="#Java-web-开发中的编码问题" class="headerlink" title="#Java web 开发中的编码问题#"></a>#Java web 开发中的编码问题#</h2><p><em>以下内容为作者原创，reference from 许令波 《升入分析JAVA web 技术内幕》</em><br><br></p>
+<p>##字符串编解码##<br>首先，java中最简单的编解码操作如下：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">String str=<span class="string">"我是中国人"</span>;</div><div class="line"><span class="comment">//解码为字节数组</span></div><div class="line"><span class="comment">//采用UTF-8解码，若不指明编码将采用当前工作空间默认编码</span></div><div class="line">String[] strByte=str.getBytes(<span class="string">"UTF-8"</span>);</div><div class="line"><span class="comment">//编码，若不指明编码将采用当前工作空间默认编码</span></div></pre></td></tr></table></figure></p>
+<p>以上代码是java 中最简单的字符串编解码操作，但是应用广泛。</p>
+<p><em>几种常用的编码格式比较：</em><br>GBK与GB2312都是处理汉字常用的编码，但由于GBK比GB2312支持的汉字范围更大，所有推荐使用GBK。<br>UTF-8与UTF-16都是处理UNICODE的编码，其中UTF-16效率更高，适合在内存中操作(java的内存编码就采用了UTF-16)，但由于UTF-16采用定长双字节表示字符，占用资源较大，加上网络传输容易损坏字节难以恢复，所以并不适合在网络上传输。</p>
+<p>UTF-8由于其对ASCII字符采用单字节编码，对中文或其他ASCII以外字符才采用多字节编码，因而网络传输中的字节损坏并不会造成整个字符串不可辨认的问题。另外它的效率鉴于GBK与UTF-16之间，故而非常适合java web开发。这样就是为什么现在公司几乎所有项目都要求使用utf-8。</p>
+<p>##URL编码##<br>首先看下一个url的组成：<br><strong>以下是使用get发送进行的一次请求，对于POST请求，它的参数编解码与get不同，将在后面叙述。</strong></p>
+<p><code>http://localhost:8080/examples/servlet/搜索?key=中国</code><br>其中出现中文的两部分分别为：</p>
+<ul>
+<li>pathIfo=”搜索” //请求的servlet</li>
+<li>queryString=”中国”  //GET请求参数，<br>以tomcat为例，pathIfo的编码是由根目录下\conf\server.xml中一下节点中URIEncoding属性决定的，如果 未设置将默认使用iso-8859-1.</li>
+</ul>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="tag">&lt;<span class="name">Connector</span> <span class="attr">port</span>=<span class="string">"8080"</span> <span class="attr">protocol</span>=<span class="string">"HTTP/1.1"</span> <span class="attr">connectionTimeout</span>=<span class="string">"20000"</span> <span class="attr">redirectPort</span>=<span class="string">"8443"</span> <span class="attr">URIEncoding</span>=<span class="string">"utf-8"</span>/&gt;</span></div></pre></td></tr></table></figure>
+<p>对于queryString部分的解码是在第一次调用HttpServletRequest对象的getParameter();方法时开始的。它的解码要么是由Http Header中的contentType决定，要么就是默认的iso-8859-1。如果要设置使用contentType定义的charset作为解码方式则需要在server.xml中对&lt;connector&gt;节点进行修改，增加属性useBodyEncodingforURI=”true”。如下：<br><figure class="highlight xml"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="tag">&lt;<span class="name">Connector</span> <span class="attr">port</span>=<span class="string">"8080"</span> <span class="attr">protocol</span>=<span class="string">"HTTP/1.1"</span> <span class="attr">connectionTimeout</span>=<span class="string">"20000"</span> <span class="attr">redirectPort</span>=<span class="string">"8443"</span> <span class="attr">URIEncoding</span>=<span class="string">"utf-8"</span> <span class="attr">useBodyEncodingforURI</span>=<span class="string">"true"</span> /&gt;</span></div></pre></td></tr></table></figure></p>
+<p><strong>注意！这个参数的名称可能会让你觉得是对整个uri都采用bodyEncoding，其实不然，它只影响queryString部分的编码。</strong></p>
+<p><strong>POST请求的参数编解码：</strong><br>POST请求的参数是通过HTTP BODY传输的，默认使用contentType定义的charset作为浏览器编码与服务端解码方式，所以一般不会出现乱码。而且这个编码我可以通过HttpServletRequest对象的setCharacterEncoding();来自行设置。</p>
+<p><strong>注意！setCharacterEncoding();方法必须要在第一次调用getParameter();方法之前调用，否则将会失效。</strong></p>
+<p><strong>Cookie,redirectPath编解码：</strong><br><strong>Http Header中的Cookie,redirectPath的编码不能进行设置，默认使用iso-8859-1，所以这两部分不能出现中文！</strong></p>
+<p><strong>Response编解码</strong><br>对于后台返回浏览的响应数据的编解码，我们可以通过HttpResponse的setCharacter();方法进行设置，它会改变浏览器收到的header中Content-Type的charset，如果没有设置，将使用<br>&lt;meta http-equiv=”content-type” content=”text/html; charset=GBK”/&gt;中的charset来解码。否则使用默认iso-8859-1;</p>
+</div></article></div></section><footer><div class="paginator"><a href="/2015/09/10/git-letter_cast_problem/" class="prev">PREV</a><a href="/2015/05/24/octopress-customizerSet/" class="next">NEXT</a></div><div data-thread-key="2015/09/08/character_and_encoding/" data-title="字符集与编码" data-url="http://www.justin-x.cn/2015/09/08/character_and_encoding/" data-author-key="1" class="ds-thread"></div><script>var duoshuoQuery = {short_name:"Justin-Blog"};
+(function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';ds.async = true;
+    ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0] 
+     || document.getElementsByTagName('body')[0]).appendChild(ds);
+})();
+
+</script><div class="copyright"><p>© 2015 - 2016 <a href="http://www.justin-x.cn">Justin</a>, powered by <a href="https://hexo.io/" target="_blank">Hexo</a> and <a href="https://github.com/pinggod/hexo-theme-apollo" target="_blank">hexo-theme-apollo</a>.</p></div></footer></div><script async src="//cdn.bootcss.com/mathjax/2.6.1/MathJax.js?config=TeX-MML-AM_CHTML"></script></body></html>

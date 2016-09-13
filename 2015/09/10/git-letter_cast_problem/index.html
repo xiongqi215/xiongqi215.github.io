@@ -1,0 +1,19 @@
+<!DOCTYPE html><html><head><meta charset="utf-8"><meta name="X-UA-Compatible" content="IE=edge"><title> 配置Git支持大小写敏感 · 非典型性程序猿</title><meta name="description" content="配置Git支持大小写敏感 - Justin"><meta name="viewport" content="width=device-width, initial-scale=1"><link rel="short icon" href="/favicon.png"><link rel="stylesheet" href="/css/apollo.css"><link rel="search" type="application/opensearchdescription+xml" href="http://www.justin-x.cn/atom.xml" title="非典型性程序猿"></head><body><div class="wrap"><header><a href="/" class="logo-link"><img src="/favicon.png"></a><ul class="nav nav-list"><li class="nav-list-item"><a href="/" target="_self" class="nav-list-link">BLOG</a></li><li class="nav-list-item"><a href="/archives/" target="_self" class="nav-list-link">ARCHIVE</a></li><li class="nav-list-item"><a href="http://weibo.com/sunchongsheng" target="_blank" class="nav-list-link">WEIBO</a></li><li class="nav-list-item"><a href="https://github.com/pinggod" target="_blank" class="nav-list-link">GITHUB</a></li><li class="nav-list-item"><a href="/atom.xml" target="_self" class="nav-list-link">RSS</a></li></ul></header><section class="container"><div class="post"><article class="post-block"><h1 class="post-title">配置Git支持大小写敏感</h1><div class="post-info">Sep 10, 2015</div><div class="post-content"><ul>
+<li>方案一是设置Git大小写敏感：</li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ git config core.ignorecase <span class="literal">false</span></div></pre></td></tr></table></figure>
+<ul>
+<li>方案二是先删除文件，再添加进去：<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">$ git rm ; git add  ;  </div><div class="line">$ git commit -m <span class="string">"rename file"</span></div></pre></td></tr></table></figure>
+</li>
+</ul>
+<a id="more"></a></div></article></div></section><footer><div class="paginator"><a href="/2015/09/15/oracle-data_exp_and_imp/" class="prev">PREV</a><a href="/2015/09/08/character_and_encoding/" class="next">NEXT</a></div><div data-thread-key="2015/09/10/git-letter_cast_problem/" data-title="配置Git支持大小写敏感" data-url="http://www.justin-x.cn/2015/09/10/git-letter_cast_problem/" data-author-key="1" class="ds-thread"></div><script>var duoshuoQuery = {short_name:"Justin-Blog"};
+(function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';ds.async = true;
+    ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0] 
+     || document.getElementsByTagName('body')[0]).appendChild(ds);
+})();
+
+</script><div class="copyright"><p>© 2015 - 2016 <a href="http://www.justin-x.cn">Justin</a>, powered by <a href="https://hexo.io/" target="_blank">Hexo</a> and <a href="https://github.com/pinggod/hexo-theme-apollo" target="_blank">hexo-theme-apollo</a>.</p></div></footer></div><script async src="//cdn.bootcss.com/mathjax/2.6.1/MathJax.js?config=TeX-MML-AM_CHTML"></script></body></html>

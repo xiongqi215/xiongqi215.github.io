@@ -1,0 +1,1078 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title>非典型性程序猿</title>
+  <subtitle>non-typical coder</subtitle>
+  <link href="/atom.xml" rel="self"/>
+  
+  <link href="http://www.justin-x.cn/"/>
+  <updated>2016-09-13T08:38:28.102Z</updated>
+  <id>http://www.justin-x.cn/</id>
+  
+  <author>
+    <name>Justin</name>
+    
+  </author>
+  
+  <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>Git学习笔记--入门</title>
+    <link href="http://www.justin-x.cn/2016/03/29/git-StudyNote/"/>
+    <id>http://www.justin-x.cn/2016/03/29/git-StudyNote/</id>
+    <published>2016-03-28T16:00:00.000Z</published>
+    <updated>2016-09-13T08:38:28.102Z</updated>
+    
+    <content type="html"><![CDATA[<p><img src="http://7xrvdu.com1.z0.glb.clouddn.com/0.jpg" alt="git"><br>最近在捣鼓自己博客网站，接触到如octopress,Jekyll和Hexo等静态博客生成工具，顺便接触到Git。对于长时间在公司开发，习惯了使用SVN的风格，刚一开始还真不习惯。 现在我使用Hexo+Git,在写文章、生成网页再到发布上已经非常顺手了，故而觉得应该写下这篇文章，一是作为自己学习的积累，二是希望完成一个Git快速上手教程与大家分享。<br><a id="more"></a><br>目录：</p>
+<ul>
+<li><a href="#1">文章目的</a></li>
+<li><a href="#2">关于版本控制</a><ul>
+<li><a href="#2.1">集中化版本控制工具</a></li>
+<li><a href="#2.2">分布式版本控制工具</a></li>
+</ul>
+</li>
+<li><a href="#3">Git 入门</a><ul>
+<li><a href="#3.1">创建本地版本库</a></li>
+<li><a href="#3.2">管理修改</a><ul>
+<li><a href="#3.2.1">修改提交</a></li>
+<li><a href="#3.2.2">修改撤销</a></li>
+</ul>
+</li>
+<li><a href="#3.3">使用远程库</a><ul>
+<li><a href="#3.3.1">使用Github托管自己的代码库</a></li>
+<li><a href="#3.3.2">从github克隆代码库</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#4">总结</a></li>
+<li><a href="#5">其它详细教程</a></li>
+</ul>
+<h1 id="关于版本控制"><a href="#关于版本控制" class="headerlink" title="关于版本控制"></a><a id="2">关于版本控制</a></h1><p>以下我对版本控制的理解:</p>
+<p>版本控制工具就是这样一种工具，它用于记录我们对文件每一次修改记录，以便日后回溯每一次的变更内容。每次的变更我们称之为<code>版本</code>，对这些版本的管理即为版本管理。版本控制工具能够提供记录修改、提交修改、更新到最新版本、与其他版本合并以及撤销当前版本或回滚到指定版本。</p>
+<p>版本控制工具大概分为以下二类：</p>
+<ul>
+<li>集中化版本控制工具</li>
+<li>分布式版本控制工具</li>
+</ul>
+<h2 id="集中化版本控制工具"><a href="#集中化版本控制工具" class="headerlink" title="集中化版本控制工具"></a><a id="2.1">集中化版本控制工具</a></h2><p>我们最常用的SVN就属于集中化版本控制工具，它的特点是所有的版本信息都集中保存在一个中央服务器中，项目人员需要从中央服务器中更新到最新版本，然后干完后后提交自己的部分到中央服务器中。<br>在使用集中化版本控制工具的项目中，项目组每个人都可以在一定程度上看到项目中其他人改动些什么。而项目经理也可以轻松掌控每个开发者的权限，并且管理一个 SVN服务器 要远比在各个客户端上维护本地版本来得轻松容易。这种集中化的版本控制适合于企业内部的开发，多年以来，这已成为版本控制系统的标准做法。<br>但是，集中化版本控制的弊端就是依赖网络，也就是说每个人都必须能够连接上中央服务器。如果网络发生异常，无法连接到中央服务器，那么你今天完成部分就无法提交，必须等到网络问题解决后。而通常在网络问题解决后，你面临可能不光是提交之前工作的问题了。</p>
+<p><img src="http://7xrvdu.com1.z0.glb.clouddn.com/18333fig0102-tn.jpg" alt="集中化版本控制"><br><em>（图片来自<a href="http://www.liaoxuefeng.com/wiki/0013739516305929606dd18361248578c67b8067c8c017b000" title="廖雪峰的官方网站" target="_blank" rel="external">廖雪峰的官方网站</a>）</em></p>
+<p>比如，我的工作中就经常发生这样一种情况。接到任务，需要在一个service层java类中扩展几个方法。完成后，单元测试完，准备提交，发现网络断了，代码不能提交。OK，那明天再来提交吧。但是领导不会让你干等呀，加任务，还是原来的类，再扩展几个方法。写到一半，网络好了，前面的代码要求提交。这时，一个很尴尬的问题出现了，我写了A,B,C,D四个方法，A,B可以提交，C,D只写到了一半，显然是不能提交的。但是它们在一个文件里！！！怎么办？只能把C和D的代码剪切掉，再提交，再把C和D复制回来！，搞定！继续干活。</p>
+<p>又或者，假如不是扩展独立的方法，而是修改了大段代码，而且修改的地方的非常分散，那么这种人工的处理方式就很有难保证不造成遗漏了。</p>
+<h2 id="分布式版本控制工具"><a href="#分布式版本控制工具" class="headerlink" title="分布式版本控制工具"></a><a id="2.2">分布式版本控制工具</a></h2><p>为解决集中化版本控制工具的弊端，分布式版本控制工具，比如Git就出现了。<br><img src="http://7xrvdu.com1.z0.glb.clouddn.com/18333fig0101-tn.jpg" alt=" 分布式版本控制"></p>
+<p><em>（图片来自<a href="http://www.liaoxuefeng.com/wiki/0013739516305929606dd18361248578c67b8067c8c017b000" title="廖雪峰的官方网站" target="_blank" rel="external">廖雪峰的官方网站</a>）</em></p>
+<p>这一类版本控制工具的特点是本地版本库+远程版本库。项目组人员并不是单纯的从服务器中获取最新版本的文件了，而是把代码仓库完整地镜像下来，你的版本维护都存储在你本地中。你可以根据任务情况，在本地中维护一系列版本，并且提交（commit)。最后在根据要求推送（push）需要的版本到远程的版本库中。而且项目组人员也可互相推送（push)或提取（pull)。这样能够保证远程版本库中的代码不会出现混乱。<br>用一句简单得话来概况，分布式版本控制中的分布式指定是版本的分布式。</p>
+<p>大名鼎鼎的<a href="https://github.com/" target="_blank" rel="external">Github</a>就是一个基于Git的项目托管平台，每个人都可以在上面建立自己远程代码库，然后使用Git做为版本管理工具。换句话，Github为我们提供了分布式版本控制中的远程库。</p>
+<h1 id="Git-入门"><a href="#Git-入门" class="headerlink" title="Git 入门"></a><a id="3">Git 入门</a></h1><h2 id="Git-准备"><a href="#Git-准备" class="headerlink" title="Git-准备"></a>Git-准备</h2><p>下载并成功安装Git后（至于如何安装，请百度。我是windows平台，一路下一步就OK了）, 你的鼠标右键菜单应该能看到如下几个选择：</p>
+<p><img src="http://7xrvdu.com1.z0.glb.clouddn.com/git1.png" alt="git bash here"></p>
+<p>点击<code>git bash here</code>或者在你的开始菜单中“Git”-&gt;“Git Bash”，如果弹出下面命令窗口说明Git安装成功:</p>
+<p><img src="http://7xrvdu.com1.z0.glb.clouddn.com/git2.jpg" alt="git CMD"><br>执行下面的命令，用于注册你的身份<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">$ git config --global user.name <span class="string">"Your Name"</span></div><div class="line">$ git config --global user.email <span class="string">"email@example.com"</span></div></pre></td></tr></table></figure></p>
+<p><strong>注意git config命令的–global参数，用了这个参数，表示你这台机器上所有的Git仓库都会使用这个配置，当然也可以对某个仓库指定不同的用户名和Email地址。</strong></p>
+<h2 id="创建本地版本库"><a href="#创建本地版本库" class="headerlink" title=" 创建本地版本库"></a><a id="3.1"> 创建本地版本库</a></h2><p><code>repository</code>–版本库或称为仓库,可以简单理解成一个目录，这个目录里面的所有文件都可以被Git管理起来，每个文件的修改、删除，Git都能跟踪，以便任何时刻都可以追踪历史，或者在将来某个时刻可以“还原”。在你需要创建版本库的文件夹中打开<code>git bash</code>,并执行如下命令：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ git init</div></pre></td></tr></table></figure></p>
+<p>成功后你会看到如下提示：<br><img src="http://7xrvdu.com1.z0.glb.clouddn.com/git3.jpg" alt="git init"></p>
+<p>你一定会注意到这句话：<code>Initialized empty Git repository in xxxxx</code>, 这说明你的<code>repository</code>建立成功了。而且在该目录下会多出一个<code>.git</code>的文件夹，类似于SVN中的<code>.svn</code>，都是用于保存版本相关信息的。</p>
+<h2 id="管理修改"><a href="#管理修改" class="headerlink" title="管理修改"></a><a id="3.2">管理修改</a></h2><p><code>管理修改</code>就是我们平时工作时，对文件产生的修改以及对修改的提交、撤销操作。<br>Git一个非常优秀的设计是在Git当中版本管理的单位是<code>修改</code>而非文件。所谓修改包括新增一个文件，删除一个文件，或在文件当中新增，修改或删除一行。每一次的修改都会使文件的状态发生改变。<br><img src="http://7xrvdu.com1.z0.glb.clouddn.com/18333fig0201-tn.png" alt="file status"><br><em>（git中的文件状态变化，图片来自<a href="http://http://iissnan.com/progit/html/zh/ch2_2.html" title="Pro Git" target="_blank" rel="external">Pro Git</a>）</em><br>下面我们一步步操作来详细看下Git是如何体现以修改为单位的管理。</p>
+<h3 id="修改提交："><a href="#修改提交：" class="headerlink" title="修改提交："></a><a id="3.2.1">修改提交：</a></h3><p>首先，当我们完成工作需要提交文件时，需要执行如下两个命令：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ git add &lt;fileName&gt;</div></pre></td></tr></table></figure>
+<p>和<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ git commit -m <span class="string">'提交说明'</span></div></pre></td></tr></table></figure></p>
+<p>在使用这些命令前，需要了解一下git中一个非常重要的概念—-<strong>暂存区</strong>。<br>暂存区是git中最重的概念之一。先说下相对暂存区，还有一个概念叫工作区（Working Directory）。工作区很好理解，就是我们在电脑里能看到的目录，比如我的<code>gitStudy</code>文件夹就是一个工作区：<br><img src="http://7xrvdu.com1.z0.glb.clouddn.com/Working Directory.jpg" alt="Working Directory"><br>在这个文件夹中有一个<code>.git</code>的文件夹，这个是git的版本库。<br>Git的版本库里存了很多东西，其中最重要的就是称为stage（或者叫index）的暂存区，还有git为我们自动创建的第一个分支master，以及我们刚才说到过的HEAD指针，它当前分支master。下图将展示工作区，暂存区和分支的一个关系：<br><img src="http://7xrvdu.com1.z0.glb.clouddn.com/git%20stage.jpg" alt="git stage"><br>图中可以看出，当我们使用<code>add</code>命令时，实际上就是把文件修改从工作区添加到暂存区。</p>
+<p>而当我们使用<code>commit</code>命令是，则是将暂存区中所有的修改提交到当前分支(master)中，提交以后暂存区将被清空。</p>
+<p>例如我们在仓库中新建一个readme.txt文件，并提交它，如下图：<br><img src="http://7xrvdu.com1.z0.glb.clouddn.com/git4.jpg" alt="git add/commit"><br>命令执行完成后readme.txt便被提交到了<code>master</code>分支中。而且，我们通过命令结果输出可以清楚的看到<code>1 file changed , 0 insertions(+), 0 deletions(-)</code>。<strong>需要注意的是git add执行成功后不会有任何输出</strong>。<br>接下我们编辑下<code>readme.txt</code>，插入一句话：<em>first edit</em> 然后再次提交：<br><img src="http://7xrvdu.com1.z0.glb.clouddn.com/git5.jpg" alt="git add/commit"><br>这次我们通过命令结果输出可以看到<code>1 file changed , 1 insertions(+)</code>。</p>
+<p>我们可以清楚的发现，Git记录的不光是文件的新增，同时也包含了文件中具体修改—–新增多少行货删除多少行。而不是像如SVN，我们一般只能看add file、upadte file或delete file。</p>
+<p>另外我们还可以使用<code>git status</code>命令跟踪文件的状态。比如，当我们新建readme.txt时执行<code>git status</code>,如图：<br><img src="http://7xrvdu.com1.z0.glb.clouddn.com/git6.jpg" alt="git status"><br>输出结果表示 readme.txt 是<code>untracked</code> 状态，并且提示我们使用<code>add &lt;file&gt;</code> 命令。然后我们执行<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ git add readme.txt</div></pre></td></tr></table></figure></p>
+<p>再次执行<code>git status</code>：<br><img src="http://7xrvdu.com1.z0.glb.clouddn.com/git7.jpg" alt="git status"><br>这时readme.txt已经在暂存区(<code>stage</code>)中了。</p>
+<p>接下来我们使用<code>git commit</code> 来提交，并查看提交后的状态：<br><img src="http://7xrvdu.com1.z0.glb.clouddn.com/git8.jpg" alt="git status"><br>命令结果显示没有需要提交的内容了。</p>
+<p>再举一个例子，比如当我们对<code>readme.txt</code>进行一次修改后执行<code>add</code>,然后再次修改但不执行<code>add</code>命令。<br><img src="http://7xrvdu.com1.z0.glb.clouddn.com/git17.jpg" alt="git status"><br>从图中可以看出，<code>git status</code>命令显示的结果有两条：上面的状态显示第一次修改已经在暂存区中，而第二次修改还是<code>not staged</code> 未加入暂存区。<br>这个例子也很好的说明了<code>暂存区</code>的概念，同时证明了git中对于修改的管理是以<code>修改</code>本身为单位，而非文件。</p>
+<h3 id="修改撤销："><a href="#修改撤销：" class="headerlink" title="修改撤销："></a><a id="3.2.2">修改撤销：</a></h3><p>工作中往往可能出现各种错误，使用版本管理工具的好处就是我们可以随时弥补错误。<br>Git中可以使用 <code>git checkout -- &lt;fileName&gt;</code> 和<code>git reset</code> 两个命令来完成修改的撤销。<br><strong>git checkout – <filename> 如果不加 ‘– <filename>’ 则是进行分支切换</filename></filename></strong><br>我们先来看下<code>git checkout -- &lt;fileName&gt;</code> 命令的使用：</p>
+<blockquote>
+<p>命令<code>git checkout  -- &lt;fileName&gt;</code> 意思就是，把文件<filename>在工作区的修改全部撤销，这里有两种情况：<br>一种是<code>&lt;fileName&gt;</code>自修改后还没有被放到暂存区，现在，撤销修改就回到和版本库一模一样的状态；<br>一种是<code>&lt;fileName&gt;</code>已经添加到暂存区后，又作了修改，现在，撤销修改就回到添加到暂存区后的状态。<br>总之，就是让这个文件回到最近一次git commit或git add时的状态。</filename></p>
+</blockquote>
+<p><em>修改后还没有被放到暂存区使用<code>git checkout  -- &lt;fileName&gt;</code></em><br><img src="http://7xrvdu.com1.z0.glb.clouddn.com/git9.jpg" alt="git"><br>在通过<code>add</code>命令前使用<code>git checkout  -- &lt;fileName&gt;</code> 会将文件内容还原为修改前的内容。</p>
+<p><em>已经添加到暂存区后，又作了修改，使用<code>git checkout  -- &lt;fileName&gt;</code></em><br><img src="http://7xrvdu.com1.z0.glb.clouddn.com/git10.jpg" alt="git"></p>
+<p>接下来是<code>git reset</code>。<br>使用<code>git reset</code>可以将文件从暂存区撤销，或者可以将已经commit 的文件进行版本回退。<br><em>使用<code>git reset HEAD  &lt;fileName&gt;</code> 完成从暂存区撤销</em><br><img src="http://7xrvdu.com1.z0.glb.clouddn.com/git11.jpg" alt="git"><br>OK，这次修改已经回到了add前，这意味着你可以重新修改文件，再执行add 操作。<br>再接下来，我们使用<code>git reset</code>进行版本操作。<br>先简单说下git 版本回退的原理。回想前面在<code>git reset HEAD  &lt;fileName&gt;</code>命令中出现的 <code>HEAD</code> 参数，它其实是git中的版本指针，并且指向的是当前分支的最新版本，比如我们这里的分支是<code>master</code>。<br>所以git中的版本回退原理其实就是将<code>HEAD</code>指针指向其他版本号。</p>
+<p>这里出现了一个问题，<code>版本号</code>从何而来？ 我们可以使用<code>git log</code>查询提交记录：<br><img src="http://7xrvdu.com1.z0.glb.clouddn.com/git12.jpg" alt="git log"><br>图中如<code>292ac30e27a81f66b04a56cffa44074ae353aae7</code>等一长串的数字就是git中的版本号。</p>
+<blockquote>
+<p>Git的版本号不像svn使用1，2，3……递增的数字，而是一个SHA1计算出来的一个非常大的数字，用十六进制表示。<br>这样做的目的是因为git是分布式的版本管理工具，单纯的1,2,3..递增显然很容易出现冲突的。</p>
+</blockquote>
+<p>刚才说到过<code>HEAD</code>指向的是最新版本，那么上个版本就是HEAD^,上上个就是HEAD^^,因此我们可以使用如下命令完成版本回退<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">git reset --hard HEAD^</div></pre></td></tr></table></figure></p>
+<p>或者直接指明版本号<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">git reset --hard b7568c296</div></pre></td></tr></table></figure></p>
+<p><code>b7568c296</code>就是你需要回退到的版本，git支持简短缩写版本号，它会自动匹配。当然不要太短了，至少7-8位吧。<br><img src="http://7xrvdu.com1.z0.glb.clouddn.com/git13.jpg" alt="git reset"><br><img src="http://7xrvdu.com1.z0.glb.clouddn.com/git14.jpg" alt="git reset"><br>回退成功后，查看<code>readme.txt</code>，其中内容应该也相应回到回退版本相应的内容。但是，从图中你会发现，版本回退后，前面的版本号已经没了，这时想后悔怎么办？<br>没关系，git中总有后悔药吃。我们可以使用<code>git reflog</code> 查看所有操作的记录，从而得版本号：<br><img src="http://7xrvdu.com1.z0.glb.clouddn.com/git15.jpg" alt="git reset"></p>
+<h3 id="小结"><a href="#小结" class="headerlink" title="小结"></a>小结</h3><p>总结一下上面说到过的git中关于修改管理的基础命令：</p>
+<ul>
+<li>文件修改后使用<code>add &lt;fileName&gt;</code>或 <code>add .</code>将指定文件修改或者文件下所有修改保存到<code>暂存区</code>中。</li>
+<li>如果在执行<code>add</code>前发现修改中存在问题，可以使用<code>git checkout -- &lt;fileName&gt;</code> 将指定的文件修改撤销。</li>
+<li>如果执行<code>add</code>发现修改中存在问题，可以使用<code>git reset HEAD  &lt;fileName&gt;</code> 将指定的文件修改从<code>暂存区</code>撤出。</li>
+<li>确认无误后，使用<code>git commit -m &#39;修改说明&#39;</code>将<code>暂存区</code>中的修改提交到当前分支中。在提交前，最好使用下<code>git status</code> 查看当前有哪些修改提交到暂存或哪些修改还未暂存，避免出现错误的提交或在遗漏提交。</li>
+<li>在提交完成后，假如需要版本回退，可以使用<code>git reset --hard HEAD^</code>回退指定个版本，或者使用<code>git reset --hard b7568c296</code> 回退到指定版本号，版本号可以通过<code>git log</code>查询。</li>
+</ul>
+<h2 id="远程库的使用"><a href="#远程库的使用" class="headerlink" title=" 远程库的使用"></a><a id="3.3"> 远程库的使用</a></h2><p>前面说到的都是git在本地的操作，那么实际协作开发过程中我们肯定是要有一个远程版本库作为项目的核心版本库，也就是投入生产使用的版本。这里我们以 <a href="https://github.com/" title="Github" target="_blank" rel="external">Github</a>为例。Github是一个开放的git远程服务器，首先我们先注册一个github账户，如何注册就不在这里说了绑定本地版本库与Github远程库有两种方式，一种是以ssh协议连接，在这方式下我们需要先绑定一个ssh key，这个在下面会说。还有一种是https协议，但是使用<code>https</code>速度慢会比慢，而且每次推送(<code>push</code>)都必须输入口令，但是在某些只开放http端口的公司内部就无法使用ssh协议而只能用https。</p>
+<h3 id="使用Github托管自己的代码库"><a href="#使用Github托管自己的代码库" class="headerlink" title="使用Github托管自己的代码库"></a><a id="3.3.1">使用Github托管自己的代码库</a></h3><p>如果你已经注册完你的Github账户，新增需要在生成一个<code>ssh key</code>，这个key用于验证你的身份是该版本库的创立者，也就是如上面说的允许你使用<code>ssh</code>方式连接Github上的远程库。执行如下命令生成<code>ssh key</code>:<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ ssh-keygen -t rsa -C <span class="string">"youremail@example.com"</span></div></pre></td></tr></table></figure></p>
+<p><strong>注意把<code>youremail@example.com</code>改为你的邮箱。</strong> 命令执行过程只能够会要求你设置密码，这个可选的，如果设置了密码，后面每次提交也许输入密码。最后你可以在用户目录下找到.ssh文件夹（我的是<code>C:\Users\Justin\.ssh</code>)里面有<code>id_rsa</code>和<code>id_rsa.pub</code>两个文件，这两个就是SSH Key的秘钥对，<code>id_rsa</code>是私钥，不能泄露出去，<code>id_rsa.pub</code>是公钥，可以放心地告诉任何人。<br>接下来我们需要绑定这个key到你的github账户中:<br><img src="http://7xrvdu.com1.z0.glb.clouddn.com/githu%20sshkey.jpg" alt="github sshkey"><br>填上任意Title，在Key文本框里粘贴<code>id_rsa.pub</code>文件的内容,点“Add Key”，你就应该看到已经添加的Key。</p>
+<blockquote>
+<p>当然，GitHub允许你添加多个Key。假定你有若干电脑，你一会儿在公司提交，一会儿在家里提交，只要把每台电脑的Key都添加到GitHub，就可以在每台电脑上往GitHub推送了。</p>
+</blockquote>
+<p>接下来我们在Github上建立一个名为<code>gitstudy</code>的<code>Repository</code>：<br><img src="http://7xrvdu.com1.z0.glb.clouddn.com/github1.jpg" alt="github"><br><img src="http://7xrvdu.com1.z0.glb.clouddn.com/github2.jpg" alt="github"><br><img src="http://7xrvdu.com1.z0.glb.clouddn.com/github3.jpg" alt="github"><br>GitHub告诉我们，可以从这个仓库克隆出新的仓库，也可以把一个已有的本地仓库与之关联，然后，把本地仓库的内容推送到GitHub仓库。<br><strong>Github的Repository分为public 和 private 两种。 public是公共的也就是谁都能查看，如果是商业项目的话还是使用private的吧，不过github要收保护费。</strong><br>现在，我们根据GitHub的提示，在本地的仓库的目录，也就前面用到的<code>gitStudy</code>下运行命令：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">git remote add origin git@github.com:xiongqi215/gitstudy.git</div></pre></td></tr></table></figure></p>
+<p>其中<code>xiongqi215</code>更换成你的github账户。 另外<code>origin</code>是远程库在你本地的名字，这个git默认的叫法，一般情况下不需要修改。<br>下一步，就可以把本地库的所有内容推送到远程库上,使用命令<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">git push -u origin master</div></pre></td></tr></table></figure></p>
+<p>把本地库的内容推送到远程，用<code>git push</code>命令，实际上是把当前分支master推送到远程。</p>
+<p>由于远程库是空的，我们第一次推送master分支时，加上了-u参数，以后就不需要加上这个参数了：<br><a href="http://7xrvdu.com1.z0.glb.clouddn.com/git%20push.jpg" target="_blank" rel="external">github push</a><br><strong>如果前面建立ssh key的时候你设置了密码，那么push过程中你也会看到<code>Enter passphrase for key &#39;/c/Users/Justin/.ssh/id_rsa&#39;:</code>的提示，这时你需输入之前设置的密码。</strong><br>成功<code>push</code>后，查看Github上的<code>gitstudy</code>库，发现所有文件已经推送上去了，并且是最新的版本。</p>
+<h3 id="从github克隆代码库"><a href="#从github克隆代码库" class="headerlink" title="从github克隆代码库"></a><a id="3.3.2">从github克隆代码库</a></h3><p>现在，假设我们换了一台电脑，或者我们需要克隆别人在Github上的某个库时，我们需要使用<code>git clone</code>:<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">git <span class="built_in">clone</span>  git@github.com:xiongqi215/gitstudy.git</div></pre></td></tr></table></figure></p>
+<p>同样<code>xiongqi215</code>更换成你的github账户。<br><img src="http://7xrvdu.com1.z0.glb.clouddn.com/git%20clone.jpg" alt="github clone"></p>
+<p>现在，我们的已经在github建立了一个远程库，同时这个库被<code>clone</code>到了多台电脑上。<br>这时假如A电脑<code>push</code>了一些修改到远程库中，B电脑需要更新到这部分修改，那么可以使用如下命令：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">git pull origin master</div></pre></td></tr></table></figure></p>
+<p><img src="http://7xrvdu.com1.z0.glb.clouddn.com/github%20pull.jpg" alt="github pull"></p>
+<h3 id="小结-1"><a href="#小结-1" class="headerlink" title="小结"></a>小结</h3><ul>
+<li>要绑定本地库与远程库，使用命令<code>git remote add origin git@server-name:path/repo-name.git</code>。</li>
+<li>绑定后后，使用命令<code>git push -u origin master</code>第一次推送master分支的所有内容。</li>
+<li>以后，只要使用<code>git push origin master</code>推送最新修改。</li>
+<li>使用<code>git clone  git@server-name:path/repo-name.git</code>命令克隆一个远程库到本地。</li>
+<li>多台电脑可以使用 <code>git pull origin master</code>抓取相互提交到远程库中的最新修改。</li>
+</ul>
+<h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a><a id="4">总结</a></h1><p>Git是个非常高效的版本控制工具。分布式的、基于修改的管理方式非常适合多人协调完成开发工作。</p>
+<blockquote>
+<p>分布式版本系统的最大好处之一是在本地工作完全不需要考虑远程库的存在，也就是有没有联网都可以正常工作，而SVN在没有联网的时候是拒绝干活的！当有网络的时候，再把本地提交推送一下就完成了同步，真是太方便了！</p>
+</blockquote>
+<p>这次学习笔记还有很多内容没有涉及，本人还在学习当中。后面陆续补充如<code>分支管理</code>、<code>冲突处理</code>等内容。这里再提供一份命令手册供大家<a href="http://7xrvdu.com1.z0.glb.clouddn.com/git-cheatsheet.pdf" title="下载" target="_blank" rel="external">下载</a>。</p>
+<h1 id="其它详细教程"><a href="#其它详细教程" class="headerlink" title="其它详细教程"></a><a id="5">其它详细教程</a></h1><ul>
+<li><p><a href="http://iissnan.com/progit/html/zh/ch1_0.html" title="Pro Git中文翻译" target="_blank" rel="external">Pro Git中文翻译 by iissnan</a></p>
+</li>
+<li><p><a href="http://www.liaoxuefeng.com/wiki/0013739516305929606dd18361248578c67b8067c8c017b000" title="廖雪峰的官方网站" target="_blank" rel="external">廖雪峰的官方网站</a></p>
+</li>
+</ul>
+]]></content>
+    
+    <summary type="html">
+    
+      Git是一款分布式版本控制工具，该篇文章一是作为自己学习的积累，二是希望完成一个Git快速上手教程与大家分享。
+    
+    </summary>
+    
+      <category term="Git" scheme="http://www.justin-x.cn/categories/Git/"/>
+    
+    
+      <category term="github" scheme="http://www.justin-x.cn/tags/github/"/>
+    
+      <category term="git" scheme="http://www.justin-x.cn/tags/git/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>Git 命令速查图</title>
+    <link href="http://www.justin-x.cn/2016/03/11/git-quickGuidImage/"/>
+    <id>http://www.justin-x.cn/2016/03/11/git-quickGuidImage/</id>
+    <published>2016-03-11T04:26:14.000Z</published>
+    <updated>2016-09-13T08:38:28.103Z</updated>
+    
+    <content type="html"><![CDATA[<h1 id="Git-命令速查图"><a href="#Git-命令速查图" class="headerlink" title="Git 命令速查图"></a>Git 命令速查图</h1><p><img src="http://7xlpf4.com1.z0.glb.clouddn.com/git_big_jb51.jpg" alt="Git 命令速查图"><br>从网上找到的Git命令速查图^.^，收藏一下。</p>
+<p>有兴趣可以看下我的另一篇关于<a href="http://justin-x.cn/2016/03/29/git-StudyNote/" title="git入门的文章" target="_blank" rel="external">git入门的文章</a></p>
+]]></content>
+    
+    <summary type="html">
+    
+      Git 命令速查图，Git 命令大全
+    
+    </summary>
+    
+      <category term="Git" scheme="http://www.justin-x.cn/categories/Git/"/>
+    
+    
+      <category term="github" scheme="http://www.justin-x.cn/tags/github/"/>
+    
+      <category term="git" scheme="http://www.justin-x.cn/tags/git/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>轻松、愉快戒烟</title>
+    <link href="http://www.justin-x.cn/2016/03/11/quit-smoking/"/>
+    <id>http://www.justin-x.cn/2016/03/11/quit-smoking/</id>
+    <published>2016-03-11T04:26:14.000Z</published>
+    <updated>2016-09-13T08:38:28.106Z</updated>
+    
+    <content type="html"><![CDATA[<p><img src="http://7xlpf4.com1.z0.glb.clouddn.com/theEnd.jpg" alt="smoking"></p>
+<p>#Sometimes to give up is to gain</p>
+<p>有如神迹，只需要点燃烟草，深吸一口，从1数到7，所有因为戒断而产生的不适感就会彻底消失。7秒钟，尼古丁就能透过口腔和肺部的粘膜进入血液，最终作用于脑部。就像插上了一个阀门，多巴胺喷涌而出，心跳加速，血压升高，世界突然变得温暖而明亮，你变得警觉而又充满自信，在云端里漂浮，在流沙里下陷，在温泉里悬停。<br><a id="more"></a><br>你想停在那里哪里都不去了。</p>
+<p>尼古丁可以维持多巴胺在分钟级别上持续产出，这是所有故事的核心。因为最美好的一刻从此全部过去，之后只有冰冷残暴的重复篇章。当尼古丁在血液中的浓度开始下降，戒断反应也就随之产生。它让人感觉紧张、焦虑、呼吸不畅，再来一只烟，那么这些症状会随即消失。于是，你认为烟草让人放松，愉悦。</p>
+<p>这是我听过的最好笑的故事：一个人花钱买烟抽，让尼古丁进入身体，于是形成了戒断反应。然后，花更多的钱购买烟草，来治疗这种戒断反应。而每多花一分钱在烟草上，也就加剧了之后戒断反应的烈度，结果你必须买更多的烟草……更强的戒断反应……所以，尼古丁的成瘾性要强于可卡因和海洛英，且可以在商店里合法购买。</p>
+<p>而在本质上，你的身体根本不需要带着尼古丁工作啊！在一开始的时候，根本不摄入尼古丁，也就没有治疗戒断反应的必要啊！</p>
+<p>No Zuo，No Die.</p>
+<p>思辨胜于行动。统计数据显示，只有7%的人戒烟能够超过一年以上，剩下的全部复吸，原因就是没有充分思辨就开始行动了。从上面的分析可以看出，烟瘾的本质是尼古丁成瘾，尼古丁比毒品更容易成瘾，也更难以戒除。所以，任何一个半夜里穿着裤衩满街狂奔砸小店门的男人，他要么是为了买避孕套，要么就是为了买烟。</p>
+<p>我们的身体并不需要烟草，也不需要尼古丁。我们买烟的目的，是为了舒缓尼古丁产生出的戒断反应。这是非常重要的一个观念，戒烟的成败取决于你是否全盘接纳这个观点。</p>
+<p>戒烟不会让人焦虑、恶心、头晕、失眠、咳嗽、体重增加，抽烟也从来不能治愈这些问题。事实上，正是因为吸烟，一个人才会有这些症状，这些症状存在的唯一理由是让人继续吸烟。尼古丁类似一条活物，寄生在你的身体里，通过控制你感受的方式，让你持续购买烟草，维系它自己的永续存在。</p>
+<p>所以，所谓控制烟量的做法本身就是错误的。以前每天一包，现在每小时一根。结果，烟草就变成了少年的小红花，一种肯定，一种奖励，需要努力才能获取的礼物。既然烟草那么好，那么难得，怎么可能通过控制烟量的方法戒除呢？哪怕一天才8根，你在那8个小时里，每分每秒、心心念念的无非就是一根烟啊！</p>
+<p>所谓准备好了再戒烟的想法也是错误的。因为你现在压力大，太焦虑，所以暂时先不戒烟。那么，假设你在一般压力水平下成功戒烟，而你总有非常焦虑，压力极大的情况，届时你怎样抵御呢？哦，历史的经验告诉你：可以通过吸烟。这就是复吸的由来，太多人因为心情不好或者压力大而复吸，在他们那里，永远相信烟草可以提振心情、舒缓压力，永远也不明白焦虑、压力、沮丧的感受本身就是由烟草而引起。</p>
+<p>三观就有那么重要。发自内心地认同：</p>
+<p>1、身体并不需要尼古丁，要努力恢复身体原来的运作模式。<br>2、尼古丁没有解决过任何问题，你认为它可以解决的问题，都是它亲自制造的。</p>
+<p>那么，最直接的后果就是戒断反应的强弱。没有以上的认同，烟草就成为了可以结束一切苦难的良药，但就是不给你，于是你感觉到加倍的痛苦；拥有以上的认同，烟草就成为加剧或维系目前苦难的原因，坚决不再摄取，就可以逐步减弱它的威力，一切变得可以忍受。</p>
+<p>这就是相信的力量，它让人能捱，知道为什么而捱。</p>
+<p><em>(转自：和菜头<a href="http://mp.weixin.qq.com/s?__biz=MjM5MjAzODU2MA==&amp;mid=201167818&amp;idx=1&amp;sn=f2f515ec4a89539b5ee8ee8b06bd545b&amp;scene=1&amp;srcid=0108BbgWmqwpT7qjmEvwpMy9#rd" target="_blank" rel="external">《7秒》</a>)</em></p>
+]]></content>
+    
+    <summary type="html">
+    
+      轻松愉，快戒烟。选择戒烟，你并没有放弃或丢掉任何东西，而是收获。Sometimes to give up is to gain
+    
+    </summary>
+    
+      <category term="生活" scheme="http://www.justin-x.cn/categories/%E7%94%9F%E6%B4%BB/"/>
+    
+    
+      <category term="戒烟" scheme="http://www.justin-x.cn/tags/%E6%88%92%E7%83%9F/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>Solr-富文本索引</title>
+    <link href="http://www.justin-x.cn/2015/11/30/sorl-richText/"/>
+    <id>http://www.justin-x.cn/2015/11/30/sorl-richText/</id>
+    <published>2015-11-30T09:57:14.000Z</published>
+    <updated>2016-09-13T08:38:28.109Z</updated>
+    
+    <content type="html"><![CDATA[<p>Solr支持从富文本文件中，如pdf,word中抽取内容建立索引。</p>
+<p>首先，需要配置支持这一功能的requestHandler。编辑<code>solrconfig.xml</code>,加入：<br><figure class="highlight xml"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line"><span class="tag">&lt;<span class="name">requestHandler</span> <span class="attr">name</span>=<span class="string">"/update/extract"</span> 	<span class="attr">class</span>=<span class="string">"solr.extraction.ExtractingRequestHandler"</span> &gt;</span>  </div><div class="line">   <span class="tag">&lt;<span class="name">lst</span> <span class="attr">name</span>=<span class="string">"defaults"</span>&gt;</span></div><div class="line">     <span class="tag">&lt;<span class="name">str</span> <span class="attr">name</span>=<span class="string">"fmap.content"</span>&gt;</span>content<span class="tag">&lt;/<span class="name">str</span>&gt;</span></div><div class="line">     <span class="tag">&lt;<span class="name">str</span> <span class="attr">name</span>=<span class="string">"fmap.Content-Type"</span>&gt;</span>Content-Type<span class="tag">&lt;/<span class="name">str</span>&gt;</span></div><div class="line">     <span class="tag">&lt;<span class="name">str</span> <span class="attr">name</span>=<span class="string">"uprefix"</span>&gt;</span>ignored_<span class="tag">&lt;/<span class="name">str</span>&gt;</span></div><div class="line">   <span class="tag">&lt;/<span class="name">lst</span>&gt;</span></div><div class="line"><span class="tag">&lt;<span class="name">lst</span> <span class="attr">name</span>=<span class="string">"date.formats"</span>&gt;</span></div><div class="line">     <span class="tag">&lt;<span class="name">str</span>&gt;</span>yyyy-MM-dd<span class="tag">&lt;/<span class="name">str</span>&gt;</span></div><div class="line">   <span class="tag">&lt;/<span class="name">lst</span>&gt;</span></div><div class="line"> <span class="tag">&lt;/<span class="name">requestHandler</span>&gt;</span></div></pre></td></tr></table></figure></p>
+<a id="more"></a>
+<p><strong>solr.extraction.ExtractingRequestHandler</strong>就是solr中用来处理富文本的handler。为了使用这个类我们我们需要拷贝jar包：<strong>solr-dataimporthandler-extras.jar</strong>到lib目录，并确认<strong>solrconfig.xml</strong>中的lib配置包含它。</p>
+<div class="alert alert-info" role="info"><br>ExtractingRequestHandler底层实际是使用apache Tika进行文件内容抽取的，<br></div>
+
+<p><strong>配置解释：</strong></p>
+<ul>
+<li><p><code>&lt;requestHandler name=&quot;/update/extract&quot; class=&quot;solr.extraction.ExtractingRequestHandler&quot; &gt;</code>：其中name=<code>update/extract</code>为改request的请求路径。</p>
+</li>
+<li><p><code>fmap.xxx</code> 为从文件中抽取的内容，意见这些内容如何存储。如在这里：</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="tag">&lt;<span class="name">str</span> <span class="attr">name</span>=<span class="string">"fmap.content"</span>&gt;</span>content<span class="tag">&lt;/<span class="name">str</span>&gt;</span>  <span class="comment">&lt;!--文件内容--&gt;</span></div><div class="line"><span class="tag">&lt;<span class="name">str</span> <span class="attr">name</span>=<span class="string">"fmap.Content-Type"</span>&gt;</span>Content-Type<span class="tag">&lt;/<span class="name">str</span>&gt;</span> <span class="comment">&lt;!--文件类型--&gt;</span></div></pre></td></tr></table></figure>
+</li>
+</ul>
+<p>官方文档关于<code>fmap</code>的描述：<br><img src="http://i.imgur.com/fsmATZQ.png" alt=""></p>
+<p>意思很简单就是字段的映射。</p>
+<ul>
+<li><code>uprefix</code> 这个配置用于将文件中其它不需要的内容统一加上指定前缀，如这里加上了ignored_。在schema.xml中有该字段与类型配置：<figure class="highlight xml"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="tag">&lt;<span class="name">dynamicField</span> <span class="attr">name</span>=<span class="string">"ignored_*"</span> <span class="attr">type</span>=<span class="string">"ignored"</span> <span class="attr">multiValued</span>=<span class="string">"true"</span>/&gt;</span></div><div class="line"><span class="tag">&lt;<span class="name">fieldType</span> <span class="attr">name</span>=<span class="string">"ignored"</span> <span class="attr">stored</span>=<span class="string">"false"</span> <span class="attr">indexed</span>=<span class="string">"false"</span> <span class="attr">multiValued</span>=<span class="string">"true"</span> <span class="attr">class</span>=<span class="string">"solr.StrField"</span> /&gt;</span></div></pre></td></tr></table></figure>
+</li>
+</ul>
+<p>这是个动态字段，即所有以<code>ignored_</code>开头的字段都按<code>ignored</code>这个<code>type</code>处理。在这达到的忽略这些数据的目的。</p>
+<p><strong>调用/update/extract完成文件索引</strong></p>
+<p>调用/update/extrac的方式有很多种，下面介绍使用solr4j api在java工程里调用：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div></pre></td><td class="code"><pre><div class="line"><span class="comment">//建立客户端连接</span></div><div class="line">SolrClient client=<span class="keyword">new</span> HttpSolrClient(<span class="string">"http://localhost:8080/solr/core1"</span>);</div><div class="line"></div><div class="line"><span class="comment">//单个文件索引</span></div><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span>  <span class="title">indexFromFile</span><span class="params">(String fileName,String id)</span> <span class="keyword">throws</span> Exception</span>&#123;</div><div class="line">        <span class="comment">//ContentStreamUpdateRequest 是专门用来提交文件的</span></div><div class="line">		ContentStreamUpdateRequest  request=<span class="keyword">new</span> ContentStreamUpdateRequest(<span class="string">"/update/extract"</span>);</div><div class="line">		String contentType=<span class="string">"application/text"</span>;</div><div class="line">		</div><div class="line">		request.addFile(<span class="keyword">new</span> File(fileName), contentType);</div><div class="line">       <span class="comment">//literal.xxx 文件以外的字段，xxx将直接映射到schema.xml中的同名字段</span></div><div class="line">		request.setParam(<span class="string">"literal.id"</span>, String.valueOf(id));  </div><div class="line">		request.setParam(<span class="string">"literal.author"</span>, author);  </div><div class="line">		request.setParam(<span class="string">"literal.title"</span>, tilte);  </div><div class="line"></div><div class="line">		request.setAction(AbstractUpdateRequest.ACTION.OPTIMIZE, <span class="keyword">true</span>, <span class="keyword">true</span>);   </div><div class="line">		client.request(request);</div><div class="line">		</div><div class="line">		client.commit();</div><div class="line">	    </div><div class="line">	&#125;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span>  </span>&#123;</div><div class="line">		<span class="keyword">try</span>&#123;</div><div class="line">		SolrMananger client=<span class="keyword">new</span> SolrMananger();</div><div class="line">		client.indexFromFile(<span class="string">"e:/apache-solr-ref-guide-5.3.pdf"</span>, <span class="number">1</span>, <span class="string">"Justn"</span>, <span class="string">"solr-ref"</span>);</div><div class="line">		&#125;<span class="keyword">catch</span>(Exception e)&#123;</div><div class="line">			e.printStackTrace();</div><div class="line">		&#125;</div><div class="line">		&#125;</div></pre></td></tr></table></figure>
+<p>运行后，查看solr控制台，使用query验证文件是否成功索引。<br><img src="http://i.imgur.com/NbapUSN.png" alt=""><br>可以看到查询结果，且各个字段的值都与预想一样。</p>
+<p>关于批量文件生成索引，需要注意性能问题，应做到：</p>
+<p>原文：<a href="http://my.oschina.net/u/1403753/blog/468439" target="_blank" rel="external">http://my.oschina.net/u/1403753/blog/468439</a></p>
+<ul>
+<li><code>client.commit();</code>操作应该放在最外层，即最后提交一次。</li>
+<li>不设置action。</li>
+<li><p>一个文件一个ContentStreamUpdateRequest对象，否则会造成contentStream递增，从而影响效率。</p>
+<p>代码如下：</p>
+</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line">SolrClient client=<span class="keyword">new</span> HttpSolrClient(<span class="string">"http://localhost:8080/solr/core1"</span>);</div><div class="line">ContentStreamUpdateRequest request;</div><div class="line"><span class="keyword">for</span>(File file:files)&#123;</div><div class="line">    request=<span class="keyword">new</span> ContentStreamUpdateRequest(<span class="string">"/update/extract"</span>);</div><div class="line">    request.addFile(<span class="keyword">new</span> File(<span class="string">"mailing_lists.pdf"</span>));</div><div class="line">    request.setParam(<span class="string">"literal.id"</span>, <span class="string">"mailing_lists.pdf"</span>);</div><div class="line">    <span class="comment">//request.setAction(AbstractUpdateRequest.ACTION.COMMIT, true, true);//注释这行代码。</span></div><div class="line">    client.request(request);</div><div class="line">&#125; </div><div class="line">client.commit();</div></pre></td></tr></table></figure>
+<p>schemal.xml:</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div></pre></td><td class="code"><pre><div class="line"></div><div class="line">&lt;?xml version="1.0" encoding="UTF-8" ?&gt;</div><div class="line"><span class="tag">&lt;<span class="name">schema</span> <span class="attr">name</span>=<span class="string">"sjsmhp"</span> <span class="attr">version</span>=<span class="string">"1.5"</span>&gt;</span></div><div class="line">   <span class="tag">&lt;<span class="name">uniqueKey</span>&gt;</span>id<span class="tag">&lt;/<span class="name">uniqueKey</span>&gt;</span></div><div class="line">   <span class="tag">&lt;<span class="name">field</span> <span class="attr">name</span>=<span class="string">"id"</span> <span class="attr">type</span>=<span class="string">"long"</span> <span class="attr">indexed</span>=<span class="string">"true"</span> <span class="attr">stored</span>=<span class="string">"true"</span> <span class="attr">required</span>=<span class="string">"true"</span> <span class="attr">multiValued</span>=<span class="string">"false"</span> &gt;</span><span class="tag">&lt;/<span class="name">field</span>&gt;</span> </div><div class="line">   <span class="tag">&lt;<span class="name">field</span> <span class="attr">name</span>=<span class="string">"content"</span> <span class="attr">type</span>=<span class="string">"text_general"</span> <span class="attr">indexed</span>=<span class="string">"true"</span>  <span class="attr">stored</span>=<span class="string">"true"</span>  <span class="attr">omitNorms</span>=<span class="string">"true"</span>&gt;</span><span class="tag">&lt;/<span class="name">field</span>&gt;</span> </div><div class="line">   <span class="tag">&lt;<span class="name">field</span> <span class="attr">name</span>=<span class="string">"author"</span> <span class="attr">type</span>=<span class="string">"text_general"</span> <span class="attr">indexed</span>=<span class="string">"true"</span> <span class="attr">stored</span>=<span class="string">"true"</span> &gt;</span><span class="tag">&lt;/<span class="name">field</span>&gt;</span> </div><div class="line">   <span class="tag">&lt;<span class="name">field</span> <span class="attr">name</span>=<span class="string">"title"</span> <span class="attr">type</span>=<span class="string">"text_general"</span> <span class="attr">indexed</span>=<span class="string">"true"</span> <span class="attr">stored</span>=<span class="string">"true"</span> &gt;</span><span class="tag">&lt;/<span class="name">field</span>&gt;</span> </div><div class="line">   <span class="tag">&lt;<span class="name">field</span> <span class="attr">name</span>=<span class="string">"docType"</span> <span class="attr">type</span>=<span class="string">"string"</span> <span class="attr">indexed</span>=<span class="string">"true"</span> <span class="attr">stored</span>=<span class="string">"true"</span> &gt;</span><span class="tag">&lt;/<span class="name">field</span>&gt;</span></div><div class="line">   <span class="tag">&lt;<span class="name">field</span> <span class="attr">name</span>=<span class="string">"Content-Type"</span> <span class="attr">type</span>=<span class="string">"string"</span> <span class="attr">indexed</span>=<span class="string">"false"</span> <span class="attr">stored</span>=<span class="string">"true"</span>&gt;</span><span class="tag">&lt;/<span class="name">field</span>&gt;</span> </div><div class="line">   <span class="tag">&lt;<span class="name">field</span> <span class="attr">name</span>=<span class="string">"last_modified"</span> <span class="attr">type</span>=<span class="string">"date"</span> <span class="attr">indexed</span>=<span class="string">"true"</span> <span class="attr">stored</span>=<span class="string">"true"</span>  &gt;</span><span class="tag">&lt;/<span class="name">field</span>&gt;</span>  </div><div class="line">   <span class="tag">&lt;<span class="name">field</span> <span class="attr">name</span>=<span class="string">"_version_"</span> <span class="attr">type</span>=<span class="string">"long"</span> <span class="attr">indexed</span>=<span class="string">"true"</span> <span class="attr">stored</span>=<span class="string">"true"</span>&gt;</span><span class="tag">&lt;/<span class="name">field</span>&gt;</span></div><div class="line">   <span class="tag">&lt;<span class="name">field</span> <span class="attr">name</span>=<span class="string">"_root_"</span> <span class="attr">type</span>=<span class="string">"string"</span> <span class="attr">indexed</span>=<span class="string">"true"</span> <span class="attr">stored</span>=<span class="string">"false"</span>&gt;</span><span class="tag">&lt;/<span class="name">field</span>&gt;</span></div><div class="line">   <span class="tag">&lt;<span class="name">dynamicField</span> <span class="attr">name</span>=<span class="string">"ignored_*"</span> <span class="attr">type</span>=<span class="string">"ignored"</span> <span class="attr">multiValued</span>=<span class="string">"true"</span>&gt;</span><span class="tag">&lt;/<span class="name">dynamicField</span>&gt;</span> </div><div class="line">    <span class="tag">&lt;<span class="name">fieldType</span> <span class="attr">name</span>=<span class="string">"string"</span> <span class="attr">class</span>=<span class="string">"solr.StrField"</span> <span class="attr">sortMissingLast</span>=<span class="string">"true"</span> &gt;</span><span class="tag">&lt;/<span class="name">fieldType</span>&gt;</span></div><div class="line">    <span class="tag">&lt;<span class="name">fieldType</span> <span class="attr">name</span>=<span class="string">"boolean"</span> <span class="attr">class</span>=<span class="string">"solr.BoolField"</span> <span class="attr">sortMissingLast</span>=<span class="string">"true"</span>&gt;</span><span class="tag">&lt;/<span class="name">fieldType</span>&gt;</span></div><div class="line">    <span class="tag">&lt;<span class="name">fieldType</span> <span class="attr">name</span>=<span class="string">"int"</span> <span class="attr">class</span>=<span class="string">"solr.TrieIntField"</span> <span class="attr">precisionStep</span>=<span class="string">"0"</span> <span class="attr">positionIncrementGap</span>=<span class="string">"0"</span> &gt;</span><span class="tag">&lt;/<span class="name">fieldType</span>&gt;</span></div><div class="line">    <span class="tag">&lt;<span class="name">fieldType</span> <span class="attr">name</span>=<span class="string">"float"</span> <span class="attr">class</span>=<span class="string">"solr.TrieFloatField"</span> <span class="attr">precisionStep</span>=<span class="string">"0"</span> <span class="attr">positionIncrementGap</span>=<span class="string">"0"</span>&gt;</span><span class="tag">&lt;/<span class="name">fieldType</span>&gt;</span></div><div class="line">    <span class="tag">&lt;<span class="name">fieldType</span> <span class="attr">name</span>=<span class="string">"long"</span> <span class="attr">class</span>=<span class="string">"solr.TrieLongField"</span> <span class="attr">precisionStep</span>=<span class="string">"0"</span> <span class="attr">positionIncrementGap</span>=<span class="string">"0"</span>&gt;</span><span class="tag">&lt;/<span class="name">fieldType</span>&gt;</span></div><div class="line">    <span class="tag">&lt;<span class="name">fieldType</span> <span class="attr">name</span>=<span class="string">"double"</span> <span class="attr">class</span>=<span class="string">"solr.TrieDoubleField"</span> <span class="attr">precisionStep</span>=<span class="string">"0"</span> <span class="attr">positionIncrementGap</span>=<span class="string">"0"</span>&gt;</span><span class="tag">&lt;/<span class="name">fieldType</span>&gt;</span></div><div class="line">    <span class="tag">&lt;<span class="name">fieldType</span> <span class="attr">name</span>=<span class="string">"date"</span> <span class="attr">class</span>=<span class="string">"solr.TrieDateField"</span> <span class="attr">precisionStep</span>=<span class="string">"0"</span> <span class="attr">positionIncrementGap</span>=<span class="string">"0"</span>&gt;</span><span class="tag">&lt;/<span class="name">fieldType</span>&gt;</span></div><div class="line">   <span class="tag">&lt;<span class="name">fieldType</span> <span class="attr">name</span>=<span class="string">"ignored"</span> <span class="attr">stored</span>=<span class="string">"false"</span> <span class="attr">indexed</span>=<span class="string">"false"</span> <span class="attr">multiValued</span>=<span class="string">"true"</span> <span class="attr">class</span>=<span class="string">"solr.StrField"</span> &gt;</span><span class="tag">&lt;/<span class="name">fieldType</span>&gt;</span></div><div class="line"></div><div class="line">   <span class="comment">&lt;!--中英文分词--&gt;</span></div><div class="line">    <span class="tag">&lt;<span class="name">fieldType</span> <span class="attr">name</span>=<span class="string">"text_general"</span> <span class="attr">class</span>=<span class="string">"solr.TextField"</span> <span class="attr">positionIncrementGap</span>=<span class="string">"100"</span>&gt;</span></div><div class="line">      <span class="tag">&lt;<span class="name">analyzer</span> <span class="attr">type</span>=<span class="string">"index"</span>&gt;</span></div><div class="line">        <span class="tag">&lt;<span class="name">tokenizer</span> <span class="attr">class</span>=<span class="string">"solr.StandardTokenizerFactory"</span>&gt;</span><span class="tag">&lt;/<span class="name">tokenizer</span>&gt;</span></div><div class="line">        <span class="tag">&lt;<span class="name">filter</span> <span class="attr">class</span>=<span class="string">"solr.StopFilterFactory"</span> <span class="attr">ignoreCase</span>=<span class="string">"true"</span> <span class="attr">words</span>=<span class="string">"stopwords.txt"</span> &gt;</span><span class="tag">&lt;/<span class="name">filter</span>&gt;</span></div><div class="line">        <span class="tag">&lt;<span class="name">filter</span> <span class="attr">class</span>=<span class="string">"solr.LowerCaseFilterFactory"</span>&gt;</span><span class="tag">&lt;/<span class="name">filter</span>&gt;</span></div><div class="line">      <span class="tag">&lt;/<span class="name">analyzer</span>&gt;</span></div><div class="line">      <span class="tag">&lt;<span class="name">analyzer</span> <span class="attr">type</span>=<span class="string">"query"</span>&gt;</span></div><div class="line">        <span class="tag">&lt;<span class="name">tokenizer</span> <span class="attr">class</span>=<span class="string">"solr.StandardTokenizerFactory"</span>&gt;</span><span class="tag">&lt;/<span class="name">tokenizer</span>&gt;</span></div><div class="line">        <span class="tag">&lt;<span class="name">filter</span> <span class="attr">class</span>=<span class="string">"solr.StopFilterFactory"</span> <span class="attr">ignoreCase</span>=<span class="string">"true"</span> <span class="attr">words</span>=<span class="string">"stopwords.txt"</span> &gt;</span><span class="tag">&lt;/<span class="name">filter</span>&gt;</span></div><div class="line">        <span class="tag">&lt;<span class="name">filter</span> <span class="attr">class</span>=<span class="string">"solr.SynonymFilterFactory"</span> <span class="attr">synonyms</span>=<span class="string">"synonyms.txt"</span> <span class="attr">ignoreCase</span>=<span class="string">"true"</span> <span class="attr">expand</span>=<span class="string">"true"</span>&gt;</span><span class="tag">&lt;/<span class="name">filter</span>&gt;</span></div><div class="line">        <span class="tag">&lt;<span class="name">filter</span> <span class="attr">class</span>=<span class="string">"solr.LowerCaseFilterFactory"</span>&gt;</span><span class="tag">&lt;/<span class="name">filter</span>&gt;</span></div><div class="line">      <span class="tag">&lt;/<span class="name">analyzer</span>&gt;</span></div><div class="line">    <span class="tag">&lt;/<span class="name">fieldType</span>&gt;</span></div><div class="line"><span class="tag">&lt;/<span class="name">schema</span>&gt;</span></div></pre></td></tr></table></figure>]]></content>
+    
+    <summary type="html">
+    
+      Solr-富文本索引
+    
+    </summary>
+    
+      <category term="Solr" scheme="http://www.justin-x.cn/categories/Solr/"/>
+    
+    
+      <category term="Solr" scheme="http://www.justin-x.cn/tags/Solr/"/>
+    
+      <category term="企业级搜索引擎" scheme="http://www.justin-x.cn/tags/%E4%BC%81%E4%B8%9A%E7%BA%A7%E6%90%9C%E7%B4%A2%E5%BC%95%E6%93%8E/"/>
+    
+      <category term="Luence" scheme="http://www.justin-x.cn/tags/Luence/"/>
+    
+      <category term="富文本索引" scheme="http://www.justin-x.cn/tags/%E5%AF%8C%E6%96%87%E6%9C%AC%E7%B4%A2%E5%BC%95/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>Solr环境搭建</title>
+    <link href="http://www.justin-x.cn/2015/11/22/sorl-envbuild/"/>
+    <id>http://www.justin-x.cn/2015/11/22/sorl-envbuild/</id>
+    <published>2015-11-22T09:57:14.000Z</published>
+    <updated>2016-09-13T08:38:28.108Z</updated>
+    
+    <content type="html"><![CDATA[<h1 id="Solr安装"><a href="#Solr安装" class="headerlink" title="Solr安装"></a>Solr安装</h1><p>总结下solr环境的部署步骤。</p>
+<p>Solr非常易于安装，我们只要从官网下载他的工程报，准备一个servlet容器，如tomcat,jetty都可以。<br>这里已tomcat为例子。步骤如下</p>
+<ul>
+<li><p>获取solr.war，部署到tomcat</p>
+</li>
+<li><p>由于solr.war中有jar包缺失，故而第一次启动不能成功。将solr解压后<code>\server\lib\ext</code>中所有jar包拷贝到项目<code>/WEB-INF/lib</code>下。</p>
+<a id="more"></a>
+<ul>
+<li>配置solr-home。solr-home是放置solr核心core的地方，core可以简单理解为数据库中实例。该目录可以随便定义自己创建，创建后，将solr根目录 <code>server\solr</code> 中solr.xml复制到你的solr-home目录下。<br>修改<code>web.xml</code> 增加如下一段：</li>
+</ul>
+</li>
+</ul>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="tag">&lt;<span class="name">env-entry</span>&gt;</span></div><div class="line">  <span class="tag">&lt;<span class="name">env-entry-name</span>&gt;</span>solr/home<span class="tag">&lt;/<span class="name">env-entry-name</span>&gt;</span> </div><div class="line">  <span class="tag">&lt;<span class="name">env-entry-value</span>&gt;</span>E:\solr_home<span class="tag">&lt;/<span class="name">env-entry-value</span>&gt;</span> </div><div class="line">  <span class="tag">&lt;<span class="name">env-entry-type</span>&gt;</span>java.lang.String<span class="tag">&lt;/<span class="name">env-entry-type</span>&gt;</span> </div><div class="line"><span class="tag">&lt;/<span class="name">env-entry</span>&gt;</span></div></pre></td></tr></table></figure>
+<p>其中env-entry-value为你的solr-home路径，再次启动tomcat 访问’<a href="http://localhost:8080/solr&#39;成功出现solr的控制台。" target="_blank" rel="external">http://localhost:8080/solr&#39;成功出现solr的控制台。</a><br><img src="http://i.imgur.com/uiQaQba.png" alt=""></p>
+<p>环境搭建基本完成！ </p>
+<h1 id="solr-home配置"><a href="#solr-home配置" class="headerlink" title="solr-home配置"></a>solr-home配置</h1><p>solr-home为solr的核心，我们90%对的开发工作都将在这里进行。首先solr-home的目录结构有若干个core的文件夹和solr.xml组成。关键的配置为core。在solr根目录<code>example</code>文件下可以找到相关例子。</p>
+<ul>
+<li><p>复制solr根目录下 <code>\example\example-DIH\solr\solr\</code> 文件夹到solr-home中 </p>
+</li>
+<li><p>新建lib目录，并将solr根目录下 <code>\dist</code> 下如下jar包复制到lib中 </p>
+</li>
+</ul>
+<p><img src="http://i.imgur.com/686UdNO.png" alt=""></p>
+<ul>
+<li>修改<code>conf/solrconfig.xml</code>。将jar包引入配置：</li>
+</ul>
+<p><img src="http://i.imgur.com/yqx2ifa.png" alt=""></p>
+<ul>
+<li>修改为：</li>
+</ul>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="tag">&lt;<span class="name">lib</span> <span class="attr">dir</span>=<span class="string">"./lib"</span> <span class="attr">regex</span>=<span class="string">".*\.jar"</span>/&gt;</span></div><div class="line"><span class="tag">&lt;/<span class="name">pre</span>&gt;</span></div></pre></td></tr></table></figure>
+<ul>
+<li>启动tomcat，进入solr控制，可以在左边看到刚才新建的core</li>
+</ul>
+<p><img src="http://i.imgur.com/tbRhQra.png" alt=""></p>
+<ul>
+<li>点击进入后，左侧出现所以操作，包括收索( <code>query</code> ),文档(<code>document</code>),数据导入(<code>dataimport</code>)</li>
+</ul>
+<p><img src="http://i.imgur.com/DMMLLFH.png" alt=""></p>
+<p>solr可以对多个core进行综合管理，并接受请求选择特定的一个或者多个core执行相关任务。</p>
+<p>core的主要结构包括一个存储数据的<code>Data</code>文件夹、一个放置配置文件的<code>conf</code>文件夹。最主要的配置文件是：<code>solrconfig.xml</code>和<code>schema.xml</code>。</p>
+<p><code>solrconfig.xml</code>从整体上对core进行了配置，例如索引的存放路径、字段的最大长度（<code>maxFiedlLength</code>）、写锁的超时时间（<code>writeLockTimeout</code>）、锁类型（<code>lockType</code>）、是否压缩索引（<code>useCompoundFile</code>）、内存索引缓冲区大小（<code>ramBufferSizeMB</code>）、合并因子（<code>mergeFactor</code>）、删除策略、自动提交策略、缓存设置等，它好比是一份组装机器人的说明书，里面详细描述了各个部件（handler）的参数。</p>
+<p><code>schema.xml</code>主要是对索引的配置，例如分词器、字段名称+索引方法+存储方式+分词方式、唯一标识字段等，它好比是机器人学习的学习方法，机器人主动或被动接受特定数据，按照配置转化成索引，然后通过其部件（handler）展示出来，例如：search、moreLikeThis、spellCheck、factedSearcher等。</p>
+<p>后面再继续总结各个配置文件。</p>
+]]></content>
+    
+    <summary type="html">
+    
+      Solr环境搭建
+    
+    </summary>
+    
+      <category term="Solr" scheme="http://www.justin-x.cn/categories/Solr/"/>
+    
+    
+      <category term="Solr" scheme="http://www.justin-x.cn/tags/Solr/"/>
+    
+      <category term="企业级搜索引擎" scheme="http://www.justin-x.cn/tags/%E4%BC%81%E4%B8%9A%E7%BA%A7%E6%90%9C%E7%B4%A2%E5%BC%95%E6%93%8E/"/>
+    
+      <category term="Luence" scheme="http://www.justin-x.cn/tags/Luence/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>Solr-data-config.xml配置</title>
+    <link href="http://www.justin-x.cn/2015/11/22/sorl-dataimportconfig/"/>
+    <id>http://www.justin-x.cn/2015/11/22/sorl-dataimportconfig/</id>
+    <published>2015-11-22T09:57:14.000Z</published>
+    <updated>2016-09-13T08:38:28.108Z</updated>
+    
+    <content type="html"><![CDATA[<p>data-config.xml位于core目录/conf/目录下，用于配置从指定数据中查询数据并导入索引。<br>配置如下：<br><figure class="highlight xml"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div></pre></td><td class="code"><pre><div class="line"><span class="tag">&lt;<span class="name">dataConfig</span>&gt;</span></div><div class="line">    <span class="tag">&lt;<span class="name">dataSource</span> <span class="attr">name</span>=<span class="string">"jdbcDataSource"</span> <span class="attr">type</span>=<span class="string">"JdbcDataSource"</span> </span></div><div class="line">    <span class="attr">driver</span>=<span class="string">"oracle.jdbc.driver.OracleDriver"</span></div><div class="line">    <span class="attr">url</span>=<span class="string">"jdbc:oracle:thin:@localhost:1521:orcl"</span> </div><div class="line">    <span class="attr">user</span>=<span class="string">"finc"</span> <span class="attr">password</span>=<span class="string">"password"</span>/&gt;</div><div class="line">    <span class="tag">&lt;<span class="name">document</span>&gt;</span></div><div class="line">        <span class="tag">&lt;<span class="name">entity</span> <span class="attr">dataSource</span>=<span class="string">"jdbcDataSource"</span> <span class="attr">name</span>=<span class="string">"country"</span>  </span></div><div class="line">        <span class="attr">query</span>=<span class="string">"select * from t_base_country"</span> &gt;</div><div class="line">            <span class="tag">&lt;<span class="name">field</span> <span class="attr">column</span>=<span class="string">"ID"</span> <span class="attr">name</span>=<span class="string">"id"</span>&gt;</span><span class="tag">&lt;/<span class="name">field</span>&gt;</span></div><div class="line">            <span class="tag">&lt;<span class="name">field</span> <span class="attr">column</span>=<span class="string">"NAME_CN"</span> <span class="attr">name</span>=<span class="string">"nameCn"</span>&gt;</span><span class="tag">&lt;/<span class="name">field</span>&gt;</span> </div><div class="line">            <span class="tag">&lt;<span class="name">field</span> <span class="attr">column</span>=<span class="string">"NAME_EN"</span> <span class="attr">name</span>=<span class="string">"nameEn"</span>&gt;</span><span class="tag">&lt;/<span class="name">field</span>&gt;</span> </div><div class="line">            <span class="tag">&lt;<span class="name">field</span> <span class="attr">column</span>=<span class="string">"CONTINENTS_CN"</span> <span class="attr">name</span>=<span class="string">"continentsCn"</span>&gt;</span><span class="tag">&lt;/<span class="name">field</span>&gt;</span></div><div class="line">            <span class="tag">&lt;<span class="name">field</span> <span class="attr">column</span>=<span class="string">"CONTINENTS_EN"</span> <span class="attr">name</span>=<span class="string">"continentsEn"</span>&gt;</span><span class="tag">&lt;/<span class="name">field</span>&gt;</span></div><div class="line">            <span class="tag">&lt;<span class="name">field</span> <span class="attr">column</span>=<span class="string">"CN_FIRST_LETTER"</span> <span class="attr">name</span>=<span class="string">"cnFirstLetter"</span>&gt;</span><span class="tag">&lt;/<span class="name">field</span>&gt;</span></div><div class="line">            <span class="tag">&lt;<span class="name">field</span> <span class="attr">column</span>=<span class="string">"EN_FIRST_LETTER"</span> <span class="attr">name</span>=<span class="string">"enFirstLetter"</span>&gt;</span><span class="tag">&lt;/<span class="name">field</span>&gt;</span></div><div class="line">            <span class="tag">&lt;<span class="name">field</span> <span class="attr">column</span>=<span class="string">"SORT"</span> <span class="attr">name</span>=<span class="string">"sort"</span>&gt;</span><span class="tag">&lt;/<span class="name">field</span>&gt;</span></div><div class="line">        <span class="tag">&lt;/<span class="name">entity</span>&gt;</span></div><div class="line">    <span class="tag">&lt;/<span class="name">document</span>&gt;</span></div><div class="line">  <span class="tag">&lt;/<span class="name">dataConfig</span>&gt;</span></div></pre></td></tr></table></figure></p>
+<a id="more"></a>
+<h2 id="dataSource节点配置："><a href="#dataSource节点配置：" class="headerlink" title="dataSource节点配置："></a><code>dataSource</code>节点配置：</h2><ul>
+<li><code>name</code>: dataSource的名称，配置文件可以有多个datasource，使用name区分。</li>
+<li><code>type</code>:数据源类型，如JDBC</li>
+<li><code>driver</code>:数据库驱动包，去提前放到lib目录下</li>
+<li><code>url</code>:数据库连接url</li>
+<li><code>user</code>:数据库用户名</li>
+<li><code>password</code>:数据库密码</li>
+<li><code>&lt;field&gt;</code>字段配置：<ul>
+<li><code>column</code>:数据库查询列名称</li>
+<li><code>name</code>:Schema.xml中的字段</li>
+</ul>
+</li>
+</ul>
+<h2 id="doucment节点配置"><a href="#doucment节点配置" class="headerlink" title="doucment节点配置"></a><code>doucment</code>节点配置</h2><p><code>document</code>节点用来配置如何从数据库导入数据构建document对象,主要有一个或多个<code>&lt;entity&gt;</code>即实体组成。<code>&lt;entity&gt;</code>有如下属性：</p>
+<ul>
+<li><code>name</code>:实体名称</li>
+<li><code>dataSource</code>:dataSource名称</li>
+<li><code>query</code>:获取全部数据的SQL</li>
+<li><code>deltaImportQuery</code>:获取增量数据时使用的SQL</li>
+<li><code>deltaQuery</code>:获取pk的SQL</li>
+<li><code>parentDeltaQuery</code>:获取父Entity的pk的SQL</li>
+</ul>
+<p>在Solr的控制台上可执行：<code>full-import</code>全导入和<code>delta-import</code>增量导入。</p>
+<p><strong>Full Import工作原理：</strong><br>执行本Entity的Query，获取所有数据；<br>针对每个行数据Row，获取pk，组装子Entity的Query；<br>执行子Entity的Query，获取子Entity的数据。</p>
+<p><strong>Delta Import工作原理：</strong><br>查找子Entity，直到没有为止；<br>执行Entity的deltaQuery，获取变化数据的pk；<br>合并子Entity parentDeltaQuery得到的pk；<br>针对每一个pk Row，组装父Entity的parentDeltaQuery；<br>执行parentDeltaQuery，获取父Entity的pk；<br>执行deltaImportQuery，获取自身的数据；<br>如果没有deltaImportQuery，就组装Query</p>
+<p><strong>限制：</strong><br>子Entity的query必须引用父Entity的pk<br>子Entity的parentDeltaQuery必须引用自己的pk<br>子Entity的parentDeltaQuery必须返回父Entity的pk<br>deltaImportQuery引用的必须是自己的pk</p>
+<p>solr自带的实例配置：<br><figure class="highlight xml"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div></pre></td><td class="code"><pre><div class="line"><span class="tag">&lt;<span class="name">dataConfig</span>&gt;</span></div><div class="line">    <span class="tag">&lt;<span class="name">dataSource</span> <span class="attr">driver</span>=<span class="string">"org.hsqldb.jdbcDriver"</span> </span></div><div class="line">      <span class="attr">url</span>=<span class="string">"jdbc:hsqldb:E:/solr_home/hsqldb/ex"</span> <span class="attr">user</span>=<span class="string">"sa"</span> /&gt;</div><div class="line">    <span class="tag">&lt;<span class="name">document</span>&gt;</span></div><div class="line">        <span class="tag">&lt;<span class="name">entity</span> <span class="attr">name</span>=<span class="string">"item"</span> <span class="attr">query</span>=<span class="string">"select * from item"</span></span></div><div class="line">             <span class="attr">deltaQuery</span>=<span class="string">"select id from item where last_modified &gt; '$&#123;dataimporter.last_index_time&#125;'"</span>&gt;</div><div class="line">            <span class="tag">&lt;<span class="name">field</span> <span class="attr">column</span>=<span class="string">"NAME"</span> <span class="attr">name</span>=<span class="string">"name"</span> /&gt;</span></div><div class="line"></div><div class="line">            <span class="tag">&lt;<span class="name">entity</span> <span class="attr">name</span>=<span class="string">"feature"</span>  </span></div><div class="line">                    <span class="attr">query</span>=<span class="string">"select DESCRIPTION from FEATURE where ITEM_ID='$&#123;item.ID&#125;'"</span></div><div class="line">                    <span class="attr">deltaQuery</span>=<span class="string">"select ITEM_ID from FEATURE where last_modified &gt; '$&#123;dataimporter.last_index_time&#125;'"</span></div><div class="line">                    <span class="attr">parentDeltaQuery</span>=<span class="string">"select ID from item where ID=$&#123;feature.ITEM_ID&#125;"</span>&gt;</div><div class="line">                <span class="tag">&lt;<span class="name">field</span> <span class="attr">name</span>=<span class="string">"features"</span> <span class="attr">column</span>=<span class="string">"DESCRIPTION"</span> /&gt;</span></div><div class="line">            <span class="tag">&lt;/<span class="name">entity</span>&gt;</span></div><div class="line">            </div><div class="line">            <span class="tag">&lt;<span class="name">entity</span> <span class="attr">name</span>=<span class="string">"item_category"</span></span></div><div class="line">                    <span class="attr">query</span>=<span class="string">"select CATEGORY_ID from item_category where ITEM_ID='$&#123;item.ID&#125;'"</span></div><div class="line">                    <span class="attr">deltaQuery</span>=<span class="string">"select ITEM_ID, CATEGORY_ID from item_category where last_modified &gt; '$&#123;dataimporter.last_index_time&#125;'"</span></div><div class="line">                    <span class="attr">parentDeltaQuery</span>=<span class="string">"select ID from item where ID=$&#123;item_category.ITEM_ID&#125;"</span>&gt;</div><div class="line">                <span class="tag">&lt;<span class="name">entity</span> <span class="attr">name</span>=<span class="string">"category"</span></span></div><div class="line">                        <span class="attr">query</span>=<span class="string">"select DESCRIPTION from category where ID = '$&#123;item_category.CATEGORY_ID&#125;'"</span></div><div class="line">                        <span class="attr">deltaQuery</span>=<span class="string">"select ID from category where last_modified &gt; '$&#123;dataimporter.last_index_time&#125;'"</span></div><div class="line">                        <span class="attr">parentDeltaQuery</span>=<span class="string">"select ITEM_ID, CATEGORY_ID from item_category where CATEGORY_ID=$&#123;category.ID&#125;"</span>&gt;</div><div class="line">                    <span class="tag">&lt;<span class="name">field</span> <span class="attr">column</span>=<span class="string">"DESCRIPTION"</span> <span class="attr">name</span>=<span class="string">"cat"</span> /&gt;</span></div><div class="line">                <span class="tag">&lt;/<span class="name">entity</span>&gt;</span></div><div class="line">            <span class="tag">&lt;/<span class="name">entity</span>&gt;</span></div><div class="line">        <span class="tag">&lt;/<span class="name">entity</span>&gt;</span></div><div class="line">    <span class="tag">&lt;/<span class="name">document</span>&gt;</span>    </div><div class="line"><span class="tag">&lt;/<span class="name">dataConfig</span>&gt;</span></div></pre></td></tr></table></figure></p>
+<p><strong>注意查询条件的写法：${..},如在本例中：</strong></p>
+<p><strong>${dataimporter.last_index_time}  索引上次导入时间</strong></p>
+<p><strong>${item.ID}  实体item查询结果中的ID</strong></p>
+]]></content>
+    
+    <summary type="html">
+    
+      Solr-data-config.xml配置
+    
+    </summary>
+    
+      <category term="Solr" scheme="http://www.justin-x.cn/categories/Solr/"/>
+    
+    
+      <category term="Solr" scheme="http://www.justin-x.cn/tags/Solr/"/>
+    
+      <category term="企业级搜索引擎" scheme="http://www.justin-x.cn/tags/%E4%BC%81%E4%B8%9A%E7%BA%A7%E6%90%9C%E7%B4%A2%E5%BC%95%E6%93%8E/"/>
+    
+      <category term="Luence" scheme="http://www.justin-x.cn/tags/Luence/"/>
+    
+      <category term="Schema.xml" scheme="http://www.justin-x.cn/tags/Schema-xml/"/>
+    
+      <category term="dataimport" scheme="http://www.justin-x.cn/tags/dataimport/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>Solr初识</title>
+    <link href="http://www.justin-x.cn/2015/11/22/solr-intro/"/>
+    <id>http://www.justin-x.cn/2015/11/22/solr-intro/</id>
+    <published>2015-11-22T09:57:14.000Z</published>
+    <updated>2016-09-13T08:38:28.107Z</updated>
+    
+    <content type="html"><![CDATA[<p> 最近在做一个项目时，客户要求实现站内全文检索功能，因而接触到Solr这款开源的企业级全文搜索 引擎。官网：<a href="http://lucene.apache.org/solr/" title="Apache-Solr" target="_blank" rel="external">http://lucene.apache.org/solr/</a></p>
+<p><img src="http://i.imgur.com/T4mVMPt.png" alt=""></p>
+<p>简单介绍下Solr。Solr是Apache基金会下一款开源全文搜索引擎产品。它基于Luence封装而来。<br><a id="more"></a><br>一下文字转自：<a href="http://my.oschina.net/fengnote/blog/288569?fromerr=hSUdZv5x" target="_blank" rel="external">http://my.oschina.net/fengnote/blog/288569?fromerr=hSUdZv5x</a>，对《solr in action》第一章的翻译。作者翻译的非常好，对于初次接触solr的人，可以起到很好的帮助。</p>
+<hr>
+<p>一下文字摘自一位牛人对《Solr in acion》第一章的翻译(原文：<a href="http://my.oschina.net/fengnote/blog/288569" target="_blank" rel="external">http://my.oschina.net/fengnote/blog/288569</a>)：</p>
+<p>伴随着社交媒体、云计算、移动互联网和大数据等技术的高速发展，我们正迎来一个令人激动的计算时代。软件架构师们开始面对的主要挑战之一，便是如何处理全球巨大的用户基数所产生及使用的海量数据。此外，用户们开始期待在线软件应用永远都是稳定可用的，并且能够一直保持响应，这对应用就提出了更高的可扩展性和稳定性需求。为了满足这些需求，一些专用的非关系型数据存储及处理技术，统称为NoSQL（Not Only SQL）技术，开始获得越来越多的青睐。这些系统并不强制要求将所有的数据都存储在曾经成为事实上标准的关系型数据模型当中，而是共用了一个通用的设计模式，在数据存储处理引擎和特定的数据类型之间进行匹配。换句话说，NoSQL技术为处理特定数据类型的特定类别问题做了性能优化。由于对可扩展性的需求和性能的需求不断增加，导致各种NoSQL技术和传统关系型数据库开始混合使用，这种跨界架构变得越来越流行。过去那种一种数据处理方案就能吃遍天下的时代已经一去不复返了。</p>
+<p> 本书主要讨论一种特殊的NoSQL技术，即Apache Solr。和她的其他非关系型兄弟们一样，Solr也为一类特定问题的处理做了优化。具体来说，Solr 是一个可扩展的，可快速部署的，对搜索海量文本中心的数据和对返回结果做相关性排序方面做了优化的企业级搜索引擎。</p>
+<p>这句话读上去有点拗口，不过没关系，我们把这个定义中的亮点分解出来看：</p>
+<ul>
+<li><p>可扩展性：Solr可以把建立索引和查询处理的运算分布到一个集群内的多台服务器上。</p>
+</li>
+<li><p>快速部署：Solr是开源软件，安装和配置都很方便，可以根据安装包内的Sample配置直接上手。</p>
+</li>
+<li><p>优化的搜索功能：Solr搜索够快。对于复杂的搜索查询，Solr可以做到亚秒级的处理，通常几十毫秒就能处理完一次复杂查询</p>
+</li>
+<li><p>海量文本：Solr是针对百万级以上的海量文本处理而设计的，可以很好地处理海量数据。</p>
+</li>
+<li><p>文本中心的数据：Solr为搜索包含自然语言的文本内容做了优化，比如电子邮件，网页，简历，PDF文档，或是推特、微博、博客这些社交内容等等，都适合用Solr来处理。</p>
+</li>
+</ul>
+<p>结果是按相关性排序的：Solr的搜索返回结果是按照结果文档与用户查询之间的相关程度度做排序的，保证最相关的结果会优先返回。</p>
+<p>在本书中，你将学到如何使用Solr来设计实现一个可扩展的搜索方案。我们的学习旅程从了解Solr支持的数据类型和典型用例开始。这样你能更好的理解在整个现代软件应用架构全景图中Solr所处的位置，以及Solr到底是设计来处理哪些问题的。</p>
+<p><strong>1.1我到底需要一个搜索引擎吗？</strong></p>
+<p>我们猜测你已经有了些想法要准备使用搜索引擎了，否则你也不会翻开这本书。因此，我们就不浪费时间来揣度你到底是为什么开始考虑用Solr的了，我们直接来讨论点干货，看看关于你的数据和用例方面， 有哪些问题是你在决定是否使用搜索引擎之前所必须要回答的。这最终会归结为如何深刻理解你的数据和你的用户，以选用一个合适的技术来同时满足二者的需求。我们先从讨论一下哪些数据属性是搜索引擎适合处理的。</p>
+<p><strong>1.1.1              管理文本中心的数据</strong></p>
+<p>合理选用同数据匹配的存储及处理引擎，是现代软件应用架构的标志性要求之一。如果你是一个优秀的程序员，那么你应该知道要根据在算法中使用数据的方式来选取最合适的数据结构。比如，如果你需要实现快速随机查找，你就不会使用链表结构来存储数据。同样的道理也适用于搜索引擎的选取。这里列出了适合用类似Solr这样的搜索引擎来处理的数据的4种主要特点：</p>
+<ul>
+<li><p>文本中心的数据</p>
+</li>
+<li><p>读取远多于写入的数据</p>
+</li>
+<li><p>面向文档的数据</p>
+</li>
+<li><p>灵活的Schema</p>
+</li>
+</ul>
+<p>也许在这儿应该加上第五个数据特性，即：海量数的据量，也就是”大数据“，但是我们主要关注的是Solr区别于其他NoSQL技术的主要特性，而可以处理海量的数据并不是它们的主要区别之一。</p>
+<p>虽然这里列出了类似Solr这样的搜索引擎可以有效处理的数据类型的4个主要特点，但是这只是一个粗略的准则，并不是一个严格的标准。我们来深入的讨论一下这些数据特性，看看为什么它们对于搜索来说这么重要。我们现在只关注概念，具体的实现细节在稍后的章节讨论。</p>
+<p><strong>文本中心的数据</strong></p>
+<p>你肯定见过有人用“非结构化数据“这个术语来描述搜索引擎处理的数据。我们认为“非结构化”这个词有些模糊不清，因为任何一个基于人类语言产生的文档都是隐含有一定的结构的。要理解“非结构化”这个术语你可以认为这是从计算机的角度来看的。在计算机眼中，文本文档就是一个字符流。这个字符流必须通过特定的语言规则解析出语义结构，才能被检索到。而这正是搜索引擎的工作所在。</p>
+<p>我们认为“文本中心的数据”这个词更适合用来描述Solr处理的数据类型。因为搜索引擎的设计初衷就是用来提取文本数据的隐含结构，并生成相关索引以提高查询检索的效率。“文本中心的数据”这个词隐含表明了文档中的文本信息包含用户感兴趣的查询内容。当然，搜索引擎也支持非文本数据，比如数字类型的数据，但是其主要强项，还是在于处理基于自然语言的文本数据。</p>
+<p>前面说的都是“文本”，其实“中心”这个部分也很重要，因为如果你的用户对于文本部分的内容不感兴趣，那么搜索引擎可能就不是处理你的问题的最佳选择。举个例子，对于一个给员工用来创建差旅支出报告的应用，每份报告都包括一些结构化的数据，比如日期，费用类型，汇率，数量等等，另外每项费用后面可能会包含一些备注信息，用于描述该项费用的大致情况。这样一个应用就是一个包含文本信息，但并不是“文本中心的数据”的一个例子，因为会计部门在使用这些员工的支出费用报告来生成月度支出报告时，并不会通过查找备注里的文本信息来做，文本在这里并不是其关心的主要内容。简单来说，就是不是所有包含文本信息的数据都适合搜索引擎来处理。</p>
+<p>所以现在先花几分钟好好想想你的数据是否是“文本中心的数据”。考虑的重点主要就是数据中的文本信息用户是不是会拿来做检索。如果答案是YES，那么搜索引擎很可能是一个好的方案选择。我们在第5章和第6章会讨论如何利用Solr的文本分析来提取文本数据的结构的细节。</p>
+<p><strong>读取远多于写入的数据:</strong></p>
+<p>另外一个搜索引擎可以高效处理的数据特性是“读取远多于写入的数据”。首先，需要声明的是Solr是允许你更新索引中的现有文档内容的。你可以把“读取远多于写入”解读为对于文档的读取操作频率要远远高于创建文档和更新文档的频率。但是别狭隘的理解为你就完全不能写入数据了，或是你会被限制在一个特定频率之下更新数据。事实上Solr4的一个关键特性就是“近乎实时的查询”，这个功能可以允许你每秒钟为数千的文档建立索引并且几乎立刻就能查询到这些新加入的文档。</p>
+<p>“读取远多于写入的数据”背后的关键点是你的数据在写入Solr后，在其生命周期内应该是要被重复读取很多次的。你可以理解为搜索引擎并不是主要用来存储数据的，而是主要用于查询存储的数据的（查询请求是一种读取操作）。所以如果你需要很频繁的更新数据，那么搜索引擎可能不太适合你的需求，其他的NoSQL技术，比如Cassandra，可能更适合你的快速随机写入的需求。</p>
+<p><strong>面向文档的数据</strong></p>
+<p>到目前为止，我们一直使用更通用的“数据”这一术语，但是实际中搜索引擎处理的都是文档数据。在搜索引擎中，一个文档是由值域(field)组成的独立集合，每一个值域都只保存数据值，不能再嵌套包含其他值域。换句话说，在Solr这样的搜索引擎中，文档都是扁平结构的，文档之间不存在相互依赖关系。Solr中“扁平”的概念是比较宽松的，一个值域可以保存多个数据值，但是值域不能再嵌套包含子值域。也就是说你可以在一个值域里存储多个数据值，但是你不能往值域里头嵌套别的值域。</p>
+<p>Solr中这种扁平化的、面向文档的方式可以很好的处理已经文档化的数据，比如网页，博客，pdf文档等等。那么如果要用solr来处理关系型数据库中已经结构化好的数据应该怎么办呢？这种情况下你需要先把关系型数据库中跨表存储的数据取出来，去结构化，然后放到扁平化的自包含文档结构里。我们会在第三章学习怎么处理这样的问题。</p>
+<p>你还需要考虑你的文档数据中的哪些值域需要存储在Solr中，哪些值域需要存储在其他系统中（比如数据库中）。简单来说，搜索引擎只存储需要被检索到的数据，以及用于显示检索结果的数据。举个例子，如果你有一个在线视频的搜索索引，你应该不会希望把视频文件本身存储在Solr中，合理的方案应该是把大的视频文件都放在内容分发网络（CDN）中。通常你只需要在搜索引擎中存储满足搜索需求的最少数据即可。刚才这个在线视频的例子清楚的说明了不要把Solr当成通用数据存储技术，Solr的工作是找到用户感兴趣的视频文件，而不是存储视频文件本身。</p>
+<p><strong>灵活的Schema</strong></p>
+<p>最后一个搜索引擎数据的主要特性是有灵活的schema。这意味着查询索引中的文档不需要拥有统一的结构。在关系型数据库中，表中的每一行数据都必须拥有相同的结构。而在Solr中，文档们可以有不同的值域。当然同一个索引中的文档们至少应该拥有一部分大家都有的值域以便于检索，但是并不要求所有文档中的值域结构完全一样。</p>
+<p>举个例子，假如要做一个用于查找出租和出售房源的搜索应用。显然每条房源文档都会有地段，房间数，卫生间数等一些共有的值域，但是根据类型是出租还是出售的不同，不同的房源文档会有不同的值域。一条出售的房源会有售价值域，财产税值域，而一条出租的房源文档则会有月租金和宠物政策等等不同的值域。</p>
+<p>总结一下，Solr这样的搜索引擎是专门优化用于处理文本中心的，读取远多于写入的，面向文档的，拥有灵活Schema的数据用的。Solr并不是一种通用数据存储处理技术，这也是区别于其他NoSQL技术的主要因素。</p>
+<p>有众多不同的数据存储和处理方案可供选择的好处是你不再需要费劲脑汁地寻找一种可以满足所有需求的通用技术方案。搜索引擎在某些特定任务上表现出色，但是在其他一些方面性能很差。这意味着在大多数情况下，你可以用Solr来作为关系型数据库和其他NoSQL技术的有力补充，而并不是要取代后者。</p>
+<p>既然我们已经谈到了Solr所针对优化处理的数据类型，那我们就接着来讨论一下像solr这样的搜索引擎主要是设计来解决哪些实际用例的。理解这些用例可以帮助你理解搜索引擎技术是如何区别于其他数据处理技术的。</p>
+<p><strong>1.1.2              常见的搜索引擎用例</strong></p>
+<p>在这一节中，我们来看看Solr这样的搜索引擎都能干些什么。正如我们在1.1.1节中所提到的那样，这些讨论只是一种指南性质的建议，不要把它们当成严格的使用规则来看。在我们开始之前，你需要意识到想做出一个优秀的搜索服务，其门槛是很高的。现在的用户都习惯于使用像Google和Bing这样又快又高效的网络搜索引擎，而很多受欢迎的网站也有自己强大的搜索方案来帮助用户快速的获取想要的信息， 所以用户对搜索服务并不陌生并且会非常的挑剔。当你在评估像Solr这样的搜索引擎时，或是在设计你自己的搜索方案时，一定要有根弦儿，要把用户体验放在高优先级上来考虑。</p>
+<p><strong>基本的关键字查询</strong></p>
+<p>很明显，作为一个搜索引擎来说， 首先必须要能够支持基本的关键词查询。这也是搜索引擎的主要功能之一。不过关键词查询功能还是值得在这里强调一下的，因为这是用户使用搜索引擎最典型的方式。很少有用户想要会一上来就填写一个很完整的复杂搜索表单来进行搜索的。考虑到关键词搜索功能将会是用户和你的搜索引擎之间最常见的交互方式，这个基本功能必须能够提供给用户以非常好的用户体验才行。</p>
+<p> 一般来说，用户希望只输入几个简单的关键词就能获取到很好的搜索结果。这也许听上去像是一个简单的匹配任务：把查询字串和文档进行匹配即可。不过请考虑一下要实现良好的用户体验所必须解决的几个问题：</p>
+<p>·          相关结果必须迅速返回，大多数情况下要求一秒钟之内就能够返回</p>
+<p>·          用户的查询字串出现拼写错误时能够自动纠错</p>
+<p>·          用户输入时通过自动补全建议来减少用户的输入负担，这在移动应用中很常见</p>
+<p>·          处理查询字串中的同义词近义词</p>
+<p>·          对包含查询字串的语言变异的文档进行匹配（译者注：语言变异是语义学术语，即用词不完全一样的近似表达）</p>
+<p>·          短语处理，用户是希望匹配短语中所有的单词，还是只要匹配短语中的部分单词就行</p>
+<p>·          对一些通用介词的处理，比如“a,” “an”, “of”, “the”等等</p>
+<p>·          如果最靠前的查询结果用户不满意， 如何给用户返回更多的查询结果</p>
+<p>就像你看到的那样，不使用特定的处理方法的话，这样一堆问题会使得看上去如此简单的功能实现起来变得很困难。然而利用像Solr这样的搜索引擎，这些功能就能立等可取，实现起来变得很简单。当你给用户提供了一个强大的关键词搜索工具之后，接下来你就需要考虑如何去展示查询的结果，这就引出了下一个用例，按照结果同查询请求之间的相关性顺序，对搜索返回的查询结果进行排序。</p>
+<p><strong>排序的检索结果</strong></p>
+<p>搜索引擎为查询返回“最靠前“的结果。在SQL查询关系型数据库的时候，某一行数据记录要么匹配查询被返回，要么不匹配查询被忽略，查询结果也是按照数据记录的某一列属性来排序的。而对于搜索引擎来说，返回的结果文档是按照得分做降序排列的，该得分表示文档和查询的匹配程度。匹配程度得分依据一系列的因子来计算，不过一般说来得分越高，表明结果文档同查询之间的相关度越高。</p>
+<p>有好几个因素决定了将结果文档按照相关度排序的方式很重要。首先，现代搜索引擎一般都存储着海量的文档，都是上百万甚至数十亿记的。如果不对查询结果进行相关度排序，那用户就会被海量的返回结果所淹没，无法清晰有效的浏览搜索的结果。其次，用户使用其他搜索引擎的经验使得用户已经习惯于使用少数的几个关键词就能获得不错的查询结果，也使得用户普遍比较缺乏耐心。他们会期待搜索引擎按照他们想要的意思来工作，而不管其所输入的信息是否完全正确。比如对于移动应用的后台搜索服务来说，用户会期待在输入了简短的几个可能还包含有拼写错误的查询词之后，搜索服务就能够返回正确的搜索结果。</p>
+<p>如果要人工干预排序的结果，你可以给特定的文档、值域、或者查询字串增加权重，或着直接提高某个文档的相关度分值。比如你如果希望把新加入的文档推送到最靠前的位置，就可以通过按照创建时间来提高文档排序的方式实现。我们在第三章中会学习关于文档排序的知识。</p>
+<p><strong>除了关键词查询之外</strong></p>
+<p>利用像Solr这样的搜索引擎，用户可以输入少数几个关键词就能获取到一些搜索结果。然而对于很多用户来说这仅仅是一个查询交互的第一步。他们需要在查询结果中能够继续地浏览。驱动一个信息发现的交互会话过程也是搜素引擎的一个主要应用场景。通常用户在搜索前并不是很精确的知道想要查询的信息什么样的，他们事先也不知道你的系统中到底存储了哪些信息。一个好的搜索引擎可以帮助用户不断地细化信息需求，一步步到达最需要的信息。</p>
+<p>这里的核心思想是在返回用户最初的查询所对应的文档结果的同时，提供给用户一个工具，使其能够不断地改进查询以获得更需要的信息。换句话说，在返回匹配的文档之外，你应该返回一个工具让用户知道下一步该怎么办。举个例子，你可以对查询结果按照属性进行分类，便于用户根据需求做进一步的浏览。这种功能称之为分类检索（Faceted-Search），这也是Solr的功能亮点之一。我们会在1.2节中看到一个关于房地产的分类检索实例，在第八章中会详细介绍分类检索功能的细节。</p>
+<p><strong>搜索引擎不适合做的事…</strong></p>
+<p>最后，我们来讨论一下不适合应用搜索引擎的一些用例场景。首先，搜索引擎一般的设计是，为每个查询返回一个小的文档集，通常包含10个到100个的结果文档。更多的结果文档可以通过Solr自带的结果分页功能来获取。对于一个查询结果有好几百万个文档的情况，如果你要求所有的匹配文档都要能够一次返回，那么你会等待很长的时间。查询本身会执行的很快，但是从索引结构中重建上百万的文档绝对是一件很耗时间的事情。因为Solr这样的搜索引擎在硬盘上存储值域的方式只适用于快速生成少量的文档结果，如果需要一次生成大量的查询结果，在这种存储方式之下生成大量文档结果就会耗费大量的时间。</p>
+<p>另一个不适合应用搜索引擎的使用场景是需要读取索引文件的大部分子集的才能完成的深度分析任务场景。即使你通过结果分页技术避免了刚刚说的那个问题，如果一次分析需要读取索引文件中的大量数据，你也会遇到很大的性能问题，因为索引文件的底层数据结构就不是为一次大量读取来设计的。</p>
+<p>我们前面有提到过一点，但是在这里还是要再次强调一下，那就是搜索引擎技术并不适合用于在文档的相互关系之间进行查询。Solr确实是可以支持基于父子关系的查询，但是并不支持在复杂的关系型数据结构之间查询。在第三章，你会学习到如何将关系型数据结构适配到适合solr处理的扁平型文档结构中进行查询。</p>
+<p>最后，绝大多数搜索引擎都没有直接的文档级安全支持，至少Solr是没有。如果你需要严格管理文档的权限，那你只能在搜索引擎之外来想办法。</p>
+<p>到这里我们已经了解了适合搜索引擎处理的用例场景和数据类型，下一步该是时候讨论Solr到底能做些什么，以及这些功能是如何实现的了。在下一节中，你将学习到Solr到底有哪些主要功能，以及她是如何实现外部系统集成、可扩展性、以及高可用性等软件设计原则的。</p>
+]]></content>
+    
+    <summary type="html">
+    
+      Solr初识
+    
+    </summary>
+    
+      <category term="Solr" scheme="http://www.justin-x.cn/categories/Solr/"/>
+    
+    
+      <category term="Solr" scheme="http://www.justin-x.cn/tags/Solr/"/>
+    
+      <category term="企业级搜索引擎" scheme="http://www.justin-x.cn/tags/%E4%BC%81%E4%B8%9A%E7%BA%A7%E6%90%9C%E7%B4%A2%E5%BC%95%E6%93%8E/"/>
+    
+      <category term="Luence" scheme="http://www.justin-x.cn/tags/Luence/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>Solr-Schema.xml配置</title>
+    <link href="http://www.justin-x.cn/2015/11/22/schema/"/>
+    <id>http://www.justin-x.cn/2015/11/22/schema/</id>
+    <published>2015-11-22T09:57:14.000Z</published>
+    <updated>2016-09-13T08:38:28.106Z</updated>
+    
+    <content type="html"><![CDATA[<p>schema.xml位于core目录/conf/目录下，用于配置该core中的字段即字段类型，处理、分析方式。主要包括<code>&lt;schema &gt;</code>根节点，<code>&lt;field&gt;</code>字段定义以及<code>&lt;fieldType&gt;</code>字段类型定义组成。</p>
+<a id="more"></a>
+<ul>
+<li><p><strong>Schema根节点</strong>：<code>&lt;schema name=&quot;example&quot; version=&quot;1.2&quot;&gt;</code></p>
+<ul>
+<li>name：标识这个schema的名字</li>
+<li>version：现在版本是1.2</li>
+</ul>
+</li>
+</ul>
+<ul>
+<li><p><strong>Field字段定义</strong>:<code>&lt;field name=&quot;id&quot; type=&quot;string&quot; indexed=&quot;true&quot; stored=&quot;true&quot; required=&quot;true&quot; /&gt;</code></p>
+<ul>
+<li><p>name：字段名称。</p>
+</li>
+<li><p>type：字段类型对应<code>&lt;fieldType&gt;</code>中的定义。</p>
+</li>
+<li><p>indexed：是否被用来建立索引（关系到搜索和排序）<strong>如果该字段为主键，则indexed必须为true</strong></p>
+</li>
+<li><p>stored：是否储存</p>
+</li>
+<li><p>docValues: 如果这个字段应该有文档值（doc values），设置为true。文档值在门<br>面搜索，分组，排序和函数查询中会非常有用。虽然不是必须的，而且会导致生成<br>索引变大变慢，但这样设置会使索引加载更快，更加NRT友好，更高的内存使用效率。<br>然而也有一些使用限制：目前仅支持StrField, UUIDField和所有 Trie*Fields,<br>并且依赖字段类型, 可能要求字段为单值（single-valued）的,必须的或者有默认值。</p>
+</li>
+<li><p>required：是否必输</p>
+</li>
+<li><p>compressed：[false]，是否使用gzip压缩（只有TextField和StrField可以压缩）</p>
+</li>
+<li><p>mutiValued：是否包含多个值，可以理解为数组</p>
+</li>
+<li><p>default：如果没有属性需要修改，就可以用这个标识下。</p>
+</li>
+<li><p>omitNorms：是否忽略掉Norm，可以节省内存空间，只有全文本field和need an - index-time boost的field需要norm。（具体没看懂，注释里有矛盾）</p>
+</li>
+<li><p>termVectors：[false]，当设置true，会存储 term vector。当使用   MoreLikeThis，用来作为相似词的field应该存储起来。</p>
+</li>
+<li><p>termPositions：存储 term vector中的地址信息，会消耗存储开销。</p>
+</li>
+<li><p>termOffsets：存储 term vector 的偏移量，会消耗存储开销。</p>
+</li>
+</ul>
+</li>
+</ul>
+<div class="alert alert-info" role="info"><br><code>omitNorms</code>,<code>termVectors</code>,<code>termPositions</code>,<code>termOffsets</code>还不太懂什么意思。<br></div>
+
+<p><strong>着重解释下<code>indexed</code>与<code>stored</code>:</strong></p>
+<p>   <strong>indexed表示需不需要建立索引，以便之后对这个field进行查询；</strong></p>
+<p>   <strong>stored表示需不需要随索引同时存储这个field本身的内容，以便查询时直接从结果中获取该内容，一般大数据（比如文件内容本身）不会和索引一起保存，节省资源，防止索引过大。</strong> </p>
+<p>官方文档(5.2)中的描述：</p>
+<p><img src="http://i.imgur.com/BUvFSaY.png" alt=""><br><img src="http://i.imgur.com/mJy7VRx.png" alt=""></p>
+<ul>
+<li>FieldType 字段了定义：这个节点想对复杂。简单的可以按如下定义<br> <code>&lt;fieldType name=&quot;string&quot; class=&quot;solr.StrField&quot; sortMissingLast=&quot;true&quot; precisionStep=&quot;0&quot; positionIncrementGap=&quot;0&quot; /&gt;</code> </li>
+</ul>
+<ul>
+<li><p>name：类型名称，对应<code>&lt;field&gt;</code>中<code>type=&#39;String&#39;</code></p>
+</li>
+<li><p>class：类型对应的处理java类，常用的基本类型有：   <code>solr.StrField</code>、<code>solr.BoolField</code>、<code>solr.TrieIntField</code>、<code>solr.TrieFloatField</code>、<code>solr.TrieLongField</code>、<code>solr.TrieDoubleField</code>、<code>solr.UUIDField</code></p>
+</li>
+<li><p>sortMissingLast和sortMissingFirst两个属性是用在可以内在使用String排序的类型上（包括：string,boolean,sint,slong,sfloat,sdouble,pdate）。<br>sortMissingLast=”true”，没有该field的数据排在有该field的数据之后，而不管请求时的排序规则。<br>sortMissingFirst=”true”，跟上面倒过来呗。</p>
+</li>
+</ul>
+<p>  <strong><code>precisionStep</code>和<code>positionIncrementGap</code>还未理解是什么意思，但是可以知道的是,**</strong><code>positionIncrementGap</code>只对<code>mutiValued=ture</code>有意义。**</p>
+<p>官方文档(5.2)中的描述：</p>
+<p><img src="http://i.imgur.com/lwQxUuC.png" alt=""></p>
+<p>solr自带数据类型(官方文档):</p>
+<p><img src="http://i.imgur.com/kTLNaEe.png" alt=""><br><img src="http://i.imgur.com/8yawFbv.png" alt=""><br><img src="http://i.imgur.com/Dxm9a7l.png" alt=""><br><img src="http://i.imgur.com/Kzogdcl.png" alt=""></p>
+<ul>
+<li><p><strong>使用analyzer，tokenizer，filter自定义字段类型</strong></p>
+</li>
+<li><p>如下：定义了一个字段，使用中文分词器</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line"><span class="tag">&lt;<span class="name">fieldType</span> <span class="attr">name</span>=<span class="string">"text_general"</span> <span class="attr">class</span>=<span class="string">"solr.TextField"</span> <span class="attr">positionIncrementGap</span>=<span class="string">"100"</span>&gt;</span></div><div class="line">    <span class="tag">&lt;<span class="name">analyzer</span> <span class="attr">type</span>=<span class="string">"index"</span>&gt;</span></div><div class="line">      <span class="tag">&lt;<span class="name">tokenizer</span> <span class="attr">class</span>=<span class="string">"solr.StandardTokenizerFactory"</span>/&gt;</span></div><div class="line">      <span class="tag">&lt;<span class="name">filter</span> <span class="attr">class</span>=<span class="string">"solr.StopFilterFactory"</span> <span class="attr">ignoreCase</span>=<span class="string">"true"</span> <span class="attr">words</span>=<span class="string">"stopwords.txt"</span> /&gt;</span></div><div class="line">      <span class="tag">&lt;<span class="name">filter</span> <span class="attr">class</span>=<span class="string">"solr.LowerCaseFilterFactory"</span>/&gt;</span></div><div class="line">    <span class="tag">&lt;/<span class="name">analyzer</span>&gt;</span></div><div class="line">    <span class="tag">&lt;<span class="name">analyzer</span> <span class="attr">type</span>=<span class="string">"query"</span>&gt;</span></div><div class="line">      <span class="tag">&lt;<span class="name">tokenizer</span> <span class="attr">class</span>=<span class="string">"solr.StandardTokenizerFactory"</span>/&gt;</span></div><div class="line">      <span class="tag">&lt;<span class="name">filter</span> <span class="attr">class</span>=<span class="string">"solr.StopFilterFactory"</span> <span class="attr">ignoreCase</span>=<span class="string">"true"</span> <span class="attr">words</span>=<span class="string">"stopwords.txt"</span> /&gt;</span></div><div class="line">      <span class="tag">&lt;<span class="name">filter</span> <span class="attr">class</span>=<span class="string">"solr.SynonymFilterFactory"</span> <span class="attr">synonyms</span>=<span class="string">"synonyms.txt"</span> <span class="attr">ignoreCase</span>=<span class="string">"true"</span> <span class="attr">expand</span>=<span class="string">"true"</span>/&gt;</span></div><div class="line">      <span class="tag">&lt;<span class="name">filter</span> <span class="attr">class</span>=<span class="string">"solr.LowerCaseFilterFactory"</span>/&gt;</span></div><div class="line">    <span class="tag">&lt;/<span class="name">analyzer</span>&gt;</span></div><div class="line">  <span class="tag">&lt;/<span class="name">fieldType</span>&gt;</span></div></pre></td></tr></table></figure>
+</li>
+</ul>
+<div class="alert alert-danger" role="alert"><br>  <ul><br>   <li>只用 solr.TextField 这种类型的字段可以使用自定义analyzer</li><br>   <li>tokenizer是分词器，其作用就将文本切分为一个个词语或单词</li><br>   <li>filter是过滤器，用于过滤到文本中不需要的成分，如英文中的a,the等介词或标点符号和空格。它们需要我们制定一个txt作为过滤的依据词典，如本例中的stopwords.txt和synonyms.txt</li><br></ul></div>
+
+
+<ul>
+<li><strong>其它标签</strong></li>
+</ul>
+<p>主键：<code>&lt;uniqueKey&gt;id&lt;/uniqueKey&gt;</code>定义文档主键使用的字段</p>
+<p>保留字段: <code>_version_</code>为保留字段，不得删除，每个schema中都必须有。实际上name前后带有_的字段都为保留字段。<br><figure class="highlight xml"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="tag">&lt;<span class="name">field</span> <span class="attr">name</span>=<span class="string">"_version_"</span> <span class="attr">type</span>=<span class="string">"long"</span> <span class="attr">indexed</span>=<span class="string">"true"</span> <span class="attr">stored</span>=<span class="string">"true"</span>/&gt;</span></div></pre></td></tr></table></figure></p>
+<p>一份简单的<code>schema.xml</code>:<br><figure class="highlight xml"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div></pre></td><td class="code"><pre><div class="line"> </div><div class="line">&lt;?xml version="1.0" encoding="UTF-8" ?&gt;</div><div class="line">  <span class="tag">&lt;<span class="name">schema</span> <span class="attr">name</span>=<span class="string">"sjsmhp"</span> <span class="attr">version</span>=<span class="string">"1.5"</span>&gt;</span></div><div class="line">   <span class="tag">&lt;<span class="name">uniqueKey</span>&gt;</span>id<span class="tag">&lt;/<span class="name">uniqueKey</span>&gt;</span></div><div class="line">   <span class="tag">&lt;<span class="name">field</span> <span class="attr">name</span>=<span class="string">"id"</span> <span class="attr">type</span>=<span class="string">"long"</span> <span class="attr">indexed</span>=<span class="string">"true"</span> <span class="attr">stored</span>=<span class="string">"true"</span> <span class="attr">multiValued</span>=<span class="string">"false"</span> /&gt;</span> </div><div class="line">   <span class="tag">&lt;<span class="name">field</span> <span class="attr">name</span>=<span class="string">"name_cn"</span> <span class="attr">type</span>=<span class="string">"text_general"</span> <span class="attr">indexed</span>=<span class="string">"ture"</span> <span class="attr">stored</span>=<span class="string">"true"</span>  /&gt;</span>  </div><div class="line">   <span class="tag">&lt;<span class="name">field</span> <span class="attr">name</span>=<span class="string">"name_en"</span> <span class="attr">type</span>=<span class="string">"text_general"</span> <span class="attr">indexed</span>=<span class="string">"ture"</span> <span class="attr">stored</span>=<span class="string">"true"</span>  /&gt;</span>  </div><div class="line">   <span class="tag">&lt;<span class="name">field</span> <span class="attr">name</span>=<span class="string">"continents_cn"</span> <span class="attr">type</span>=<span class="string">"text_general"</span> <span class="attr">indexed</span>=<span class="string">"ture"</span> <span class="attr">stored</span>=<span class="string">"true"</span>  /&gt;</span>  </div><div class="line">   <span class="tag">&lt;<span class="name">field</span> <span class="attr">name</span>=<span class="string">"continents_en"</span> <span class="attr">type</span>=<span class="string">"text_general"</span> <span class="attr">indexed</span>=<span class="string">"ture"</span> <span class="attr">stored</span>=<span class="string">"true"</span>  /&gt;</span>  </div><div class="line">   <span class="tag">&lt;<span class="name">field</span> <span class="attr">name</span>=<span class="string">"en_first_letter"</span> <span class="attr">type</span>=<span class="string">"string"</span> <span class="attr">indexed</span>=<span class="string">"ture"</span> <span class="attr">stored</span>=<span class="string">"true"</span>  /&gt;</span> </div><div class="line">   <span class="tag">&lt;<span class="name">field</span> <span class="attr">name</span>=<span class="string">"cn_first_letter"</span> <span class="attr">type</span>=<span class="string">"string"</span> <span class="attr">indexed</span>=<span class="string">"ture"</span> <span class="attr">stored</span>=<span class="string">"true"</span>  /&gt;</span> </div><div class="line">   <span class="tag">&lt;<span class="name">field</span> <span class="attr">name</span>=<span class="string">"sort"</span> <span class="attr">type</span>=<span class="string">"int"</span> <span class="attr">indexed</span>=<span class="string">"ture"</span> <span class="attr">stored</span>=<span class="string">"false"</span>  /&gt;</span>  </div><div class="line">   <span class="tag">&lt;<span class="name">field</span> <span class="attr">name</span>=<span class="string">"_version_"</span> <span class="attr">type</span>=<span class="string">"long"</span> <span class="attr">indexed</span>=<span class="string">"true"</span> <span class="attr">stored</span>=<span class="string">"true"</span>/&gt;</span></div><div class="line">   <span class="tag">&lt;<span class="name">field</span> <span class="attr">name</span>=<span class="string">"_root_"</span> <span class="attr">type</span>=<span class="string">"string"</span> <span class="attr">indexed</span>=<span class="string">"false"</span> <span class="attr">stored</span>=<span class="string">"false"</span>/&gt;</span></div><div class="line"></div><div class="line">   <span class="tag">&lt;<span class="name">fieldType</span> <span class="attr">name</span>=<span class="string">"string"</span> <span class="attr">class</span>=<span class="string">"solr.StrField"</span> <span class="attr">sortMissingLast</span>=<span class="string">"true"</span> /&gt;</span></div><div class="line">   <span class="tag">&lt;<span class="name">fieldType</span> <span class="attr">name</span>=<span class="string">"boolean"</span> <span class="attr">class</span>=<span class="string">"solr.BoolField"</span> <span class="attr">sortMissingLast</span>=<span class="string">"true"</span>/&gt;</span></div><div class="line">   <span class="tag">&lt;<span class="name">fieldType</span> <span class="attr">name</span>=<span class="string">"int"</span> <span class="attr">class</span>=<span class="string">"solr.TrieIntField"</span> <span class="attr">precisionStep</span>=<span class="string">"0"</span> <span class="attr">positionIncrementGap</span>=<span class="string">"0"</span>/&gt;</span></div><div class="line">   <span class="tag">&lt;<span class="name">fieldType</span> <span class="attr">name</span>=<span class="string">"float"</span> <span class="attr">class</span>=<span class="string">"solr.TrieFloatField"</span> <span class="attr">precisionStep</span>=<span class="string">"0"</span> <span class="attr">positionIncrementGap</span>=<span class="string">"0"</span>/&gt;</span></div><div class="line">   <span class="tag">&lt;<span class="name">fieldType</span> <span class="attr">name</span>=<span class="string">"long"</span> <span class="attr">class</span>=<span class="string">"solr.TrieLongField"</span> <span class="attr">precisionStep</span>=<span class="string">"0"</span> <span class="attr">positionIncrementGap</span>=<span class="string">"0"</span>/&gt;</span></div><div class="line">   <span class="tag">&lt;<span class="name">fieldType</span> <span class="attr">name</span>=<span class="string">"double"</span> <span class="attr">class</span>=<span class="string">"solr.TrieDoubleField"</span> <span class="attr">precisionStep</span>=<span class="string">"0"</span> <span class="attr">positionIncrementGap</span>=<span class="string">"0"</span>/&gt;</span></div><div class="line"></div><div class="line"><span class="comment">&lt;!--中英文分词--&gt;</span></div><div class="line"><span class="tag">&lt;<span class="name">fieldType</span> <span class="attr">name</span>=<span class="string">"text_general"</span> <span class="attr">class</span>=<span class="string">"solr.TextField"</span> <span class="attr">positionIncrementGap</span>=<span class="string">"100"</span>&gt;</span></div><div class="line"></div><div class="line">  <span class="tag">&lt;<span class="name">analyzer</span> <span class="attr">type</span>=<span class="string">"index"</span>&gt;</span></div><div class="line">     <span class="tag">&lt;<span class="name">tokenizer</span> <span class="attr">class</span>=<span class="string">"solr.StandardTokenizerFactory"</span>/&gt;</span></div><div class="line">     <span class="tag">&lt;<span class="name">filter</span> <span class="attr">class</span>=<span class="string">"solr.StopFilterFactory"</span> <span class="attr">ignoreCase</span>=<span class="string">"true"</span> <span class="attr">words</span>=<span class="string">"stopwords.txt"</span> /&gt;</span></div><div class="line">     <span class="tag">&lt;<span class="name">filter</span> <span class="attr">class</span>=<span class="string">"solr.LowerCaseFilterFactory"</span>/&gt;</span></div><div class="line">  <span class="tag">&lt;/<span class="name">analyzer</span>&gt;</span></div><div class="line"></div><div class="line">  <span class="tag">&lt;<span class="name">analyzer</span> <span class="attr">type</span>=<span class="string">"query"</span>&gt;</span></div><div class="line">	   <span class="tag">&lt;<span class="name">tokenizer</span> <span class="attr">class</span>=<span class="string">"solr.StandardTokenizerFactory"</span>/&gt;</span></div><div class="line">	   <span class="tag">&lt;<span class="name">filter</span> <span class="attr">class</span>=<span class="string">"solr.StopFilterFactory"</span> <span class="attr">ignoreCase</span>=<span class="string">"true"</span> <span class="attr">words</span>=<span class="string">"stopwords.txt"</span> /&gt;</span></div><div class="line">	   <span class="tag">&lt;<span class="name">filter</span> <span class="attr">class</span>=<span class="string">"solr.SynonymFilterFactory"</span> <span class="attr">synonyms</span>=<span class="string">"synonyms.txt"</span> <span class="attr">ignoreCase</span>=<span class="string">"true"</span> <span class="attr">expand</span>=<span class="string">"true"</span>/&gt;</span></div><div class="line">	   <span class="tag">&lt;<span class="name">filter</span> <span class="attr">class</span>=<span class="string">"solr.LowerCaseFilterFactory"</span>/&gt;</span></div><div class="line">  <span class="tag">&lt;/<span class="name">analyzer</span>&gt;</span></div><div class="line"><span class="tag">&lt;/<span class="name">fieldType</span>&gt;</span></div><div class="line"></div><div class="line">  </div><div class="line">   <span class="tag">&lt;<span class="name">fieldType</span> <span class="attr">name</span>=<span class="string">"uuid"</span> <span class="attr">class</span>=<span class="string">"solr.UUIDField"</span> <span class="attr">indexed</span>=<span class="string">"false"</span> /&gt;</span></div><div class="line"><span class="tag">&lt;/<span class="name">schema</span>&gt;</span></div></pre></td></tr></table></figure></p>
+]]></content>
+    
+    <summary type="html">
+    
+      Solr-Schema.xml配置
+    
+    </summary>
+    
+      <category term="Solr" scheme="http://www.justin-x.cn/categories/Solr/"/>
+    
+    
+      <category term="Solr" scheme="http://www.justin-x.cn/tags/Solr/"/>
+    
+      <category term="企业级搜索引擎" scheme="http://www.justin-x.cn/tags/%E4%BC%81%E4%B8%9A%E7%BA%A7%E6%90%9C%E7%B4%A2%E5%BC%95%E6%93%8E/"/>
+    
+      <category term="Luence" scheme="http://www.justin-x.cn/tags/Luence/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>Oracle11g无法导出空表的问题</title>
+    <link href="http://www.justin-x.cn/2015/09/21/oracle-11g_exp_empty_table/"/>
+    <id>http://www.justin-x.cn/2015/09/21/oracle-11g_exp_empty_table/</id>
+    <published>2015-09-21T09:57:14.000Z</published>
+    <updated>2016-09-13T08:38:28.105Z</updated>
+    
+    <content type="html"><![CDATA[<p>最近在使用oracle exp命令导出本地数据库时出现一个奇怪问题–只能导出部分表！检查命令语句没有问题，无论如何设置owner参数或full参数都不行。同事机器和服务器上的oracle导出都是正常的，只有我本地出现这个问题，可想而知应该是版本差异问题了–我本地是oracle 11g而同事与服务器上的都是10g。</p>
+<p>上网一查原来oracle 11g默认是不会导出空表的。因为到表为空时，oracle不会为其分配<code>segment</code>以节省空间。解决方法有两种， 一是对空表插入数据，再rollback就产生<code>segment</code>了。但这样明显很麻烦。<br><a id="more"></a></p>
+<p>方法二：修改 <code>deferred_segment_creation</code>参数，允许为空表分配segment。修改sql如下：<br><figure class="highlight sql"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">alter</span> <span class="keyword">system</span> <span class="keyword">set</span> deferred_segment_creation=<span class="literal">false</span>;</div></pre></td></tr></table></figure></p>
+<p><strong>该参数值默认是TRUE，当改为FALSE时，无论是空表还是非空表，都分配segment。<p><br>需注意的是：该值设置后对以前导入的空表不产生作用，仍不能导出，只能对后面新增的表产生作用。</p></strong></p>
+<p>正如上面所说的，修改”deferred <em> segment </em> creation”参数只能对后面新增的表有效，对于当前的空表需要单独设置。</p>
+<p>先查询出所有空表：<br><figure class="highlight sql"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">select</span> <span class="string">'alter table '</span>||table_name||<span class="string">' allocate extent;'</span> <span class="keyword">from</span> user_tables <span class="keyword">where</span> num_rows=<span class="number">0</span></div></pre></td></tr></table></figure></p>
+<p>得到类似下面的结果：</p>
+<p><img src="http://i.imgur.com/15qaWnV.png" alt=""> </p>
+<p>导出结果，并执行这些语句，完成后这些空表便可以成功导出了。</p>
+]]></content>
+    
+    <summary type="html">
+    
+      Oracle11g无法导出空表的问题
+    
+    </summary>
+    
+      <category term="Oracle" scheme="http://www.justin-x.cn/categories/Oracle/"/>
+    
+    
+      <category term="Oracle" scheme="http://www.justin-x.cn/tags/Oracle/"/>
+    
+      <category term="数据库" scheme="http://www.justin-x.cn/tags/%E6%95%B0%E6%8D%AE%E5%BA%93/"/>
+    
+      <category term="数据库备份" scheme="http://www.justin-x.cn/tags/%E6%95%B0%E6%8D%AE%E5%BA%93%E5%A4%87%E4%BB%BD/"/>
+    
+      <category term="Oracle备份" scheme="http://www.justin-x.cn/tags/Oracle%E5%A4%87%E4%BB%BD/"/>
+    
+      <category term="Oracle11g" scheme="http://www.justin-x.cn/tags/Oracle11g/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>spring中@Autowired与@Resource的区别</title>
+    <link href="http://www.justin-x.cn/2015/09/21/Spring-different_@Autowired_@Resource/"/>
+    <id>http://www.justin-x.cn/2015/09/21/Spring-different_@Autowired_@Resource/</id>
+    <published>2015-09-21T09:57:14.000Z</published>
+    <updated>2016-09-13T08:38:28.100Z</updated>
+    
+    <content type="html"><![CDATA[<p><em>原文：<a href="http://www.cnblogs.com/suneryong/p/4311829.html" target="_blank" rel="external">http://www.cnblogs.com/suneryong/p/4311829.html</a></em></p>
+<p>1、@Autowired与@Resource都可以用来装配bean. 都可以写在字段上,或写在setter方法上。</p>
+<p>2、@Autowired默认按类型装配（这个注解是属业spring的），默认情况下必须要求依赖对象必须存在，如果要允许null 值，可以设置它的required属性为false，如：@Autowired(required=false) ，如果我们想使用名称装配可以结合@Qualifier注解进行使用，如下：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="meta">@Autowired</span>() <span class="meta">@Qualifier</span>(<span class="string">"baseDao"</span>)     </div><div class="line"><span class="keyword">private</span> BaseDao baseDao;</div></pre></td></tr></table></figure></p>
+<a id="more"></a>
+<p> 3、@Resource（这个注解属于J2EE的），默认安照名称进行装配，名称可以通过name属性进行指定，<br>如果没有指定name属性，当注解写在字段上时，默认取字段名进行按照名称查找，如果注解写在setter方法上默认取属性名进行装配。 当找不到与名称匹配的bean时才按照类型进行装配。但是需要注意的是，如果name属性一旦指定，就只会按照名称进行装配。<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="meta">@Resource</span>(name=<span class="string">"baseDao"</span>)     </div><div class="line"><span class="keyword">private</span> BaseDao baseDao;</div></pre></td></tr></table></figure></p>
+<p>@Resource注解在字段上，这样就不用写setter方法了，并且这个注解是属于J2EE的，减少了与spring的耦合。</p>
+]]></content>
+    
+    <summary type="html">
+    
+      spring中@Autowired与@Resource的区别
+    
+    </summary>
+    
+      <category term="java" scheme="http://www.justin-x.cn/categories/java/"/>
+    
+    
+      <category term="J2EE" scheme="http://www.justin-x.cn/tags/J2EE/"/>
+    
+      <category term="Spring" scheme="http://www.justin-x.cn/tags/Spring/"/>
+    
+      <category term="JAVA" scheme="http://www.justin-x.cn/tags/JAVA/"/>
+    
+      <category term="web" scheme="http://www.justin-x.cn/tags/web/"/>
+    
+      <category term="SSH" scheme="http://www.justin-x.cn/tags/SSH/"/>
+    
+      <category term="依赖注入" scheme="http://www.justin-x.cn/tags/%E4%BE%9D%E8%B5%96%E6%B3%A8%E5%85%A5/"/>
+    
+      <category term="依赖翻转" scheme="http://www.justin-x.cn/tags/%E4%BE%9D%E8%B5%96%E7%BF%BB%E8%BD%AC/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>Oracle数据导出导入</title>
+    <link href="http://www.justin-x.cn/2015/09/15/oracle-data_exp_and_imp/"/>
+    <id>http://www.justin-x.cn/2015/09/15/oracle-data_exp_and_imp/</id>
+    <published>2015-09-15T09:57:14.000Z</published>
+    <updated>2016-09-13T08:38:28.105Z</updated>
+    
+    <content type="html"><![CDATA[<ul>
+<li><p>使用exp命令数据导出</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line"> <span class="comment">##完全： </span></div><div class="line">     EXP SYSTEM/MANAGER BUFFER=64000 FILE=C:\FULL.DMP FULL=Y </div><div class="line">  如果要执行完全导出，必须具有特殊的权限 </div><div class="line"></div><div class="line"><span class="comment">##用户模式： 导出指定用户的所有表，OWNER参数用来指定用户</span></div><div class="line">     EXP SONIC/SONIC    BUFFER=64000 FILE=C:\SONIC.DMP OWNER=SONIC </div><div class="line">    </div><div class="line"> <span class="comment">##表模式：导出指定用户的指定表 OWNER参数指定用户，TABLES指定表，多个用逗号隔开</span></div><div class="line">     EXP SONIC/SONIC    BUFFER=64000 FILE=C:\SONIC.DMP OWNER=SONIC TABLES=(SONIC)</div><div class="line">   </div><div class="line"> <span class="comment">##参数full=y表示导出整个数据库，如果不指定默认导出所有当前链接用户下的对象</span></div></pre></td></tr></table></figure>
+</li>
+<li><p>使用imp命令数据导入</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line"><span class="comment">##完全： </span></div><div class="line">    IMP SYSTEM/MANAGER BUFFER=64000 FILE=C:\FULL.DMP FULL=Y </div><div class="line"></div><div class="line"><span class="comment">##用户模式： 将用户sonic的对象导入到用户sonic下</span></div><div class="line">    IMP SONIC/SONIC    BUFFER=64000 FILE=C:\SONIC.DMP FROMUSER=SONIC TOUSER=SONIC </div><div class="line">   </div><div class="line"><span class="comment">##表模式： </span></div><div class="line">    EXP SONIC/SONIC    BUFFER=64000 FILE=C:\SONIC.DMP OWNER=SONIC TABLES=(SONIC)</div></pre></td></tr></table></figure>
+</li>
+</ul>
+<a id="more"></a>
+<h1 id="2015-10-12更新"><a href="#2015-10-12更新" class="headerlink" title="2015-10-12更新"></a>2015-10-12更新</h1><h1 id="exp-与-imp-性能调优"><a href="#exp-与-imp-性能调优" class="headerlink" title="exp 与 imp 性能调优"></a>exp 与 imp 性能调优</h1><h2 id="一、Exp调优"><a href="#一、Exp调优" class="headerlink" title="一、Exp调优"></a>一、Exp调优</h2><p>1.使用DIRECT和RECORDLENGTH选项</p>
+<p>DIRECT参数定义了导出是使用直接路径方式(DIRECT=Y)，还是常规路径方式(DIRECT=N)。常规路径导出使用SQL SELECT语句从表中抽取数据，直接路径导出则是将数据直接从磁盘读到PGA再原样写入导出文件，从而避免了SQL命令处理层的数据转换过程，大大提高了导出效率。在数据量大的情况下，直接路径导出的效率优势更为明显，可比常规方法速度提高三倍之多。</p>
+<p>和DIRECT=Y配合使用的是RECORDLENGTH参数，它定义了Export I/O缓冲的大小，作用类似于常规路径导出使用的BUFFER参数。建议设置RECORDLENGTH参数为最大I/O缓冲，即65535(64kb)。其用法如下：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">exp userid=system/manager full=y direct=y recordlength=65535 file=</div><div class="line">exp_full.dmp <span class="built_in">log</span>=exp_full.log</div></pre></td></tr></table></figure></p>
+<p>直接路径导出根据Oracle版本不同，有一些使用限制。比较重要的限制有，8i及以下版本不支持导出客户端和数据库的字符集转换，因此导出前必须保证NLS_LANG设置正确;8.1.5及以下版本不支持导出含LOBs对象的表;不能使用QUERY参数等。</p>
+<p>2.使用管道技术</p>
+<p>管道是从一个程序进程向另一个程序进程单向传送信息的技术。通常，管道把一个进程的输出传给另一进程作为输入。如果导出的数据量很大，可以利用管道直接生成最终的压缩文件，所耗费的时间和不压缩直接导出的时间相当。这样一来，不仅能够解决磁盘空间不足的问题，而且省去了单独压缩文件的时间;如果需要传输导出文件，还可以减少网络传输的时间。比如，一个10G的文件单独压缩可能需要半小时以上的时间。虽然管道技术不能够直接缩短Exp/Imp本身的时间，但节省出来的压缩时间非常可观。管道和Exp结合的具体使用方法如下：</p>
+<p>导出数据示例：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">% mknod /tmp/exp_pipe p <span class="comment"># Make the pipe</span></div><div class="line">% compress &lt; /tmp/exp_pipe &gt; export.dmp.Z &amp; <span class="comment"># Background compress</span></div><div class="line">% exp file=/tmp/exp_pipe <span class="comment"># Export to the pipe</span></div></pre></td></tr></table></figure></p>
+<h2 id="二、Imp调优"><a href="#二、Imp调优" class="headerlink" title="二、Imp调优"></a>二、Imp调优</h2><p>Oracle Import进程需要花比Export进程数倍的时间将数据导入数据库。某些关键时刻，导入是为了应对数据库的紧急故障恢复。为了减少宕机时间，加快导入速度显得至关重要。没有特效办法加速一个大数据量的导入，但我们可以做一些适当的设定以减少整个导入时间。</p>
+<p>1.使用管道技术</p>
+<p>前面已经说明了Exp时如何使用管道，在导入时管道的作用是相同，不仅能够解决磁盘空间不足的问题，而且省去了单独解压缩文件的时间。在大数据量导入导出的时候，推荐一定要使用管道。</p>
+<p>导入数据示例：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">% mknod /tmp/imp_pipe p <span class="comment"># Make the pipe</span></div><div class="line">% uncompress &lt; export.dmp.Z &gt; /tmp/imp_pipe &amp; <span class="comment"># Background uncompress</span></div><div class="line">% imp file=/tmp/imp_pipe <span class="comment"># Import from the pipe</span></div></pre></td></tr></table></figure>
+<p>2.避免I/O竞争</p>
+<p>Import是一个I/O密集的操作，避免I/O竞争可以加快导入速度。如果可能，不要在系统高峰的时间导入数据，不要在导入数据时运行job等可能竞争系统资源的操作。</p>
+<p>3.增加排序区</p>
+<p>Oracle Import进程先导入数据再创建索引，不论INDEXES值设为YES或者NO，主键的索引是一定会创建的。创建索引的时候需要用到排序区，在内存大小不足的时候，使用临时表空间进行磁盘排序，由于磁盘排序效率和内存排序效率相差好几个数量级。增加排序区可以大大提高创建索引的效率，从而加快导入速度。</p>
+<p>8i及其以下版本：导入数据前增加数据库的sort_area_size大小，可设为正常值的5-10倍。但这个值设定会影响到所有会话，设的过高有可能导致内存不足出现paging, swapping现象。更为稳妥的方法是，对于大表和索引特别多的表，只导数据不导索引。导完数据后，创建一个会话，设定当前会话的sort_area_size一个足够大的值，再手工创建索引。</p>
+<p>9i：在workarea_size_policy=AUTO的情况下，所有会话的UGA共用pga_aggregate_target定义的内存，不必单独设定sort_area_size。导入数据前增加pga_aggregate_target大小，如果机器内存够大，可从通常设定的500M提高到1-2G。pga_aggregate_target大小可以动态调整，导入完成后可在线调回原值。</p>
+<p>4.调整BUFFER选项</p>
+<p>Imp参数BUFFER定义了每一次读取导出文件的数据量，设的越大，就越减少Import进程读取数据的次数，从而提高导入效率。BUFFER的大小取决于系统应用、数据库规模，通常来说，设为百兆就足够了。其用法如下：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">imp user2/<span class="built_in">pwd</span> fromuser=user1 touser=user2 file=/tmp/imp_db_pipe1 commi</div><div class="line">t=y feedback=10000 buffer=10240000</div></pre></td></tr></table></figure></p>
+<p>5.使用COMMIT=Y选项</p>
+<p>COMMIT=Y表示每个数据缓冲满了之后提交一次，而不是导完一张表提交一次。这样会大大减少对系统回滚段等资源的消耗，对顺利完成导入是有益的。</p>
+<p>6.使用INDEXES=N选项</p>
+<p>前面谈到增加排序区时，说明Imp进程会先导入数据再创建索引。导入过程中建立用户定义的索引，特别是表上有多个索引或者数据表特别庞大时，需要耗费大量时间。某些情况下，需要以最快的时间导入数据，而索引允许后建，我们就可以使用INDEXES=N 只导入数据不创建索引，从而加快导入速度。</p>
+<p>我们可以用INDEXFILE选项生成创建索引的DLL脚本，再手工创建索引。我们也可以用如下的方法导入两次，第一次导入数据，第二次导入索引。其用法如下：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">imp user2/<span class="built_in">pwd</span> fromuser=user1 touser=user2 file=/tmp/imp_db_pipe1 commit=y feed</div><div class="line">back=10000 buffer=10240000 ignore=y rows=y indexes=n</div><div class="line">imp user2/<span class="built_in">pwd</span> fromuser=user1 touser=user2 file=/tmp/imp_index_pipe1 comm</div><div class="line">it=y feedback=10000 buffer=10240000 ignore=y rows=n indexes=y</div></pre></td></tr></table></figure></p>
+<p>7.增加LARGE_POOL_SIZE</p>
+<p>如果在init.ora中配置了MTS_SERVICE，MTS_DISPATCHERS等参数，tnsnames.ora中又没有(SERVER=DEDICATED)的配置，那么数据库就使用了共享服务器模式。在MTS模式下，Exp/Imp操作会用到LARGE_POOL，建议调整LARGE_POOL_SIZE到150M。</p>
+<p>检查数据库是否在MTS模式下：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">SQL&gt;select distinct server from v<span class="variable">$session</span>;</div></pre></td></tr></table></figure></p>
+<p>如果返回值出现none或shared，说明启用了MTS。</p>
+]]></content>
+    
+    <summary type="html">
+    
+      Oracle数据导出导入
+    
+    </summary>
+    
+      <category term="Oracle" scheme="http://www.justin-x.cn/categories/Oracle/"/>
+    
+    
+  </entry>
+  
+  <entry>
+    <title>配置Git支持大小写敏感</title>
+    <link href="http://www.justin-x.cn/2015/09/10/git-letter_cast_problem/"/>
+    <id>http://www.justin-x.cn/2015/09/10/git-letter_cast_problem/</id>
+    <published>2015-09-10T09:57:14.000Z</published>
+    <updated>2016-09-13T08:38:28.102Z</updated>
+    
+    <content type="html"><![CDATA[<ul>
+<li>方案一是设置Git大小写敏感：</li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ git config core.ignorecase <span class="literal">false</span></div></pre></td></tr></table></figure>
+<ul>
+<li>方案二是先删除文件，再添加进去：<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">$ git rm ; git add  ;  </div><div class="line">$ git commit -m <span class="string">"rename file"</span></div></pre></td></tr></table></figure>
+</li>
+</ul>
+<a id="more"></a>]]></content>
+    
+    <summary type="html">
+    
+      Git 提交时大小写的问题
+    
+    </summary>
+    
+      <category term="Git" scheme="http://www.justin-x.cn/categories/Git/"/>
+    
+    
+      <category term="github" scheme="http://www.justin-x.cn/tags/github/"/>
+    
+      <category term="git" scheme="http://www.justin-x.cn/tags/git/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>字符集与编码</title>
+    <link href="http://www.justin-x.cn/2015/09/08/character_and_encoding/"/>
+    <id>http://www.justin-x.cn/2015/09/08/character_and_encoding/</id>
+    <published>2015-09-08T09:57:14.000Z</published>
+    <updated>2016-09-13T08:38:28.101Z</updated>
+    
+    <content type="html"><![CDATA[<p><em>以下内容转自 <a href="http://www.cnblogs.com/skynet/archive/2011/05/03/2035105.html" target="_blank" rel="external">http://www.cnblogs.com/skynet/archive/2011/05/03/2035105.html</a></em></p>
+<h1 id="什么是字符集与字符编码？"><a href="#什么是字符集与字符编码？" class="headerlink" title="什么是字符集与字符编码？"></a>什么是字符集与字符编码？</h1><hr>
+<p><strong>字符集</strong> （Charset）：是一个系统支持的所有抽象字符的集合。字符是各种文字和符号的总称，包括各国家文字、标点符号、图形符号、数字等。<br>常见字符集名称：ASCII字符集、GB2312字符集、BIG5字符集、GB18030字符集、Unicode字符集等</p>
+<p><strong>字符编码</strong>（Character Encoding）：是一套法则，使用该法则能够对自然语言的字符的一个集合（如字母表或音节表），与其他东西的一个集合（如号码或电脉冲）进行配对。即在符号集合与数字系统之间建立对应关系，它是信息处理的一项基本技术。通常人们用符号集合（一般情况下就是文字）来表达信息。而以计算机为基础的信息处理系统则是利用元件（硬件）不同状态的组合来存储和处理信息的。元件不同状态的组合能代表数字系统的数字，因此字符编码就是将符号转换为计算机可以接受的数字系统的数，称为数字代码。</p>
+<p>可以这样理解：Unicode是字符集，UTF-32/ UTF-16/ UTF-8是三种字符编码方案。<br><a id="more"></a></p>
+<h1 id="HTTP中关于字符与字符集的参数"><a href="#HTTP中关于字符与字符集的参数" class="headerlink" title="HTTP中关于字符与字符集的参数"></a>HTTP中关于字符与字符集的参数</h1><hr>
+<p>在HTTP中，与字符集和字符编码相关的消息头是Accept-Charset/Content-Type，另外主区区分Accept-Charset/Accept-Encoding/Accept-Language/Content-Type/Content-Encoding/Content-Language：</p>
+<ul>
+<li>Accept-Charset：浏览器申明自己接收的字符集，这就是本文前面介绍的各种字符集和字符编码，如gb2312，utf-8（通常我们说Charset包括了相应的字符编码方案）；</li>
+</ul>
+<ul>
+<li>Accept-Encoding：浏览器申明自己接收的编码方法，通常指定压缩方法，是否支持压缩，支持什么压缩方法（gzip，deflate），（注意：这不是只字符编码）；</li>
+</ul>
+<ul>
+<li>Accept-Language：浏览器申明自己接收的语言。语言跟字符集的区别：中文是语言，中文有多种字符集，比如big5，gb2312，gbk等等；</li>
+</ul>
+<ul>
+<li>Content-Type：WEB服务器告诉浏览器自己响应的对象的类型和字符集。例如：Content-Type: text/html; charset=’gb2312’</li>
+</ul>
+<ul>
+<li>Content-Encoding：WEB服务器表明自己使用了什么压缩方法（gzip，deflate）压缩响应中的对象。例如：Content-Encoding：gzip</li>
+</ul>
+<ul>
+<li>Content-Language：WEB服务器告诉浏览器自己响应的对象的语言。</li>
+</ul>
+<h2 id="Java-web-开发中的编码问题"><a href="#Java-web-开发中的编码问题" class="headerlink" title="#Java web 开发中的编码问题#"></a>#Java web 开发中的编码问题#</h2><p><em>以下内容为作者原创，reference from 许令波 《升入分析JAVA web 技术内幕》</em><br><br></p>
+<p>##字符串编解码##<br>首先，java中最简单的编解码操作如下：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">String str=<span class="string">"我是中国人"</span>;</div><div class="line"><span class="comment">//解码为字节数组</span></div><div class="line"><span class="comment">//采用UTF-8解码，若不指明编码将采用当前工作空间默认编码</span></div><div class="line">String[] strByte=str.getBytes(<span class="string">"UTF-8"</span>);</div><div class="line"><span class="comment">//编码，若不指明编码将采用当前工作空间默认编码</span></div></pre></td></tr></table></figure></p>
+<p>以上代码是java 中最简单的字符串编解码操作，但是应用广泛。</p>
+<p><em>几种常用的编码格式比较：</em><br>GBK与GB2312都是处理汉字常用的编码，但由于GBK比GB2312支持的汉字范围更大，所有推荐使用GBK。<br>UTF-8与UTF-16都是处理UNICODE的编码，其中UTF-16效率更高，适合在内存中操作(java的内存编码就采用了UTF-16)，但由于UTF-16采用定长双字节表示字符，占用资源较大，加上网络传输容易损坏字节难以恢复，所以并不适合在网络上传输。</p>
+<p>UTF-8由于其对ASCII字符采用单字节编码，对中文或其他ASCII以外字符才采用多字节编码，因而网络传输中的字节损坏并不会造成整个字符串不可辨认的问题。另外它的效率鉴于GBK与UTF-16之间，故而非常适合java web开发。这样就是为什么现在公司几乎所有项目都要求使用utf-8。</p>
+<p>##URL编码##<br>首先看下一个url的组成：<br><strong>以下是使用get发送进行的一次请求，对于POST请求，它的参数编解码与get不同，将在后面叙述。</strong></p>
+<p><code>http://localhost:8080/examples/servlet/搜索?key=中国</code><br>其中出现中文的两部分分别为：</p>
+<ul>
+<li>pathIfo=”搜索” //请求的servlet</li>
+<li>queryString=”中国”  //GET请求参数，<br>以tomcat为例，pathIfo的编码是由根目录下\conf\server.xml中一下节点中URIEncoding属性决定的，如果 未设置将默认使用iso-8859-1.</li>
+</ul>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="tag">&lt;<span class="name">Connector</span> <span class="attr">port</span>=<span class="string">"8080"</span> <span class="attr">protocol</span>=<span class="string">"HTTP/1.1"</span> <span class="attr">connectionTimeout</span>=<span class="string">"20000"</span> <span class="attr">redirectPort</span>=<span class="string">"8443"</span> <span class="attr">URIEncoding</span>=<span class="string">"utf-8"</span>/&gt;</span></div></pre></td></tr></table></figure>
+<p>对于queryString部分的解码是在第一次调用HttpServletRequest对象的getParameter();方法时开始的。它的解码要么是由Http Header中的contentType决定，要么就是默认的iso-8859-1。如果要设置使用contentType定义的charset作为解码方式则需要在server.xml中对&lt;connector&gt;节点进行修改，增加属性useBodyEncodingforURI=”true”。如下：<br><figure class="highlight xml"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="tag">&lt;<span class="name">Connector</span> <span class="attr">port</span>=<span class="string">"8080"</span> <span class="attr">protocol</span>=<span class="string">"HTTP/1.1"</span> <span class="attr">connectionTimeout</span>=<span class="string">"20000"</span> <span class="attr">redirectPort</span>=<span class="string">"8443"</span> <span class="attr">URIEncoding</span>=<span class="string">"utf-8"</span> <span class="attr">useBodyEncodingforURI</span>=<span class="string">"true"</span> /&gt;</span></div></pre></td></tr></table></figure></p>
+<p><strong>注意！这个参数的名称可能会让你觉得是对整个uri都采用bodyEncoding，其实不然，它只影响queryString部分的编码。</strong></p>
+<p><strong>POST请求的参数编解码：</strong><br>POST请求的参数是通过HTTP BODY传输的，默认使用contentType定义的charset作为浏览器编码与服务端解码方式，所以一般不会出现乱码。而且这个编码我可以通过HttpServletRequest对象的setCharacterEncoding();来自行设置。</p>
+<p><strong>注意！setCharacterEncoding();方法必须要在第一次调用getParameter();方法之前调用，否则将会失效。</strong></p>
+<p><strong>Cookie,redirectPath编解码：</strong><br><strong>Http Header中的Cookie,redirectPath的编码不能进行设置，默认使用iso-8859-1，所以这两部分不能出现中文！</strong></p>
+<p><strong>Response编解码</strong><br>对于后台返回浏览的响应数据的编解码，我们可以通过HttpResponse的setCharacter();方法进行设置，它会改变浏览器收到的header中Content-Type的charset，如果没有设置，将使用<br>&lt;meta http-equiv=”content-type” content=”text/html; charset=GBK”/&gt;中的charset来解码。否则使用默认iso-8859-1;</p>
+]]></content>
+    
+    <summary type="html">
+    
+      Java中的字符集与编码
+    
+    </summary>
+    
+      <category term="其它" scheme="http://www.justin-x.cn/categories/%E5%85%B6%E5%AE%83/"/>
+    
+    
+      <category term="字符集与编码" scheme="http://www.justin-x.cn/tags/%E5%AD%97%E7%AC%A6%E9%9B%86%E4%B8%8E%E7%BC%96%E7%A0%81/"/>
+    
+      <category term="中文乱码" scheme="http://www.justin-x.cn/tags/%E4%B8%AD%E6%96%87%E4%B9%B1%E7%A0%81/"/>
+    
+      <category term="web开发" scheme="http://www.justin-x.cn/tags/web%E5%BC%80%E5%8F%91/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>Octopress个性配置</title>
+    <link href="http://www.justin-x.cn/2015/05/24/octopress-customizerSet/"/>
+    <id>http://www.justin-x.cn/2015/05/24/octopress-customizerSet/</id>
+    <published>2015-05-24T09:57:14.000Z</published>
+    <updated>2016-09-13T08:38:28.105Z</updated>
+    
+    <content type="html"><![CDATA[<p>Octopress 有许多可以个性化设置的地方。<br>简单的可以通过’rake install[ThemeName]’ 安装主题。 也可以修改导航、增加自定义页面、侧边栏等。当然，增加插件什么也不在话下，如果会Ruby语言，也可以自己写插件。大部分的配置在官网上就能查到（<a href="http://octopress.org/help/" target="_blank" rel="external">octopress-help</a>）。为方便日后查看，在此也做个简单的整理。</p>
+<a id="more"></a>
+<h2 id="一、-config-yml-全局配置"><a href="#一、-config-yml-全局配置" class="headerlink" title="一、_config.yml 全局配置"></a>一、_config.yml 全局配置</h2><hr>
+<p>Octopress根目录下有一个_config.yml文件，这个是全局配置文件。一般的，刚装好需要设置下面几项基本的参数：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line">url: http://xiongqi215.github.io            # 博客地址</div><div class="line">title: Justin-Blog          	                # 博客标题</div><div class="line">subtitle: 用心甘情愿的态度，过随遇而安的生活    # 副标题</div><div class="line">author: Justin                              # 你的姓名、网名</div><div class="line">simple_search: https://www.baidu.com/      # 搜索引擎</div><div class="line">description: Justin的个人博客 Octopress BootStrap 响应式布局                              </div><div class="line"># 博客默认的描述，出现在HTML页面中的 meta 中的 description</div><div class="line"></div><div class="line">subscribe_rss:                   # Url for your blog&apos;s feed, defauts to /atom.xml</div><div class="line">subscribe_email:                # Url to subscribe by email (service required)</div><div class="line">email:              # Email address for the RSS feed if you want it.</div></pre></td></tr></table></figure></p>
+<p><strong>注：参数值与前面的’:’之间必须要有个空格！</strong></p>
+<p>##二，添加多说评论</p>
+<hr>
+<p>Octopress 默认使用<code>Disqus</code>作为社交评论工具，由于国内网络问题，我们需要改为<code>多说</code>。</p>
+<p>首先登陆<a href="http://duoshuo.com/" target="_blank" rel="external">多说</a>注册账号，然后点击<code>我要安装</code>，填入站点与个人信息，创建。</p>
+<p><img src="http://i.imgur.com/KhU01wA.png" alt=""></p>
+<p>复制代码：</p>
+<p><img src="http://i.imgur.com/xCQbtOr.png" alt=""></p>
+<p>打开_config.yml文件，关闭Disqus评论开关，增加多说评论开关</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">disqus_show_comment_count: false</div><div class="line"></div><div class="line">#duoshuo</div><div class="line">duoshuo_comments: true</div></pre></td></tr></table></figure>
+<p>在<code>source/_includes/post/</code>新建<code>duoshuo_thread.html</code>将刚才复制的代码粘贴进去。按如下代码修改：</p>
+<ul>
+<li>将data-thread-key值改为{{page.id}}</li>
+<li>将data-title值改为{{ page.id }}</li>
+<li>将data-url值改为{{sit.url}}{{page.url}}</li>
+</ul>
+<p>打开<code>octopress\source\_layouts\post.html</code>,将<br><figure class="highlight xml"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">&#123;% raw %&#125;&#123;% if site.disqus_short_name and page.comments == true %&#125;&#123;% endraw %&#125;</div><div class="line">     <span class="tag">&lt;<span class="name">section</span>&gt;</span></div><div class="line">    <span class="tag">&lt;<span class="name">h1</span>&gt;</span>Comments<span class="tag">&lt;/<span class="name">h1</span>&gt;</span></div><div class="line">    <span class="tag">&lt;<span class="name">div</span> <span class="attr">id</span>=<span class="string">"disqus_thread"</span> <span class="attr">aria-live</span>=<span class="string">"polite"</span>&gt;</span>&#123;% raw %&#125;&#123;% include post/disqus_thread.html %&#125;&#123;% endraw %&#125;<span class="tag">&lt;/<span class="name">div</span>&gt;</span></div><div class="line">    <span class="tag">&lt;/<span class="name">section</span>&gt;</span></div><div class="line">&#123;% raw %&#125;&#123;% endif %&#125;&#123;% endraw %&#125;</div></pre></td></tr></table></figure></p>
+<p>替换为：<br><figure class="highlight xml"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">&#123;% raw %&#125; &#123;% if site.duoshuo_comments == true %&#125;&#123;% endraw %&#125;</div><div class="line"></div><div class="line">    <span class="tag">&lt;<span class="name">section</span>&gt;</span></div><div class="line">      <span class="tag">&lt;<span class="name">h1</span>&gt;</span>评论<span class="tag">&lt;/<span class="name">h1</span>&gt;</span></div><div class="line">      <span class="tag">&lt;<span class="name">div</span> <span class="attr">id</span>=<span class="string">"disqus_thread"</span> <span class="attr">aria-live</span>=<span class="string">"polite"</span>&gt;</span>&#123;% raw %&#125;&#123;% include duoshuo_thread.html %&#125;&#123;% endraw %&#125;<span class="tag">&lt;/<span class="name">div</span>&gt;</span></div><div class="line">    <span class="tag">&lt;/<span class="name">section</span>&gt;</span></div><div class="line"></div><div class="line">&#123;% raw %&#125;&#123;% endif %&#125;&#123;% endraw %&#125;</div></pre></td></tr></table></figure></p>
+<p>执行<code>rake generate</code> 和 <code>rake preview</code> 查看效果吧^.^</p>
+<p>##三、添加分享工具<br>打开_config.yml文件，关闭Twitter分享开关，增加JiaThis评论开关<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">twitter_tweet_button: flase</div><div class="line"></div><div class="line">#jiathis</div><div class="line">jiathis_share: true</div></pre></td></tr></table></figure></p>
+<p>从<a href="http://www.jiathis.com/" target="_blank" rel="external">jiaThis</a>上获取代码，这个比较简单，就不在这罗列了。<br>在<code>octopress\source\_includes\post</code>下新建<code>jiathis.html</code>，并将jiathis代码放入。接着将<code>octopress\source\_includes\sharing.html</code> 中以下代码：</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">&#123;% raw %&#125;&#123;% if site.twitter_tweet_button %&#125;</div><div class="line"></div><div class="line">  <span class="tag">&lt;<span class="name">a</span> <span class="attr">href</span>=<span class="string">"http://twitter.com/share"</span> <span class="attr">class</span>=<span class="string">"twitter-share-button"</span> <span class="attr">data-url</span>=<span class="string">"&#123;&#123; site.url &#125;&#125;&#123;&#123; page.url &#125;&#125;"</span> <span class="attr">data-via</span>=<span class="string">"&#123;&#123; site.twitter_user &#125;&#125;"</span> <span class="attr">data-counturl</span>=<span class="string">"&#123;&#123; site.url &#125;&#125;&#123;&#123; page.url &#125;&#125;"</span> &gt;</span>Tweet<span class="tag">&lt;/<span class="name">a</span>&gt;</span></div><div class="line"></div><div class="line">  &#123;% endif %&#125;</div><div class="line">&#123;% endif %&#125;&#123;% endraw %&#125;</div></pre></td></tr></table></figure>
+<p>替换为：<br><figure class="highlight xml"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">&#123;% raw %&#125;&#123;% if site.twitter_tweet_button %&#125;</div><div class="line">&#123;% include post/jiathis.html %&#125;</div><div class="line">  &#123;% endif %&#125;</div><div class="line">&#123;% endif %&#125;&#123;% endraw %&#125;</div></pre></td></tr></table></figure></p>
+]]></content>
+    
+    <summary type="html">
+    
+      Octopress个人博客搭建,Octopress 个性化
+    
+    </summary>
+    
+      <category term="Octopress" scheme="http://www.justin-x.cn/categories/Octopress/"/>
+    
+    
+  </entry>
+  
+  <entry>
+    <title>Octopress个人博客搭建</title>
+    <link href="http://www.justin-x.cn/2015/05/22/octopress-envbuild/"/>
+    <id>http://www.justin-x.cn/2015/05/22/octopress-envbuild/</id>
+    <published>2015-05-22T07:11:02.000Z</published>
+    <updated>2016-09-13T08:38:28.105Z</updated>
+    
+    <content type="html"><![CDATA[<p><img src="http://i.imgur.com/47kd0XA.png" alt=""></p>
+<p><strong>一直想要做一个属于自己的博客网站。</strong></p>
+<p>试过在<code>新浪</code>，<code>CSDN</code>上写博客，但总感觉不是很爽，缺少个性化（博主是水瓶座）。后来开始学习PHP，想用wordpress搭建个人网站。学习中发现，wordpress做为个人博客构建工具实在不够轻便，光安装不同的主机提供商就有各种不同的方法，而且wordpress过于强大的功能也让它不在局限于做博客了。</p>
+<p>Octopress基于Jekyll使用<code>Ruby</code>语言编写，实质是一个静态html生成工具，利用Markdown语言编写博客文章，在通过Github提供的page服务向外发布。<br>这样好处是明显的,安装好自己主题后，博客撰写不在需要关注如何展示（省去了文字编辑器），而是关注文章内容本身。<br>另外，最重要一点事省去了租用主机的费用，Github的服务免费的。<br><a id="more"></a><br>不过Octopress也有明显不足的地方，最为头疼的是前期的环境准备工作。<br>搭建Octopress需安装的程序:</p>
+<ul>
+<li>Git-1.9.5</li>
+<li>rubyinstaller-2.1.3</li>
+<li>DevKit</li>
+</ul>
+<p>另外，编辑makdown可以选择<br><code>markdownpad2</code> 与 <code>awesomium_v1.6.6_sdk_win</code> 的组合。</p>
+<p>以上程序我已经放到云盘啦（64位）：<a href="http://pan.baidu.com/s/1mgoqUxU" target="_blank" rel="external">点击下载</a> 。</p>
+<h2 id="一、git环境搭建"><a href="#一、git环境搭建" class="headerlink" title="一、git环境搭建"></a>一、git环境搭建</h2><hr>
+<p>先注册<a href="https://github.com/" target="_blank" rel="external">Github</a>账号。</p>
+<p>安装完Git-1.9.5后，需要完成本地与github的链接。</p>
+<p>打开git bash窗口（鼠标右键菜单中选择），输入以下两条命令：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">git config --global user.name <span class="string">"你的github账号"</span></div><div class="line">git config --global user.email<span class="string">"你的github注册邮箱"</span></div></pre></td></tr></table></figure></p>
+<p>执行命令生成SSH密钥对:<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">ssh-keygen -C <span class="string">"username@email.com"</span> -t rsa</div></pre></td></tr></table></figure></p>
+<p><strong>注：出现提示如下两条提示：</strong><br><strong>Enter file in which to save the key (/c/Users/Administrator/.ssh/id_rsa):</strong><br><strong>若不输入文件名，秘钥文件将默认保存到c/Users/Administrator/.ssh/id_rsa （Administrator为当前系统用户）</strong><br><strong>Enter passphrase (empty for no passphrase):</strong><br><strong>输入密码，可以为空。若设置密码，后期每次提交github都需要输入密码。</strong></p>
+<p>登入github，进入setting选择SSH KEYS，点击add ssh key，<br>打开前面生成的id_rsa.pub文件，将其中内容粘贴到github中。</p>
+<p><img src="http://i.imgur.com/9pwWnLx.png" alt=""></p>
+<p>打开git bash 输入：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ ssh -T git@github. com</div></pre></td></tr></table></figure></p>
+<p>执行后若出现一下成功信息，则表示已经与github完成绑定。<br><!--more--></p>
+<h2 id="二、ruby环境搭建"><a href="#二、ruby环境搭建" class="headerlink" title="二、ruby环境搭建"></a>二、ruby环境搭建</h2><hr>
+<p>安装rubyinstaller-2.1.3-x64，解压DevKit-mingw64-64-4.7.2-20130224-1432-sfx</p>
+<p><strong>注意DevKit解压路径不可以有中文。</strong></p>
+<p><strong>安装rubyinstaller-2.1.3-x64要按下图勾选设置默认环境变量：</strong><br><img src="http://i.imgur.com/1Hcn5PE.png" alt=""></p>
+<p>进入Devkit的解压目录，运行git bash, 首先使用<code>ruby --version</code> 命令测试下ruby是否成功安装。接着输入：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">ruby dk.rb init</div></pre></td></tr></table></figure>
+<p>打开<code>config.ym</code>l文件，在最后添加ruby安装目录，比如： <code>- D:\Ruby21-x64</code> 执行命令：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">ruby dk.rb install</div></pre></td></tr></table></figure>
+<p><strong>注：<br>若出现任何错误都与config.yml文件中设置的ruby路径有关，请仔细检查。</strong></p>
+<h2 id="三、安装octopress"><a href="#三、安装octopress" class="headerlink" title="三、安装octopress:"></a>三、安装octopress:</h2><p>从github上下载octopress，打开git bash 输入命令：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">git <span class="built_in">clone</span> git://github.com/imathis/octopress.git octopress</div></pre></td></tr></table></figure></p>
+<p>由于国内网络问题，下载可能出现几次网络错误，需要多试几次。</p>
+<p>下载完成后，进入octpress目录，打开git bash。接下来需要为octopress安装默认依赖包。但还是由于国内的网络问题，我们先设置下下载地址到国内的镜像上,执行命令：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">gem sources --remove https://rubygems.org/</div><div class="line">gem sources <span class="_">-a</span> http://ruby.taobao.org/</div></pre></td></tr></table></figure></p>
+<p><strong>这里非常感谢淘宝提供的软件镜像；</strong></p>
+<p>打开octopress目录下的 <code>GemFile</code> 文件 修改source 为<code>http://ruby.taobao.org/</code><br>执行命令：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">gem install bundler</div><div class="line"></div><div class="line">bundle install</div></pre></td></tr></table></figure></p>
+<p>等待几分钟…….完成后执行，用于安装默认主题：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">rake install</div></pre></td></tr></table></figure></p>
+<p><strong>恭喜，所有本地环境配置完成！！！</strong></p>
+<p>现在，我们便可以运行我们的博客了。执行两个重要命令：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">rake generate //生成网页</div><div class="line">rake preview //启动本地预览，默认端口4000。</div></pre></td></tr></table></figure></p>
+<p>打开浏览器输入localhost:4000,预览你的博客网站吧^.^ 。</p>
+<p><strong>注：从第四步开始，所有的命令、操作都在octopress目录下执行。</strong></p>
+<h2 id="四、开始写博文"><a href="#四、开始写博文" class="headerlink" title="四、开始写博文"></a>四、开始写博文</h2><hr>
+<p>Ok,既然环境搭建好了，我们开始写博客吧。<br>通过<code>rake new_post[&quot;title&quot;]</code>命令，在source/_post下创建一个新的文章，默认文件名如下面的格式:2012-02-16-title.markdown。<br>然后可以用<code>VIM</code>或打<code>Markdownpad</code> 开该文件，并在其中输入/编辑文章内容。<br>再次执行<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">rake generate</div><div class="line">rake preview</div></pre></td></tr></table></figure></p>
+<p>打开浏览器就就能看到刚才文章了啦。</p>
+<h2 id="五、将博客部署到Github上"><a href="#五、将博客部署到Github上" class="headerlink" title="五、将博客部署到Github上"></a>五、将博客部署到Github上</h2><hr>
+<p>现在我们将博客部署到Github上。</p>
+<p>部署前需要先要在<a href="https://github.com/" target="_blank" rel="external">Github</a>上创建一个名为：<code>username.github.io</code>的repository， 然后使用’rake setup_github_pages’命令将自己的Blog与上述的repository关联起来。 根据提示输入：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">git@github.com:username/username.github.io.git</div></pre></td></tr></table></figure></p>
+<p><strong>注：username替换为自己github的账户名。</strong></p>
+<p>然后就可以通过下面的命令来部署自己的博客内容至Github了:<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">rake deploy  //部署</div><div class="line">//上传源码</div><div class="line">git status</div><div class="line">git add .</div><div class="line">git commit <span class="_">-a</span> -m <span class="string">'comment'</span></div><div class="line">git push origin <span class="built_in">source</span></div></pre></td></tr></table></figure></p>
+<p>开始浏览自己的博客吧！在浏览器的地址栏中输入username.github.io，打开的网站就是自己的博客了，此刻一个独立博客就如此问世了!</p>
+]]></content>
+    
+    <summary type="html">
+    
+      Octopress个人博客搭建
+    
+    </summary>
+    
+      <category term="Octopress" scheme="http://www.justin-x.cn/categories/Octopress/"/>
+    
+    
+      <category term="octopress" scheme="http://www.justin-x.cn/tags/octopress/"/>
+    
+      <category term="个人博客" scheme="http://www.justin-x.cn/tags/%E4%B8%AA%E4%BA%BA%E5%8D%9A%E5%AE%A2/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>浅析SAX,DOM,JAXP,JDOM与DOM4J之间的关系</title>
+    <link href="http://www.justin-x.cn/2014/08/21/javaXml-Api-intro/"/>
+    <id>http://www.justin-x.cn/2014/08/21/javaXml-Api-intro/</id>
+    <published>2014-08-20T16:00:00.000Z</published>
+    <updated>2016-09-13T08:38:28.103Z</updated>
+    
+    <content type="html"><![CDATA[<p><img src="http://7xrvdu.com1.z0.glb.clouddn.com/javaXmlApi.jpg" alt="java xml api"><br><em>图片来源百度</em></p>
+<p>众所周知，<code>SAX</code>与<code>DOM</code>是JAVA中两大核心XML解析API类库，而<code>JAXP</code>,<code>JDOM</code>与<code>DOM4J</code>都是基于这两大核心API而衍生出来的。今日兴起看了看相关资料，写篇文章总结总结^.^。<br><a id="more"></a></p>
+<h1 id="SAX与DOM"><a href="#SAX与DOM" class="headerlink" title="SAX与DOM"></a>SAX与DOM</h1><p>首先需要说明白的是SAX与DOM的关系。</p>
+<p><code>SAX</code>与<code>DOM</code>都是底层API，在JDK中他们的包路径分别为：org.xml.sax与org.w3c.dom。自JDK1.5开始，JDK中自带的实现为Apache的<code>xerces</code>（位于com.sun.org.apache.xerces.internal.parsers下）。</p>
+<p><code>SAX</code>是<code>Simple API for XML</code>的简称，它是在JAVA平台上第一个被广泛使用的XML API。也就说它是为JAVA而出现的。目前已经有多个语言版本，比如C++。<br><code>DOM</code>是<code>Documents Object Model</code>的简称，与SAX不同的是，DOM是<code>W3C</code>的标准，它出现的目的是为了实现一套跨平台与语言的标准。</p>
+<p>以上是它们之间的第一个不同。第二个，就是解析方式的不同。</p>
+<p>SAX是<code>基于事件解析</code>，解析过程中根据目前的XML元素类型，调用用户自己实现的回调方法（或着叫事件方法）来处理，如：<code>startDocument();</code>，<code>startElement();</code> 。<br>SAX2.0中有4个核心接口：</p>
+<ul>
+<li>org.xml.sax.ContentHander</li>
+<li>org.xml.sax.ErrorHandler</li>
+<li>org.xml.sax.DTDHandler</li>
+<li>org.xml.sax.EntityResolver</li>
+</ul>
+<p>实现这几个Handler，然后调用解析器相应的set方法注册给解析器，就可以完成各种元素的解析与处理。 对应的注册进解析器的方法分别是：</p>
+<ul>
+<li>parser.setContentHandler(ContentHander handler)</li>
+<li>parser.setErrorHandler(ErrorHandler handler)</li>
+<li>parser.setDTDHandler(DTDHandler handler)<br>完整例子：<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line"> DefaultHandler  handler=<span class="keyword">new</span> XmlParserHandler();<span class="comment">//DefaultHandler已经实现了全部org.xml.sax.ContentHandler，  </span></div><div class="line">                                                   <span class="comment">//org.xml.sax.ErrortHandler，org.xml.sax.DTDHandler和org.xml.sax.EntityHandler接口  </span></div><div class="line"> XMLReader xr=XMLReaderFactory.createXMLReader();<span class="comment">//获取解析器实例  </span></div><div class="line"> xr.setContentHandler(handler);<span class="comment">//设置处理类  </span></div><div class="line">        xr.setErrorHandler(handler);  </div><div class="line">        xr.setDTDHandler(handler);  </div><div class="line">xr.setFeature(<span class="string">"http://xml.org/sax/features/validation"</span>, <span class="keyword">true</span>);<span class="comment">//开启DTD验证  </span></div><div class="line">xr.setFeature(<span class="string">"http://apache.org/xml/features/validation/schema"</span>, <span class="keyword">true</span>);<span class="comment">//开启SCHMAE验证  </span></div><div class="line">xr.parse(<span class="keyword">new</span> InputSource(<span class="string">"F:/Work/Workspace/XmlStudy/test.xml"</span>));</div></pre></td></tr></table></figure>
+</li>
+</ul>
+<p>基于事件处理的好处是，不需要等到整个XML文件被加载完成后在开始处理，而是加载到哪处理到哪。这样便带来了效率上的优势。但是其也有明显的不足，第一个不足便是无法随机访问元素。如果你只想获取第二元素的信息，那么你必须等到第一个元素处理完成后，第二个元素开始的时候。如果这时，你又需要返回第一个元素，那么对不起，已经来不及了。SAX不会主动记忆或保存已处理过的元素（为了效率）。为了实现前面的需求，开发人员需要自己使用容器来保存处理过的元素，并且建立一个模型来表示XML的树形结构。这样一来也就带来了第二个缺点，使用的复杂性。</p>
+<p>再来说说DOM。DOM采用了解析方式是<code>一次性加载</code>整个XML文档，在内存中形成一个树形的数据结构，这个数据结构我们称为文档对象模型。通过DOM解析器获取Documen文档t对象后，开发人员可以很方便的对其进行操作，如<code>getDocumentElement();（获取更元素）</code>，<code>getFirstChild();获取一个子元素</code>，<code>appendChild();增加子元素</code>，<code>removeChild();移除子元素</code>。因此，使用DOM可以很方便对XML中的数据进行获取与修改，而不需要像SAX一样自己设计模型保存获取的数据。<br>完整例子：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">DOMParser dp=<span class="keyword">new</span> DOMParser();  </div><div class="line">dp.parse(<span class="keyword">new</span> InputSource(<span class="string">"e:/test.xml"</span>));  </div><div class="line">Document doc=dp.getDocument();  </div><div class="line">Element rootElemet=doc.getDocumentElement();  </div><div class="line">NodeList list=rootElemet.getChildNodes();</div></pre></td></tr></table></figure></p>
+<p><strong>跟重要的一点是</strong>，在DOM中所有Element都是Node，这意味着，我们不需要明确知道文档的结构就可以操作它。我们可以判断当前获取到的任意Node对象类型来做不同操作。主要Node类型有：</p>
+<pre><code>- Node.DOCUMENT_NODE
+- Node.ELEMENT_NODE
+- Node.TEXT_NODE
+- Node.CDATA_SECTION_NODE
+- Node.PROCESSING_INSTRUCTION_NODE
+- Node.ENTITY_REFERENCE_NODE
+- Node.DOCUMENT_TYPE_NODE
+</code></pre><p>但是，由于DOM是一次性加载整个XML文件到内存， 如果XML文件非常庞大，构建文档树的内存与时间开销会很大，且很有可能导致内存溢出异常。</p>
+<p>那么如何在SAX与DOM直接选择呢？这取决于下面几个因素：</p>
+<ol>
+<li>应用程序的目的：如果打算对数据作出更改并将它输出为 XML，那么在大多数情况下，DOM 是适当的选择。并不是说使用 SAX 就不能更改数据，但是该过程要复杂得多，因为您必须对数据的一份拷贝而不是对数据本身作出更改。</li>
+<li>数据容量： 对于大型文件，SAX 是更好的选择。</li>
+<li>数据将如何使用：如果只有数据中的少量部分会被使用，那么使用 SAX 来将该部分数据提取到应用程序中可能更好。 另一方面，如果您知道自己以后会回头引用已处理过的大量信息，那么 SAX 也许不是恰当的选择。</li>
+<li>对速度的需要： SAX 实现通常要比 DOM 实现更快。</li>
+</ol>
+<blockquote>
+<p><code>SAX</code> 和 <code>DOM</code> 不是相互排斥的，记住这点很重要。您可以使用 DOM 来创建 SAX 事件流，也可以使用 SAX 来创建 DOM 树。事实上，用于创建 DOM 树的大多数解析器实际上都使用 SAX 来完成这个任务，比如<code>DOM4J</code>与<code>JDOM</code>！</p>
+</blockquote>
+<h1 id="JAXP-JDOM与DOM4J"><a href="#JAXP-JDOM与DOM4J" class="headerlink" title="JAXP,JDOM与DOM4J"></a>JAXP,JDOM与DOM4J</h1><h2 id="JAXP"><a href="#JAXP" class="headerlink" title="JAXP"></a>JAXP</h2><p><code>JAXP</code>，全称<code>Java API for XML Processing</code>，打开其为JDK的目录：javax.xml.parsers， 你会发现它与SAX和DOM一样只是一套API。实际上，JAXP出现时SUN公司为了弥补JAVA在XML标准制定上的空白而制定的一套JAVA XML标准API。它并没有为JAVA解析XML提供任何新功能，但是它为在JAVA获取SAX与DOM解析器提供了更加直接的途径。它封装了SAX与DOM两种接口，并在SAX与DOM的基础之上，作了一套比较简单的api以供开发。<br>例如：JAXP获取SAX解析器：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">SAXParserFactory factory=SAXParserFactory.newInstance();  </div><div class="line">SAXParser parser=factory.newSAXParser();  </div><div class="line">parser.parse(<span class="string">"F:/Work/Workspace/xiongqi/XmlStudy/test.xml"</span>, handler);</div></pre></td></tr></table></figure></p>
+<p>获取DOM解析器：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">DocumentBuilderFactory factory=DocumentBuilderFactory.newInstance();  </div><div class="line">DocumentBuilder builder= factory.newDocumentBuilder();  </div><div class="line">Document document= builder.parse(<span class="string">"F:/Work/Workspace/xiongqi/XmlStudy/test.xml"</span>);</div></pre></td></tr></table></figure></p>
+<p>在 JAXP 的早期版本中，自带解析器的实现为 Apachede 的Crimson，在 JAXP 的新版本中 （包括在 JDK 中） ，Sun 已经重新包装了 Apache Xerces 做为解析器的实现。</p>
+<h2 id="JDOM"><a href="#JDOM" class="headerlink" title="JDOM"></a>JDOM</h2><p>由于DOM是为了实现一套跨平台与语言的标准，因此使用它对于JAVA开发人员来说并不是特别的得心应手，这时<code>JDOM</code>就出现了。</p>
+<p><code>JDOM</code> 的目的是成为 Java 特定文档模型，它简化与 XML 的交互并且比使用 DOM 实现更快。而且它是第一个 Java 特定模型。与<code>DOM</code>相比较，首先，JDOM 仅使用具体类而不使用接口。这在某些方面简化了API，但是也限制了灵活性。第二，API 大量使用了 Collections 类，相对于dom中的Node，简化了那些已经熟悉这些类的Java 开发者的使用。JDOM 自身不包含解析器，默认使用随jar包一起发行的pache Xerces。</p>
+<p>例子：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">SAXBuilder builder = <span class="keyword">new</span> SAXBuilder(<span class="keyword">false</span>);  </div><div class="line">Document doc = builder.build(in);</div></pre></td></tr></table></figure>
+<p>从上面代码中可以看出，JDOM使用SAX2 解析器来解析和验证输入 XML 文档，然后构建Doucment对象。</p>
+<h2 id="DOM4J"><a href="#DOM4J" class="headerlink" title="DOM4J"></a>DOM4J</h2><p><code>DOM4J</code>  最初是 JDOM 的一个分支。它合并了许多超出基本 XML 文档表示的功能，包括集成的 XPath 支持、XML Schema 支持以及用于大文档或流化文档的基于事件的处理。它还提供了构建文档表示的选项，它通过 DOM4J API 和标准 DOM 接口具有并行访问功能。</p>
+<p>为支持所有这些功能，DOM4J 使用<code>接口</code>和<code>抽象</code>基本类方法。DOM4J 大量使用了 API 中的Collections 类，但是在许多情况下，它还提供一些替代方法以允许更好的性能或更直接的编码方法。直接好处是，虽然 DOM4J 付出了更复杂的 API 的代价，但是它提供了比 JDOM 大得多的灵活性。在添加灵活性、XPath 集成和对大文档处理的目标时，DOM4J 的目标与 JDOM 是一样的：针对 Java开发者的易用性和直观操作。它还致力于成为比 JDOM 更完整的解决方案，实现在本质上处理所有Java/XML 问题的目标。在完成该目标时，它比 JDOM 更少强调防止不正确的应用程序行为。</p>
+<p>例子：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">SAXReader reader = <span class="keyword">new</span> SAXReader(<span class="keyword">false</span>);  </div><div class="line">Document  doc = reader.read(in);</div></pre></td></tr></table></figure></p>
+<p>DOM4J 是一个非常非常优秀的Java XML API，具有性能优异、功能强大和极端易用使用的特点，同时它也是一个开放源代码的软件。如今你可以看到越来越多的 Java 软件都在使用 DOM4J 来读写 XML，特别值得一提的是连 Sun 的 JAXM 也在用 DOM4J。</p>
+]]></content>
+    
+    <summary type="html">
+    
+      SAX与DOM是JAVA中两大核心XML解析API类库，而JAXP,JDOM与DOM4J都是基于这两大核心API而衍生出来的。
+    
+    </summary>
+    
+      <category term="java" scheme="http://www.justin-x.cn/categories/java/"/>
+    
+    
+      <category term="java" scheme="http://www.justin-x.cn/tags/java/"/>
+    
+      <category term="xml" scheme="http://www.justin-x.cn/tags/xml/"/>
+    
+      <category term="SAX" scheme="http://www.justin-x.cn/tags/SAX/"/>
+    
+      <category term="DOM" scheme="http://www.justin-x.cn/tags/DOM/"/>
+    
+      <category term="JAXP" scheme="http://www.justin-x.cn/tags/JAXP/"/>
+    
+      <category term="JDOM" scheme="http://www.justin-x.cn/tags/JDOM/"/>
+    
+      <category term="DOM4J" scheme="http://www.justin-x.cn/tags/DOM4J/"/>
+    
+  </entry>
+  
+</feed>
