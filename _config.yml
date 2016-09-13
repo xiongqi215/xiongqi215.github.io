@@ -74,7 +74,7 @@ feed:
   path: atom.xml
   limit: 20
 
-theme: yilia
+theme: apollo
 
 # Deployment
 ## Docs: https://hexo.io/docs/deployment.html
