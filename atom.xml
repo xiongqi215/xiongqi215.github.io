@@ -5,7 +5,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://www.justin-x.cn/"/>
-  <updated>2016-09-13T10:10:35.751Z</updated>
+  <updated>2016-09-13T10:22:28.849Z</updated>
   <id>http://www.justin-x.cn/</id>
   
   <author>
@@ -14,6 +14,63 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>Git学习笔记（二）</title>
+    <link href="http://www.justin-x.cn/2016/03/29/git-StudyNote2/"/>
+    <id>http://www.justin-x.cn/2016/03/29/git-StudyNote2/</id>
+    <published>2016-03-28T16:00:00.000Z</published>
+    <updated>2016-09-13T10:22:28.849Z</updated>
+    
+    <content type="html"><![CDATA[<p><img src="http://7xrvdu.com1.z0.glb.clouddn.com/github_logo" alt="github"></p>
+<h2 id="远程库的使用"><a href="#远程库的使用" class="headerlink" title=" 远程库的使用"></a><a id="3.3"> 远程库的使用</a></h2><p>前面说到的都是git在本地的操作，那么实际协作开发过程中我们肯定是要有一个远程版本库作为项目的核心版本库，也就是投入生产使用的版本。这里我们以 <a href="https://github.com/" title="Github" target="_blank" rel="external">Github</a>为例。Github是一个开放的git远程服务器，首先我们先注册一个github账户，如何注册就不在这里。说了绑定本地版本库与Github远程库有两种方式，一种是以ssh协议连接，在这方式下我们需要先绑定一个ssh key，这个在下面会说。还有一种是https协议，但是使用<code>https</code>速度慢会比慢，而且每次推送(<code>push</code>)都必须输入口令，但是在某些只开放http端口的公司内部就无法使用ssh协议而只能用https。<br><a id="more"></a></p>
+<h3 id="使用Github托管自己的代码库"><a href="#使用Github托管自己的代码库" class="headerlink" title="使用Github托管自己的代码库"></a><a id="3.3.1">使用Github托管自己的代码库</a></h3><p>如果你已经注册完你的Github账户，新增需要在生成一个<code>ssh key</code>，这个key用于验证你的身份是该版本库的创立者，也就是如上面说的允许你使用<code>ssh</code>方式连接Github上的远程库。执行如下命令生成<code>ssh key</code>:<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ ssh-keygen -t rsa -C <span class="string">"youremail@example.com"</span></div></pre></td></tr></table></figure></p>
+<p><strong>注意把<code>youremail@example.com</code>改为你的邮箱。</strong> 命令执行过程只能够会要求你设置密码，这个可选的，如果设置了密码，后面每次提交也许输入密码。最后你可以在用户目录下找到.ssh文件夹（我的是<code>C:\Users\Justin\.ssh</code>)里面有<code>id_rsa</code>和<code>id_rsa.pub</code>两个文件，这两个就是SSH Key的秘钥对，<code>id_rsa</code>是私钥，不能泄露出去，<code>id_rsa.pub</code>是公钥，可以放心地告诉任何人。<br>接下来我们需要绑定这个key到你的github账户中:<br><img src="http://7xrvdu.com1.z0.glb.clouddn.com/githu%20sshkey.jpg" alt="github sshkey"><br>填上任意Title，在Key文本框里粘贴<code>id_rsa.pub</code>文件的内容,点“Add Key”，你就应该看到已经添加的Key。</p>
+<blockquote>
+<p>当然，GitHub允许你添加多个Key。假定你有若干电脑，你一会儿在公司提交，一会儿在家里提交，只要把每台电脑的Key都添加到GitHub，就可以在每台电脑上往GitHub推送了。</p>
+</blockquote>
+<p>接下来我们在Github上建立一个名为<code>gitstudy</code>的<code>Repository</code>：<br><img src="http://7xrvdu.com1.z0.glb.clouddn.com/github1.jpg" alt="github"><br><img src="http://7xrvdu.com1.z0.glb.clouddn.com/github2.jpg" alt="github"><br><img src="http://7xrvdu.com1.z0.glb.clouddn.com/github3.jpg" alt="github"><br>GitHub告诉我们，可以从这个仓库克隆出新的仓库，也可以把一个已有的本地仓库与之关联，然后，把本地仓库的内容推送到GitHub仓库。<br><strong>Github的Repository分为public 和 private 两种。 public是公共的也就是谁都能查看，如果是商业项目的话还是使用private的吧，不过github要收保护费。</strong><br>现在，我们根据GitHub的提示，在本地的仓库的目录，也就前面用到的<code>gitStudy</code>下运行命令：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">git remote add origin git@github.com:xiongqi215/gitstudy.git</div></pre></td></tr></table></figure></p>
+<p>其中<code>xiongqi215</code>更换成你的github账户。 另外<code>origin</code>是远程库在你本地的名字，这个git默认的叫法，一般情况下不需要修改。<br>下一步，就可以把本地库的所有内容推送到远程库上,使用命令<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">git push -u origin master</div></pre></td></tr></table></figure></p>
+<p>把本地库的内容推送到远程，用<code>git push</code>命令，实际上是把当前分支master推送到远程。</p>
+<p>由于远程库是空的，我们第一次推送master分支时，加上了-u参数，以后就不需要加上这个参数了：<br><a href="http://7xrvdu.com1.z0.glb.clouddn.com/git%20push.jpg" target="_blank" rel="external">github push</a><br><strong>如果前面建立ssh key的时候你设置了密码，那么push过程中你也会看到<code>Enter passphrase for key &#39;/c/Users/Justin/.ssh/id_rsa&#39;:</code>的提示，这时你需输入之前设置的密码。</strong><br>成功<code>push</code>后，查看Github上的<code>gitstudy</code>库，发现所有文件已经推送上去了，并且是最新的版本。</p>
+<h3 id="从github克隆代码库"><a href="#从github克隆代码库" class="headerlink" title="从github克隆代码库"></a><a id="3.3.2">从github克隆代码库</a></h3><p>现在，假设我们换了一台电脑，或者我们需要克隆别人在Github上的某个库时，我们需要使用<code>git clone</code>:<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">git <span class="built_in">clone</span>  git@github.com:xiongqi215/gitstudy.git</div></pre></td></tr></table></figure></p>
+<p>同样<code>xiongqi215</code>更换成你的github账户。<br><img src="http://7xrvdu.com1.z0.glb.clouddn.com/git%20clone.jpg" alt="github clone"></p>
+<p>现在，我们的已经在github建立了一个远程库，同时这个库被<code>clone</code>到了多台电脑上。<br>这时假如A电脑<code>push</code>了一些修改到远程库中，B电脑需要更新到这部分修改，那么可以使用如下命令：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">git pull origin master</div></pre></td></tr></table></figure></p>
+<p><img src="http://7xrvdu.com1.z0.glb.clouddn.com/github%20pull.jpg" alt="github pull"></p>
+<h3 id="小结"><a href="#小结" class="headerlink" title="小结"></a>小结</h3><ul>
+<li>要绑定本地库与远程库，使用命令<code>git remote add origin git@server-name:path/repo-name.git</code>。</li>
+<li>绑定后后，使用命令<code>git push -u origin master</code>第一次推送master分支的所有内容。</li>
+<li>以后，只要使用<code>git push origin master</code>推送最新修改。</li>
+<li>使用<code>git clone  git@server-name:path/repo-name.git</code>命令克隆一个远程库到本地。</li>
+<li>多台电脑可以使用 <code>git pull origin master</code>抓取相互提交到远程库中的最新修改。</li>
+</ul>
+<h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a><a id="4">总结</a></h1><p>Git是个非常高效的版本控制工具。分布式的、基于修改的管理方式非常适合多人协调完成开发工作。</p>
+<blockquote>
+<p>分布式版本系统的最大好处之一是在本地工作完全不需要考虑远程库的存在，也就是有没有联网都可以正常工作，而SVN在没有联网的时候是拒绝干活的！当有网络的时候，再把本地提交推送一下就完成了同步，真是太方便了！</p>
+</blockquote>
+<p>这次学习笔记还有很多内容没有涉及，本人还在学习当中。后面陆续补充如<code>分支管理</code>、<code>冲突处理</code>等内容。这里再提供一份命令手册供大家<a href="http://7xrvdu.com1.z0.glb.clouddn.com/git-cheatsheet.pdf" title="下载" target="_blank" rel="external">下载</a>。</p>
+<h1 id="其它详细教程"><a href="#其它详细教程" class="headerlink" title="其它详细教程"></a><a id="5">其它详细教程</a></h1><ul>
+<li><p><a href="http://iissnan.com/progit/html/zh/ch1_0.html" title="Pro Git中文翻译" target="_blank" rel="external">Pro Git中文翻译 by iissnan</a></p>
+</li>
+<li><p><a href="http://www.liaoxuefeng.com/wiki/0013739516305929606dd18361248578c67b8067c8c017b000" title="廖雪峰的官方网站" target="_blank" rel="external">廖雪峰的官方网站</a></p>
+</li>
+</ul>
+]]></content>
+    
+    <summary type="html">
+    
+      Git是一款分布式版本控制工具，该篇文章一是作为自己学习的积累，二是希望完成一个Git快速上手教程与大家分享。
+    
+    </summary>
+    
+      <category term="Git" scheme="http://www.justin-x.cn/categories/Git/"/>
+    
+    
+      <category term="github" scheme="http://www.justin-x.cn/tags/github/"/>
+    
+      <category term="git" scheme="http://www.justin-x.cn/tags/git/"/>
+    
+  </entry>
   
   <entry>
     <title>Git学习笔记（一）</title>
@@ -79,63 +136,6 @@
 <li>如果执行<code>add</code>发现修改中存在问题，可以使用<code>git reset HEAD  &lt;fileName&gt;</code> 将指定的文件修改从<code>暂存区</code>撤出。</li>
 <li>确认无误后，使用<code>git commit -m &#39;修改说明&#39;</code>将<code>暂存区</code>中的修改提交到当前分支中。在提交前，最好使用下<code>git status</code> 查看当前有哪些修改提交到暂存或哪些修改还未暂存，避免出现错误的提交或在遗漏提交。</li>
 <li>在提交完成后，假如需要版本回退，可以使用<code>git reset --hard HEAD^</code>回退指定个版本，或者使用<code>git reset --hard b7568c296</code> 回退到指定版本号，版本号可以通过<code>git log</code>查询。</li>
-</ul>
-]]></content>
-    
-    <summary type="html">
-    
-      Git是一款分布式版本控制工具，该篇文章一是作为自己学习的积累，二是希望完成一个Git快速上手教程与大家分享。
-    
-    </summary>
-    
-      <category term="Git" scheme="http://www.justin-x.cn/categories/Git/"/>
-    
-    
-      <category term="github" scheme="http://www.justin-x.cn/tags/github/"/>
-    
-      <category term="git" scheme="http://www.justin-x.cn/tags/git/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>Git学习笔记（二）</title>
-    <link href="http://www.justin-x.cn/2016/03/29/git-StudyNote2/"/>
-    <id>http://www.justin-x.cn/2016/03/29/git-StudyNote2/</id>
-    <published>2016-03-28T16:00:00.000Z</published>
-    <updated>2016-09-13T10:22:28.849Z</updated>
-    
-    <content type="html"><![CDATA[<p><img src="http://7xrvdu.com1.z0.glb.clouddn.com/github_logo" alt="github"></p>
-<h2 id="远程库的使用"><a href="#远程库的使用" class="headerlink" title=" 远程库的使用"></a><a id="3.3"> 远程库的使用</a></h2><p>前面说到的都是git在本地的操作，那么实际协作开发过程中我们肯定是要有一个远程版本库作为项目的核心版本库，也就是投入生产使用的版本。这里我们以 <a href="https://github.com/" title="Github" target="_blank" rel="external">Github</a>为例。Github是一个开放的git远程服务器，首先我们先注册一个github账户，如何注册就不在这里。说了绑定本地版本库与Github远程库有两种方式，一种是以ssh协议连接，在这方式下我们需要先绑定一个ssh key，这个在下面会说。还有一种是https协议，但是使用<code>https</code>速度慢会比慢，而且每次推送(<code>push</code>)都必须输入口令，但是在某些只开放http端口的公司内部就无法使用ssh协议而只能用https。<br><a id="more"></a></p>
-<h3 id="使用Github托管自己的代码库"><a href="#使用Github托管自己的代码库" class="headerlink" title="使用Github托管自己的代码库"></a><a id="3.3.1">使用Github托管自己的代码库</a></h3><p>如果你已经注册完你的Github账户，新增需要在生成一个<code>ssh key</code>，这个key用于验证你的身份是该版本库的创立者，也就是如上面说的允许你使用<code>ssh</code>方式连接Github上的远程库。执行如下命令生成<code>ssh key</code>:<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ ssh-keygen -t rsa -C <span class="string">"youremail@example.com"</span></div></pre></td></tr></table></figure></p>
-<p><strong>注意把<code>youremail@example.com</code>改为你的邮箱。</strong> 命令执行过程只能够会要求你设置密码，这个可选的，如果设置了密码，后面每次提交也许输入密码。最后你可以在用户目录下找到.ssh文件夹（我的是<code>C:\Users\Justin\.ssh</code>)里面有<code>id_rsa</code>和<code>id_rsa.pub</code>两个文件，这两个就是SSH Key的秘钥对，<code>id_rsa</code>是私钥，不能泄露出去，<code>id_rsa.pub</code>是公钥，可以放心地告诉任何人。<br>接下来我们需要绑定这个key到你的github账户中:<br><img src="http://7xrvdu.com1.z0.glb.clouddn.com/githu%20sshkey.jpg" alt="github sshkey"><br>填上任意Title，在Key文本框里粘贴<code>id_rsa.pub</code>文件的内容,点“Add Key”，你就应该看到已经添加的Key。</p>
-<blockquote>
-<p>当然，GitHub允许你添加多个Key。假定你有若干电脑，你一会儿在公司提交，一会儿在家里提交，只要把每台电脑的Key都添加到GitHub，就可以在每台电脑上往GitHub推送了。</p>
-</blockquote>
-<p>接下来我们在Github上建立一个名为<code>gitstudy</code>的<code>Repository</code>：<br><img src="http://7xrvdu.com1.z0.glb.clouddn.com/github1.jpg" alt="github"><br><img src="http://7xrvdu.com1.z0.glb.clouddn.com/github2.jpg" alt="github"><br><img src="http://7xrvdu.com1.z0.glb.clouddn.com/github3.jpg" alt="github"><br>GitHub告诉我们，可以从这个仓库克隆出新的仓库，也可以把一个已有的本地仓库与之关联，然后，把本地仓库的内容推送到GitHub仓库。<br><strong>Github的Repository分为public 和 private 两种。 public是公共的也就是谁都能查看，如果是商业项目的话还是使用private的吧，不过github要收保护费。</strong><br>现在，我们根据GitHub的提示，在本地的仓库的目录，也就前面用到的<code>gitStudy</code>下运行命令：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">git remote add origin git@github.com:xiongqi215/gitstudy.git</div></pre></td></tr></table></figure></p>
-<p>其中<code>xiongqi215</code>更换成你的github账户。 另外<code>origin</code>是远程库在你本地的名字，这个git默认的叫法，一般情况下不需要修改。<br>下一步，就可以把本地库的所有内容推送到远程库上,使用命令<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">git push -u origin master</div></pre></td></tr></table></figure></p>
-<p>把本地库的内容推送到远程，用<code>git push</code>命令，实际上是把当前分支master推送到远程。</p>
-<p>由于远程库是空的，我们第一次推送master分支时，加上了-u参数，以后就不需要加上这个参数了：<br><a href="http://7xrvdu.com1.z0.glb.clouddn.com/git%20push.jpg" target="_blank" rel="external">github push</a><br><strong>如果前面建立ssh key的时候你设置了密码，那么push过程中你也会看到<code>Enter passphrase for key &#39;/c/Users/Justin/.ssh/id_rsa&#39;:</code>的提示，这时你需输入之前设置的密码。</strong><br>成功<code>push</code>后，查看Github上的<code>gitstudy</code>库，发现所有文件已经推送上去了，并且是最新的版本。</p>
-<h3 id="从github克隆代码库"><a href="#从github克隆代码库" class="headerlink" title="从github克隆代码库"></a><a id="3.3.2">从github克隆代码库</a></h3><p>现在，假设我们换了一台电脑，或者我们需要克隆别人在Github上的某个库时，我们需要使用<code>git clone</code>:<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">git <span class="built_in">clone</span>  git@github.com:xiongqi215/gitstudy.git</div></pre></td></tr></table></figure></p>
-<p>同样<code>xiongqi215</code>更换成你的github账户。<br><img src="http://7xrvdu.com1.z0.glb.clouddn.com/git%20clone.jpg" alt="github clone"></p>
-<p>现在，我们的已经在github建立了一个远程库，同时这个库被<code>clone</code>到了多台电脑上。<br>这时假如A电脑<code>push</code>了一些修改到远程库中，B电脑需要更新到这部分修改，那么可以使用如下命令：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">git pull origin master</div></pre></td></tr></table></figure></p>
-<p><img src="http://7xrvdu.com1.z0.glb.clouddn.com/github%20pull.jpg" alt="github pull"></p>
-<h3 id="小结"><a href="#小结" class="headerlink" title="小结"></a>小结</h3><ul>
-<li>要绑定本地库与远程库，使用命令<code>git remote add origin git@server-name:path/repo-name.git</code>。</li>
-<li>绑定后后，使用命令<code>git push -u origin master</code>第一次推送master分支的所有内容。</li>
-<li>以后，只要使用<code>git push origin master</code>推送最新修改。</li>
-<li>使用<code>git clone  git@server-name:path/repo-name.git</code>命令克隆一个远程库到本地。</li>
-<li>多台电脑可以使用 <code>git pull origin master</code>抓取相互提交到远程库中的最新修改。</li>
-</ul>
-<h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a><a id="4">总结</a></h1><p>Git是个非常高效的版本控制工具。分布式的、基于修改的管理方式非常适合多人协调完成开发工作。</p>
-<blockquote>
-<p>分布式版本系统的最大好处之一是在本地工作完全不需要考虑远程库的存在，也就是有没有联网都可以正常工作，而SVN在没有联网的时候是拒绝干活的！当有网络的时候，再把本地提交推送一下就完成了同步，真是太方便了！</p>
-</blockquote>
-<p>这次学习笔记还有很多内容没有涉及，本人还在学习当中。后面陆续补充如<code>分支管理</code>、<code>冲突处理</code>等内容。这里再提供一份命令手册供大家<a href="http://7xrvdu.com1.z0.glb.clouddn.com/git-cheatsheet.pdf" title="下载" target="_blank" rel="external">下载</a>。</p>
-<h1 id="其它详细教程"><a href="#其它详细教程" class="headerlink" title="其它详细教程"></a><a id="5">其它详细教程</a></h1><ul>
-<li><p><a href="http://iissnan.com/progit/html/zh/ch1_0.html" title="Pro Git中文翻译" target="_blank" rel="external">Pro Git中文翻译 by iissnan</a></p>
-</li>
-<li><p><a href="http://www.liaoxuefeng.com/wiki/0013739516305929606dd18361248578c67b8067c8c017b000" title="廖雪峰的官方网站" target="_blank" rel="external">廖雪峰的官方网站</a></p>
-</li>
 </ul>
 ]]></content>
     
@@ -632,6 +632,45 @@
   </entry>
   
   <entry>
+    <title>Oracle11g无法导出空表的问题</title>
+    <link href="http://www.justin-x.cn/2015/09/21/oracle-11g_exp_empty_table/"/>
+    <id>http://www.justin-x.cn/2015/09/21/oracle-11g_exp_empty_table/</id>
+    <published>2015-09-21T09:57:14.000Z</published>
+    <updated>2016-09-13T08:38:28.105Z</updated>
+    
+    <content type="html"><![CDATA[<p>最近在使用oracle exp命令导出本地数据库时出现一个奇怪问题–只能导出部分表！检查命令语句没有问题，无论如何设置owner参数或full参数都不行。同事机器和服务器上的oracle导出都是正常的，只有我本地出现这个问题，可想而知应该是版本差异问题了–我本地是oracle 11g而同事与服务器上的都是10g。</p>
+<p>上网一查原来oracle 11g默认是不会导出空表的。因为到表为空时，oracle不会为其分配<code>segment</code>以节省空间。解决方法有两种， 一是对空表插入数据，再rollback就产生<code>segment</code>了。但这样明显很麻烦。<br><a id="more"></a></p>
+<p>方法二：修改 <code>deferred_segment_creation</code>参数，允许为空表分配segment。修改sql如下：<br><figure class="highlight sql"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">alter</span> <span class="keyword">system</span> <span class="keyword">set</span> deferred_segment_creation=<span class="literal">false</span>;</div></pre></td></tr></table></figure></p>
+<p><strong>该参数值默认是TRUE，当改为FALSE时，无论是空表还是非空表，都分配segment。<p><br>需注意的是：该值设置后对以前导入的空表不产生作用，仍不能导出，只能对后面新增的表产生作用。</p></strong></p>
+<p>正如上面所说的，修改”deferred <em> segment </em> creation”参数只能对后面新增的表有效，对于当前的空表需要单独设置。</p>
+<p>先查询出所有空表：<br><figure class="highlight sql"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">select</span> <span class="string">'alter table '</span>||table_name||<span class="string">' allocate extent;'</span> <span class="keyword">from</span> user_tables <span class="keyword">where</span> num_rows=<span class="number">0</span></div></pre></td></tr></table></figure></p>
+<p>得到类似下面的结果：</p>
+<p><img src="http://i.imgur.com/15qaWnV.png" alt=""> </p>
+<p>导出结果，并执行这些语句，完成后这些空表便可以成功导出了。</p>
+]]></content>
+    
+    <summary type="html">
+    
+      Oracle11g无法导出空表的问题
+    
+    </summary>
+    
+      <category term="Oracle" scheme="http://www.justin-x.cn/categories/Oracle/"/>
+    
+    
+      <category term="Oracle" scheme="http://www.justin-x.cn/tags/Oracle/"/>
+    
+      <category term="数据库" scheme="http://www.justin-x.cn/tags/%E6%95%B0%E6%8D%AE%E5%BA%93/"/>
+    
+      <category term="数据库备份" scheme="http://www.justin-x.cn/tags/%E6%95%B0%E6%8D%AE%E5%BA%93%E5%A4%87%E4%BB%BD/"/>
+    
+      <category term="Oracle备份" scheme="http://www.justin-x.cn/tags/Oracle%E5%A4%87%E4%BB%BD/"/>
+    
+      <category term="Oracle11g" scheme="http://www.justin-x.cn/tags/Oracle11g/"/>
+    
+  </entry>
+  
+  <entry>
     <title>spring中@Autowired与@Resource的区别</title>
     <link href="http://www.justin-x.cn/2015/09/21/Spring-different_@Autowired_@Resource/"/>
     <id>http://www.justin-x.cn/2015/09/21/Spring-different_@Autowired_@Resource/</id>
@@ -668,45 +707,6 @@
       <category term="依赖注入" scheme="http://www.justin-x.cn/tags/%E4%BE%9D%E8%B5%96%E6%B3%A8%E5%85%A5/"/>
     
       <category term="依赖翻转" scheme="http://www.justin-x.cn/tags/%E4%BE%9D%E8%B5%96%E7%BF%BB%E8%BD%AC/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>Oracle11g无法导出空表的问题</title>
-    <link href="http://www.justin-x.cn/2015/09/21/oracle-11g_exp_empty_table/"/>
-    <id>http://www.justin-x.cn/2015/09/21/oracle-11g_exp_empty_table/</id>
-    <published>2015-09-21T09:57:14.000Z</published>
-    <updated>2016-09-13T08:38:28.105Z</updated>
-    
-    <content type="html"><![CDATA[<p>最近在使用oracle exp命令导出本地数据库时出现一个奇怪问题–只能导出部分表！检查命令语句没有问题，无论如何设置owner参数或full参数都不行。同事机器和服务器上的oracle导出都是正常的，只有我本地出现这个问题，可想而知应该是版本差异问题了–我本地是oracle 11g而同事与服务器上的都是10g。</p>
-<p>上网一查原来oracle 11g默认是不会导出空表的。因为到表为空时，oracle不会为其分配<code>segment</code>以节省空间。解决方法有两种， 一是对空表插入数据，再rollback就产生<code>segment</code>了。但这样明显很麻烦。<br><a id="more"></a></p>
-<p>方法二：修改 <code>deferred_segment_creation</code>参数，允许为空表分配segment。修改sql如下：<br><figure class="highlight sql"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">alter</span> <span class="keyword">system</span> <span class="keyword">set</span> deferred_segment_creation=<span class="literal">false</span>;</div></pre></td></tr></table></figure></p>
-<p><strong>该参数值默认是TRUE，当改为FALSE时，无论是空表还是非空表，都分配segment。<p><br>需注意的是：该值设置后对以前导入的空表不产生作用，仍不能导出，只能对后面新增的表产生作用。</p></strong></p>
-<p>正如上面所说的，修改”deferred <em> segment </em> creation”参数只能对后面新增的表有效，对于当前的空表需要单独设置。</p>
-<p>先查询出所有空表：<br><figure class="highlight sql"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">select</span> <span class="string">'alter table '</span>||table_name||<span class="string">' allocate extent;'</span> <span class="keyword">from</span> user_tables <span class="keyword">where</span> num_rows=<span class="number">0</span></div></pre></td></tr></table></figure></p>
-<p>得到类似下面的结果：</p>
-<p><img src="http://i.imgur.com/15qaWnV.png" alt=""> </p>
-<p>导出结果，并执行这些语句，完成后这些空表便可以成功导出了。</p>
-]]></content>
-    
-    <summary type="html">
-    
-      Oracle11g无法导出空表的问题
-    
-    </summary>
-    
-      <category term="Oracle" scheme="http://www.justin-x.cn/categories/Oracle/"/>
-    
-    
-      <category term="Oracle" scheme="http://www.justin-x.cn/tags/Oracle/"/>
-    
-      <category term="数据库" scheme="http://www.justin-x.cn/tags/%E6%95%B0%E6%8D%AE%E5%BA%93/"/>
-    
-      <category term="数据库备份" scheme="http://www.justin-x.cn/tags/%E6%95%B0%E6%8D%AE%E5%BA%93%E5%A4%87%E4%BB%BD/"/>
-    
-      <category term="Oracle备份" scheme="http://www.justin-x.cn/tags/Oracle%E5%A4%87%E4%BB%BD/"/>
-    
-      <category term="Oracle11g" scheme="http://www.justin-x.cn/tags/Oracle11g/"/>
     
   </entry>
   
@@ -1073,6 +1073,41 @@
       <category term="JDOM" scheme="http://www.justin-x.cn/tags/JDOM/"/>
     
       <category term="DOM4J" scheme="http://www.justin-x.cn/tags/DOM4J/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>StAX---基于流的拉式XML解析</title>
+    <link href="http://www.justin-x.cn/2014/08/21/stAX-Api-intro/"/>
+    <id>http://www.justin-x.cn/2014/08/21/stAX-Api-intro/</id>
+    <published>2014-08-20T16:00:00.000Z</published>
+    <updated>2016-09-20T03:05:20.098Z</updated>
+    
+    <content type="html"><![CDATA[<p>最近在学习webservice时，发现很多技术框架都在使用StAX作为底层XML解析工具，于是今天看了看资料，简单学习了下，在这里做个总结。</p>
+<h1 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h1><p>StAX，全称Streaming API for XML，一种全新的，基于流的JAVA XML解析标准类库。其最终版本于 2004 年 3 月发布，并成为了 JAXP 1.4（将包含在即将发布的 Java 6 中）的一部分。在某种程度上来说，StAX与SAX一样是基于XML事件的解析方式，它们都不会一次性加载整个XML文件。但是它们之间也有很大的不同。</p>
+<a id="more"></a>
+<h2 id="与SAX相比"><a href="#与SAX相比" class="headerlink" title="与SAX相比"></a>与SAX相比</h2><p>虽然StAX与SAX一样基于XML事件解析，相比于DOM将整个XML加载进内存来说效率高。不同的是，StAX在在处理XML事件的方式上使得应用程序更接近底层，所以在效率上比SAX更优秀。</p>
+<p>使用SAX时，我们知道XML事件是由解析器调用开发人员编写的回调方法来处理的，也就是说应用程序是被动于解析器的。应用程序只能被动的等待解析器将XML事件推送给自己处理，对于每一种事件都需要在解析开始之前就做好准备。这种方式被称为‘推（push)‘。<br>而StAX正好相反，StAX采用一种‘拉（pull）‘的方式，由应用程序主动从解析器中获取当前XML事件然后更具需求处理（保存或者忽略）。StAX使得应用程序掌握了主动权，可以简化调用代码来准确地处理它预期的内容，或者发生意外时停止解析。此外，由于该方法不基于处理程序回调，应用程序不需要像使用 SAX 那样模拟解析器的状态。</p>
+<h1 id="简单入门"><a href="#简单入门" class="headerlink" title="简单入门"></a>简单入门</h1><p>获取解析器工厂<br>与其他解析技术一样，在使用StAX解析器之前也需要获取其工厂类。<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">import</span> java.io.InputStream;  </div><div class="line"><span class="keyword">import</span> java.io.OutputStream;  </div><div class="line"><span class="keyword">import</span> javax.xml.stream.XMLInputFactory;  </div><div class="line"><span class="keyword">import</span> javax.xml.stream.XMLOutputFactory;  </div><div class="line">  </div><div class="line">  </div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">StAX_Frist</span> </span>&#123;  </div><div class="line"> <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">writeXMlByStream</span><span class="params">(OutputStream out)</span></span>&#123;  </div><div class="line">     XMLOutputFactory outFactor=XMLOutputFactory.newInstance();<span class="comment">//写解析器工厂  </span></div><div class="line">     .......  </div><div class="line"> &#125;  </div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span>  <span class="title">readXmlByStream</span><span class="params">(InputStream in)</span></span>&#123;  </div><div class="line">          </div><div class="line">        XMLInputFactory inFactory=XMLInputFactory.newInstance();<span class="comment">//读解析器工厂  </span></div><div class="line">        .......  </div><div class="line">    &#125;</div></pre></td></tr></table></figure></p>
+<h2 id="主要API"><a href="#主要API" class="headerlink" title="主要API"></a>主要API</h2><p>StAX 实际上包括两套处理 XML 的 API，分别提供了不同程度的抽象。基于指针（Cursor）的 API 允许应用程序把 XML 作为一个标记（或事件）流来处理。在这里，解析器就像一跟指针一样在文件流上前进，应用程序可以跟随解析器从文件的开头一直处理到结尾。这是一种低层 API，尽管效率高，但是没有提供底层 XML 结构的抽象。Cursor API 由两个主要API组成，XMLStreamReader和XMLStreamWriter，分别由XMLInputStreamFactory和XMLOutputStreamFactory获取。<br>使用Cursor API 读XML文件：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">import</span> java.io.InputStream;  </div><div class="line"><span class="keyword">import</span> javax.xml.stream.XMLInputFactory;;  </div><div class="line"><span class="keyword">import</span> javax.xml.stream.XMLStreamConstants;  </div><div class="line"><span class="keyword">import</span> javax.xml.stream.XMLStreamReader;  </div><div class="line">  </div><div class="line">  </div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">StAX_Frist</span> </span>&#123;  </div><div class="line">      </div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span>  <span class="title">readXmlByStream</span><span class="params">(InputStream in)</span></span>&#123;  </div><div class="line">          </div><div class="line">        XMLInputFactory inFactory=XMLInputFactory.newInstance();<span class="comment">//读解析器工厂  </span></div><div class="line">          </div><div class="line">  </div><div class="line">        <span class="keyword">try</span> &#123;  </div><div class="line">            XMLStreamReader reader=inFactory.createXMLStreamReader(in);<span class="comment">//获取读解析器  </span></div><div class="line">            <span class="keyword">while</span>(reader.hasNext())&#123;<span class="comment">//reader.hasNext();说明文件未到结尾。  </span></div><div class="line">                <span class="keyword">int</span> eventId=reader.next();  </div><div class="line">                <span class="keyword">switch</span> (eventId) &#123;  </div><div class="line">                <span class="keyword">case</span> XMLStreamConstants.START_DOCUMENT:  </div><div class="line">                    System.out.println(<span class="string">"start docmuent"</span>);  </div><div class="line">                    <span class="keyword">break</span>;  </div><div class="line">                      </div><div class="line">                <span class="keyword">case</span> XMLStreamConstants.START_ELEMENT:  </div><div class="line">                    System.out.println(<span class="string">"&lt;"</span>+reader.getLocalName()+<span class="string">"&gt;"</span>);  </div><div class="line">                    <span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">0</span>;i&lt;reader.getAttributeCount();i++)&#123;  </div><div class="line">                        System.out.println(reader.getAttributeLocalName(i)+<span class="string">"="</span>+reader.getAttributeValue(i));  </div><div class="line">                    &#125;  </div><div class="line">                    <span class="keyword">break</span>;  </div><div class="line">                      </div><div class="line">                <span class="keyword">case</span> XMLStreamConstants.CHARACTERS:  </div><div class="line">                    <span class="keyword">if</span>(reader.isWhiteSpace())&#123;  </div><div class="line">                        <span class="keyword">break</span>;  </div><div class="line">                    &#125;  </div><div class="line">                    System.out.println(reader.getText());  </div><div class="line">                    <span class="keyword">break</span>;  </div><div class="line">                <span class="keyword">case</span> XMLStreamConstants.END_ELEMENT:  </div><div class="line">                    System.out.println(<span class="string">"&lt;/"</span>+reader.getLocalName()+<span class="string">"&gt;"</span>);  </div><div class="line">                      </div><div class="line">                    <span class="keyword">break</span>;  </div><div class="line">                <span class="keyword">case</span> XMLStreamConstants.END_DOCUMENT:  </div><div class="line">                    System.out.println(<span class="string">"end docmuent"</span>);  </div><div class="line">                    <span class="keyword">break</span>;  </div><div class="line">                <span class="keyword">default</span>:  </div><div class="line">                    <span class="keyword">break</span>;  </div><div class="line">                &#125;  </div><div class="line">            &#125;  </div><div class="line">        &#125; <span class="keyword">catch</span> (Exception e) &#123;  </div><div class="line">            e.printStackTrace();  </div><div class="line">        &#125;  </div><div class="line">    &#125;</div></pre></td></tr></table></figure>
+<p>另外一种是较为高级的基于迭代器（Iterator）的 API ，它允许应用程序把 XML 作为一系列事件对象来处理，每个对象和应用程序交换 XML 结构的一部分。应用程序只需要确定解析事件的类型，将其转换成对应的具体类型，然后利用其方法获得属于该事件的信息。基于事件迭代器的方法具有一个基于指针的方法不具备的重要优点。通过将解析器事件变成一级对象，从而让应用程序可以采用面向对象的方式处理它们。这样做有助于模块化和不同应用程序组件之间的代码重用。Iterator API 由两个主要API组成，XMLEventReader和XMLEventWriter，分别由XMLInputStreamFactory和XMLOutputStreamFactory获取。<br>使用Iterator API 读XML文件：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div></pre></td><td class="code"><pre><div class="line"></div><div class="line"><span class="keyword">import</span> java.io.InputStream;  </div><div class="line"><span class="keyword">import</span> java.util.Iterator;  </div><div class="line"><span class="keyword">import</span> javax.xml.stream.XMLEventReader;  </div><div class="line"><span class="keyword">import</span> javax.xml.stream.XMLInputFactory;  </div><div class="line"><span class="keyword">import</span> javax.xml.stream.XMLStreamConstants;  </div><div class="line"><span class="keyword">import</span> javax.xml.stream.events.Attribute;  </div><div class="line"><span class="keyword">import</span> javax.xml.stream.events.Characters;  </div><div class="line"><span class="keyword">import</span> javax.xml.stream.events.StartElement;  </div><div class="line"><span class="keyword">import</span> javax.xml.stream.events.XMLEvent;  </div><div class="line">  </div><div class="line">   <span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">StAX_Frist</span> </span>&#123;  </div><div class="line">      </div><div class="line">           <span class="function"><span class="keyword">public</span> <span class="keyword">void</span>  <span class="title">readXmlByEvent</span><span class="params">(InputStream in)</span></span>&#123;  </div><div class="line">          </div><div class="line">        XMLInputFactory factory=XMLInputFactory.newInstance();<span class="comment">//获取解析器工厂  </span></div><div class="line">        <span class="keyword">try</span> &#123;  </div><div class="line">            XMLEventReader reader=factory.createXMLEventReader(in);<span class="comment">//获取解析器  </span></div><div class="line">            <span class="keyword">while</span>(reader.hasNext())&#123;  </div><div class="line">            XMLEvent event=reader.nextEvent();  </div><div class="line">              </div><div class="line">                <span class="keyword">switch</span> (event.getEventType()) &#123;  </div><div class="line">                <span class="keyword">case</span> XMLStreamConstants.START_DOCUMENT:  </div><div class="line">                    System.out.println(<span class="string">"start docmuent"</span>);  </div><div class="line">                    <span class="keyword">break</span>;  </div><div class="line">                      </div><div class="line">                <span class="keyword">case</span> XMLStreamConstants.START_ELEMENT:  </div><div class="line">                    StartElement element=(StartElement)event;  </div><div class="line">                    System.out.println(<span class="string">"&lt;"</span>+element.getName().getLocalPart()+<span class="string">"&gt;"</span>);  </div><div class="line">                    <span class="keyword">for</span>(Iterator it=element.getAttributes();it.hasNext();)&#123;  </div><div class="line">                        Attribute attr=(Attribute) it.next();  </div><div class="line">                        System.out.println(attr.getName().getLocalPart()+<span class="string">"="</span>+attr.getValue());  </div><div class="line">                    &#125;  </div><div class="line">                    <span class="keyword">break</span>;  </div><div class="line">                      </div><div class="line">                <span class="keyword">case</span> XMLStreamConstants.CHARACTERS:  </div><div class="line">                    Characters charData=(Characters)event;  </div><div class="line">                    <span class="keyword">if</span>(charData.isIgnorableWhiteSpace()&amp;&amp;charData.isWhiteSpace())&#123;  </div><div class="line">                        <span class="keyword">break</span>;  </div><div class="line">                    &#125;  </div><div class="line">                    System.out.println(charData.getData());  </div><div class="line">                    <span class="keyword">break</span>;  </div><div class="line">                <span class="keyword">case</span> XMLStreamConstants.END_ELEMENT:  </div><div class="line">                    element=(StartElement)event;  </div><div class="line">                    System.out.println(<span class="string">"&lt;/"</span>+element.getName().getLocalPart()+<span class="string">"&gt;"</span>);  </div><div class="line">                      </div><div class="line">                    <span class="keyword">break</span>;  </div><div class="line">                <span class="keyword">case</span> XMLStreamConstants.END_DOCUMENT:  </div><div class="line">                    System.out.println(<span class="string">"end docmuent"</span>);  </div><div class="line">                    <span class="keyword">break</span>;  </div><div class="line">                <span class="keyword">default</span>:  </div><div class="line">                    <span class="keyword">break</span>;  </div><div class="line">                &#125;  </div><div class="line">            &#125;  </div><div class="line">        &#125; <span class="keyword">catch</span> (Exception e) &#123;  </div><div class="line">            e.printStackTrace();  </div><div class="line">        &#125;  </div><div class="line">    &#125;</div></pre></td></tr></table></figure>]]></content>
+    
+    <summary type="html">
+    
+      StAX采用一种‘拉（pull）‘的方式，由应用程序主动从解析器中获取当前XML事件然后更具需求处理（保存或者忽略）。StAX使得应用程序掌握了主动权，可以简化调用代码来准确地处理它预期的内容，或者发生意外时停止解析。此外，由于该方法不基于处理程序回调，应用程序不需要像使用 SAX 那样模拟解析器的状态。
+    
+    </summary>
+    
+      <category term="java" scheme="http://www.justin-x.cn/categories/java/"/>
+    
+    
+      <category term="java" scheme="http://www.justin-x.cn/tags/java/"/>
+    
+      <category term="xml" scheme="http://www.justin-x.cn/tags/xml/"/>
+    
+      <category term="stAX" scheme="http://www.justin-x.cn/tags/stAX/"/>
     
   </entry>
   

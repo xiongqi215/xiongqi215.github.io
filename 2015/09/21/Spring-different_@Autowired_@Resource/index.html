@@ -4,7 +4,7 @@
 <a id="more"></a>
 <p> 3、@Resource（这个注解属于J2EE的），默认安照名称进行装配，名称可以通过name属性进行指定，<br>如果没有指定name属性，当注解写在字段上时，默认取字段名进行按照名称查找，如果注解写在setter方法上默认取属性名进行装配。 当找不到与名称匹配的bean时才按照类型进行装配。但是需要注意的是，如果name属性一旦指定，就只会按照名称进行装配。<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="meta">@Resource</span>(name=<span class="string">"baseDao"</span>)     </div><div class="line"><span class="keyword">private</span> BaseDao baseDao;</div></pre></td></tr></table></figure></p>
 <p>@Resource注解在字段上，这样就不用写setter方法了，并且这个注解是属于J2EE的，减少了与spring的耦合。</p>
-</div></article></div></section><footer><div class="paginator"><a href="/2015/11/22/schema/" class="prev">PREV</a><a href="/2015/09/21/oracle-11g_exp_empty_table/" class="next">NEXT</a></div><div data-thread-key="2015/09/21/Spring-different_@Autowired_@Resource/" data-title="spring中@Autowired与@Resource的区别" data-url="http://www.justin-x.cn/2015/09/21/Spring-different_@Autowired_@Resource/" data-author-key="1" class="ds-thread"></div><script>var duoshuoQuery = {short_name:"Justin-Blog"};
+</div></article></div></section><footer><div class="paginator"><a href="/2015/09/21/oracle-11g_exp_empty_table/" class="prev">上一篇</a><a href="/2015/09/15/oracle-data_exp_and_imp/" class="next">下一篇</a></div><div data-thread-key="2015/09/21/Spring-different_@Autowired_@Resource/" data-title="spring中@Autowired与@Resource的区别" data-url="http://www.justin-x.cn/2015/09/21/Spring-different_@Autowired_@Resource/" data-author-key="1" class="ds-thread"></div><script>var duoshuoQuery = {short_name:"Justin-Blog"};
 (function() {
     var ds = document.createElement('script');
     ds.type = 'text/javascript';ds.async = true;
@@ -14,4 +14,4 @@
      || document.getElementsByTagName('body')[0]).appendChild(ds);
 })();
 
-</script><div class="copyright"><p>© 2015 - 2016 <a href="http://www.justin-x.cn">Justin</a>, powered by <a href="https://hexo.io/" target="_blank">Hexo</a> and <a href="https://github.com/pinggod/hexo-theme-apollo" target="_blank">hexo-theme-apollo</a>.</p></div></footer></div><script async src="//cdn.bootcss.com/mathjax/2.6.1/MathJax.js?config=TeX-MML-AM_CHTML"></script></body></html>
+</script><div class="copyright"><p><script>var cnzz_protocol = (("https:" == document.location.protocol) ? " https://" : " http://");document.write(unescape("%3Cspan id='cnzz_stat_icon_1260236137'%3E%3C/span%3E%3Cscript src='" + cnzz_protocol + "s11.cnzz.com/z_stat.php%3Fid%3D1260236137%26show%3Dpic' type='text/javascript'%3E%3C/script%3E")); </script>© 2015 - 2016 <a href="http://www.justin-x.cn">Justin</a>, powered by <a href="https://hexo.io/" target="_blank">Hexo</a> and <a href="https://github.com/pinggod/hexo-theme-apollo" target="_blank">hexo-theme-apollo</a>.</p></div></footer></div><script async src="//cdn.bootcss.com/mathjax/2.6.1/MathJax.js?config=TeX-MML-AM_CHTML"></script></body></html>
