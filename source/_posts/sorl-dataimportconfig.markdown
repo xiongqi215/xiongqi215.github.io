@@ -9,7 +9,7 @@ description: Solr-data-config.xml配置
 ---
 
 
-data-config.xml位于core目录/conf/目录下，用于配置从指定数据中查询数据并导入索引。
+data-config.xml位于core目录/conf/目录下，可用于配置从指定数据中查询数据并导入索引。
 配置如下：
 ```xml
 <dataConfig>
